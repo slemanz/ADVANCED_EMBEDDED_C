@@ -368,4 +368,6 @@ typedef struct
 #include "driver_gpio.h"
 #include "driver_uart.h"
 
+typedef uint32_t Pin_Type;
+
 #endif
