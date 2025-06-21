@@ -32,7 +32,6 @@ DevicePtr createDevice(const char *name, const Address *address)
             case (int)GPIOA: RCC->IOPENR |= GPIOA_EN; break;
             case (int)GPIOB: RCC->IOPENR |= GPIOB_EN; break;
             case (int)GPIOC: RCC->IOPENR |= GPIOC_EN; break;
-
         }
 
     }else
@@ -40,4 +39,19 @@ DevicePtr createDevice(const char *name, const Address *address)
         printf("Low memory, cannot create device\n");
     }
 
+}
+
+
+void turnOnDevice(DevicePtr device)
+{
+    /* 1. configure device as an output device */
+
+    uint16_t pin = device->address.Pin;
+    device->address.Port->MODER |=  (1U << (pin*2));
+    device->address.Port->MODER &= ~(1U << (pin*2 + 1));
+
+    /* 2. Turn on device */
+
+    device->address.Port->ODR |= (1U << pin);
+    printf("%s is on\n", device->name);
 }
