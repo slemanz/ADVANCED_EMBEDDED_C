@@ -10,10 +10,13 @@ int main(void)
 
     uint64_t start_time = ticks_get();
 
+    printf("Init\n");
+    //test_setup();
+
     while(1)
     {
         //blinky
-        if((ticks_get() - start_time) >= 500)
+        if((ticks_get() - start_time) >= 100)
         {
             GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
             start_time = ticks_get();

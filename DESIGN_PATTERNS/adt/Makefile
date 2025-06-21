@@ -27,7 +27,7 @@ OBJS		+= App/Build/config.o
 
 OBJS		+= App/Build/driver_systick.o
 OBJS		+= App/Build/driver_gpio.o
-#OBJS		+= App/Build/driver_uart.o
+OBJS		+= App/Build/driver_uart.o
 
 
 

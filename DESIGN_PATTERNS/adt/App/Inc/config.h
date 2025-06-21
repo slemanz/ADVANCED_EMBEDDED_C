@@ -5,4 +5,6 @@
 
 void config_drivers(void);
 
+void test_setup(void);
+
 #endif /* CONFIG_H_ */
