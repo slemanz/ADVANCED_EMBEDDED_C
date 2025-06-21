@@ -289,6 +289,13 @@ typedef struct
 
 #define DAC1                ((DAC_RegDef_t*) DAC1_BASEADDR)
 
+/*
+ * RCC ENABLE
+ */
+
+#define GPIOA_EN            (1 << 0)
+#define GPIOB_EN            (1 << 1)
+#define GPIOC_EN            (1 << 2)
 
 /*
  *  Peripheral Enable Macros
