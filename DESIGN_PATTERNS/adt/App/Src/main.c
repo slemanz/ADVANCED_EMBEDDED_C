@@ -4,33 +4,41 @@
 
 #include "device.h"
 
+State_t btn;
 
 int main(void)
 {
     config_drivers();
-    uint64_t start_time = ticks_get();
-
     printf("Init\n");
     //test_setup();
 
-    // PA5
-    DevicePtr device;
+    // PA5 - LED
+    DevicePtr device1;
 
-    const char* name  = "User LED";
-	Address addr = {GPIOA, 5};
+    // PC14 - Button
+    DevicePtr device2;
 
-    device = createDevice(name, &addr);
+    const char* name1  = "User LED";
+	Address addr1 = {GPIOA, 5};
 
-    turnOnDevice(device);
+    const char* name2  = "User Button";
+	Address addr2 = {GPIOC, 13};
 
+    device1 = createDevice(name1, &addr1);
+    device2 = createDevice(name2, &addr2);
+
+    turnOnDevice(device1); // set as output
 
     while(1)
     {
-        //blinky
-        if((ticks_get() - start_time) >= 2000)
+        btn = readDevice(device2);
+
+        if(btn)
         {
-            toggleDevice(device);
-            start_time = ticks_get();
+            turnOffDevice(device1);
+        }else
+        {
+            turnOnDevice(device1);
         }
     }
 }

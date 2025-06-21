@@ -33,7 +33,6 @@ DevicePtr createDevice(const char *name, const Address *address)
             case (int)GPIOB: RCC->IOPENR |= GPIOB_EN; break;
             case (int)GPIOC: RCC->IOPENR |= GPIOC_EN; break;
         }
-        printf("Created device: \n");
     }else
     {
         printf("Low memory, cannot create device\n");
@@ -74,4 +73,24 @@ void toggleDevice(DevicePtr device)
     /* 1. Toggle device */
     device->address.Port->ODR ^= (1U << _pin);
     printf(" %s has toggled\n", device->name);
+}
+
+State_t readDevice(DevicePtr device)
+{
+    State_t bitStatus;
+
+    /* 1. Configure as input pin */
+    uint16_t _pin = device->address.Pin;
+    device->address.Port->MODER &= ~(0x3U << (2*_pin));
+
+    /* 2. Read device */
+    if((device->address.Port->IDR & (1U << _pin)))
+    {
+        bitStatus = 1;
+    }else
+    {
+        bitStatus = 0;
+    }
+
+    return bitStatus;
 }
