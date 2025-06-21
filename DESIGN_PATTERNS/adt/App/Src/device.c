@@ -94,3 +94,11 @@ State_t readDevice(DevicePtr device)
 
     return bitStatus;
 }
+
+void destroyDevice(DevicePtr device)
+{
+    printf("*** %s destroyed***\n\r", device->name);
+    free(device);
+    noOfdevices--;
+}
+
