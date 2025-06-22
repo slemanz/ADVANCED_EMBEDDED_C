@@ -24,25 +24,25 @@ int main(void)
     const char* name2  = "User Button";
 	Address addr2 = {GPIOC, 13};
 
-    device1 = createDevice(name1, &addr1);
-    device2 = createDevice(name2, &addr2);
+    device1 = device_create(name1, &addr1);
+    device2 = device_create(name2, &addr2);
 
-    turnOnDevice(device1); // set as output
+    device_turnOn(device1); // set as output
 
-    displayDeviceInfo(device1);
-    displayDeviceInfo(device2);
+    device_displayInfo(device1);
+    device_displayInfo(device2);
 
     while(1)
     {
-        btn = readDevice(device2);
+        btn = device_read(device2);
 
         if(btn && btn != btnOld)
         {
-            turnOffDevice(device1);
+            device_turnOff(device1);
             btnOld = btn;
         }else if(btn != btnOld)
         {
-            turnOnDevice(device1);
+            device_turnOn(device1);
             btnOld = btn;
         }
     }

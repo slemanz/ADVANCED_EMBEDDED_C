@@ -14,7 +14,7 @@ struct Device{
 
 uint32_t noOfdevices = 0;
 
-DevicePtr createDevice(const char *name, const Address *address)
+DevicePtr device_create(const char *name, const Address *address)
 {
     DevicePtr device = (DevicePtr)calloc(sizeof(DevicePtr), sizeof(DevicePtr));
 
@@ -43,7 +43,7 @@ DevicePtr createDevice(const char *name, const Address *address)
 }
 
 
-void turnOnDevice(DevicePtr device)
+void device_turnOn(DevicePtr device)
 {
     /* 1. configure device as an output device */
 
@@ -57,7 +57,7 @@ void turnOnDevice(DevicePtr device)
     printf(" %s is on\n", device->name);
 }
 
-void turnOffDevice(DevicePtr device)
+void device_turnOff(DevicePtr device)
 {
     uint16_t _pin = device->address.Pin;
 
@@ -66,7 +66,7 @@ void turnOffDevice(DevicePtr device)
     printf(" %s is off\n", device->name);
 }
 
-void toggleDevice(DevicePtr device)
+void device_toggle(DevicePtr device)
 {
     uint16_t _pin = device->address.Pin;
 
@@ -75,7 +75,7 @@ void toggleDevice(DevicePtr device)
     printf(" %s has toggled\n", device->name);
 }
 
-State_t readDevice(DevicePtr device)
+State_t device_read(DevicePtr device)
 {
     State_t bitStatus;
 
@@ -95,7 +95,7 @@ State_t readDevice(DevicePtr device)
     return bitStatus;
 }
 
-void destroyDevice(DevicePtr device)
+void device_destroy(DevicePtr device)
 {
     printf("*** %s destroyed***\n\r", device->name);
     free(device);
@@ -103,7 +103,7 @@ void destroyDevice(DevicePtr device)
 }
 
 
-void displayDeviceInfo(DevicePtr device)
+void device_displayInfo(DevicePtr device)
 {
     const char* type;
     uint32_t _pin = device->address.Pin;
@@ -116,7 +116,7 @@ void displayDeviceInfo(DevicePtr device)
     }
 
     printf("************************************************************\n");
-    printf("Device name:  %s\n", device->name);
+    printf("Device name: %s\n", device->name);
     printf("Device type: %s\n", type);
     printf("The device uuid is %ld\n", device->uuid);
     printf("************************************************************\n");

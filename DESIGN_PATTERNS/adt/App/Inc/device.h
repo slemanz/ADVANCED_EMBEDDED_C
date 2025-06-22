@@ -10,14 +10,14 @@ typedef bool State_t;
 /* This hides implementation details */
 typedef struct Device* DevicePtr;
 
-DevicePtr createDevice(const char *name, const Address *address);
+DevicePtr device_create(const char *name, const Address *address);
 
-void turnOnDevice(DevicePtr device);
-void turnOffDevice(DevicePtr device);
-void toggleDevice(DevicePtr device);
+void device_turnOn(DevicePtr device);
+void device_turnOff(DevicePtr device);
+void device_toggle(DevicePtr device);
 
-State_t readDevice(DevicePtr device);
-void destroyDevice(DevicePtr device);
-void displayDeviceInfo(DevicePtr device);
+State_t device_read(DevicePtr device);
+void device_destroy(DevicePtr device);
+void device_displayInfo(DevicePtr device);
 
 #endif /* INC_DEVICE_H_ */
