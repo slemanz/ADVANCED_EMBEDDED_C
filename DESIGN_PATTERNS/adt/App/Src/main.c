@@ -4,7 +4,7 @@
 
 #include "device.h"
 
-State_t btn;
+State_t btn, btnOld = 0;
 
 int main(void)
 {
@@ -29,16 +29,21 @@ int main(void)
 
     turnOnDevice(device1); // set as output
 
+    displayDeviceInfo(device1);
+    displayDeviceInfo(device2);
+
     while(1)
     {
         btn = readDevice(device2);
 
-        if(btn)
+        if(btn && btn != btnOld)
         {
             turnOffDevice(device1);
-        }else
+            btnOld = btn;
+        }else if(btn != btnOld)
         {
             turnOnDevice(device1);
+            btnOld = btn;
         }
     }
 }

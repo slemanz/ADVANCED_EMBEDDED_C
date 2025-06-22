@@ -102,3 +102,22 @@ void destroyDevice(DevicePtr device)
     noOfdevices--;
 }
 
+
+void displayDeviceInfo(DevicePtr device)
+{
+    const char* type;
+    uint32_t _pin = device->address.Pin;
+    if(device->address.Port->MODER & (1 << 2*_pin))
+    {
+        type = "output device";
+    }else
+    {
+        type = "input device";
+    }
+
+    printf("************************************************************\n");
+    printf("Device name:  %s\n", device->name);
+    printf("Device type: %s\n", type);
+    printf("The device uuid is %ld\n", device->uuid);
+    printf("************************************************************\n");
+}
