@@ -27,5 +27,7 @@ struct Device{
 ## Implementation Example
 
 [main.c](App/Src/main.c)
+
 [device.h](App/Inc/device.h)
+
 [device.c](App/Src/device.c)
