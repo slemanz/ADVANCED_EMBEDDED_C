@@ -59,6 +59,8 @@ typedef void (*void_fn)(void);
 
 #define DAC1_BASEADDR                   (0x40007400U)
 
+#define TIM2_BASEADDR                   (0x40000000U)
+
 /*
  *    INTERRUPTS
  */
@@ -261,6 +263,37 @@ typedef struct
   __vo uint32_t WINR;        /*!< Address offset: 0x10 */
 } IWDG_RegDef_t;
 
+typedef struct
+{
+    __vo uint32_t CR1;         /*!< Address offset: 0x00 */
+    __vo uint32_t CR2;         /*!< Address offset: 0x04 */
+    __vo uint32_t SMCR;        /*!< Address offset: 0x08 */
+    __vo uint32_t DIER;        /*!< Address offset: 0x0C */
+    __vo uint32_t SR;          /*!< Address offset: 0x10 */
+    __vo uint32_t EGR;         /*!< Address offset: 0x14 */
+    __vo uint32_t CCMR1;       /*!< Address offset: 0x18 */
+    __vo uint32_t CCMR2;       /*!< Address offset: 0x1C */
+    __vo uint32_t CCER;        /*!< Address offset: 0x20 */
+    __vo uint32_t CNT;         /*!< Address offset: 0x24 */
+    __vo uint32_t PSC;         /*!< Address offset: 0x28 */
+    __vo uint32_t ARR;         /*!< Address offset: 0x2C */
+    __vo uint32_t RCR;         /*!< Address offset: 0x30 */
+    __vo uint32_t CCR1;        /*!< Address offset: 0x34 */
+    __vo uint32_t CCR2;        /*!< Address offset: 0x38 */
+    __vo uint32_t CCR3;        /*!< Address offset: 0x3C */
+    __vo uint32_t CCR4;        /*!< Address offset: 0x40 */
+    __vo uint32_t BDTR;        /*!< Address offset: 0x44 */
+    __vo uint32_t DCR;         /*!< Address offset: 0x48 */
+    __vo uint32_t DMAR;        /*!< Address offset: 0x4C */
+    __vo uint32_t OR1;         /*!< Address offset: 0x50 */
+    __vo uint32_t CCMR3;       /*!< Address offset: 0x54 */
+    __vo uint32_t CCR5;        /*!< Address offset: 0x58 */
+    __vo uint32_t CCR6;        /*!< Address offset: 0x5C */
+    __vo uint32_t AF1;         /*!< Address offset: 0x60 */
+    __vo uint32_t AF2;         /*!< Address offset: 0x64 */
+    __vo uint32_t TISEL;       /*!< Address offset: 0x68 */
+} TIM_RegDef_t;
+
 
 /*
  * Peripheral defines
@@ -288,6 +321,8 @@ typedef struct
 #define SPI3                ((SPI_RegDef_t*) SPI3_BASEADDR)
 
 #define DAC1                ((DAC_RegDef_t*) DAC1_BASEADDR)
+
+#define TIM2                ((TIM_RegDef_t*) TIM2_BASEADDR)
 
 /*
  * RCC ENABLE

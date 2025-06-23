@@ -4,7 +4,7 @@
 typedef enum
 {
     TIMER2,
-    SYSTICK
+    TIMER_SYSTICK
 }HardwareTimer;
 
 typedef struct
