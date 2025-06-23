@@ -43,7 +43,7 @@ void watch_start(digitalStopWatchPtr instance, long max_time, long *current_coun
         
         case stopped:
             instance->state = started;
-            printf("Started\n");
+            printf("STARTED\n");
             switch (instance->source.timer)
             {
                 case TIMER2:
