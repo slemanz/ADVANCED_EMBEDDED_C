@@ -52,12 +52,11 @@ void watch_start(digitalStopWatchPtr instance, long max_time, long *current_coun
                 case TIMER_SYSTICK:
                     systick_millis_set(max_time, current_count);
                     break;
-                
                 default:
                     break;
-                
             }
             break;
+
         default:
             printf("State does not exist.\n");
             break;
@@ -66,5 +65,27 @@ void watch_start(digitalStopWatchPtr instance, long max_time, long *current_coun
 
 void watch_stop(digitalStopWatchPtr instance)
 {
+    switch (instance->state)
+    {
+        case started:
+            instance->state = stopped;
+            switch (instance->source.timer)
+            {
+                case TIMER2:
+                    timer2_sec_reset();
+                    break;
+                case TIMER_SYSTICK:
+                    systick_millis_reset();
+                default:
+                    break;
+            }
+            printf("STOPPED\n");
 
+        case stopped:
+            printf("Watch has already stopped!\n");
+            break;
+        default:
+            printf("State does not exist.\n");
+            break;
+    }
 }
