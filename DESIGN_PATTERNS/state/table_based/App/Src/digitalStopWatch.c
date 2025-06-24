@@ -4,16 +4,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define NO_OF_EVENTS        2
+#define NO_OF_STATES        2
+
 typedef enum{
     stopped,
     started
 }State;
+
+typedef enum{
+    stopEvent,
+    startEvent
+}Events;
 
 struct digitalStopWatch{
     State state;
     TimeSource source;
     const char *name;
 };
+
+static State transitionTable[NO_OF_STATES][NO_OF_EVENTS] = {{stopped, started}, {stopped, started}};
 
 digitalStopWatchPtr watch_create(const char *name, const TimeSource *tmr)
 {
@@ -35,7 +45,9 @@ digitalStopWatchPtr watch_create(const char *name, const TimeSource *tmr)
 
 void watch_start(digitalStopWatchPtr instance, long max_time, long *current_count)
 {
-    switch (instance->state)
+    const State currentState = instance->state;
+
+    switch (currentState)
     {
         case started:
             printf("Watch has already started\n");
@@ -61,11 +73,14 @@ void watch_start(digitalStopWatchPtr instance, long max_time, long *current_coun
             printf("State does not exist.\n");
             break;
     }
+    instance->state = transitionTable[currentState][startEvent];
 }
 
 void watch_stop(digitalStopWatchPtr instance)
 {
-    switch (instance->state)
+    const State currentState = instance->state;
+
+    switch (currentState)
     {
         case started:
             instance->state = stopped;
@@ -88,4 +103,5 @@ void watch_stop(digitalStopWatchPtr instance)
             printf("State does not exist.\n");
             break;
     }
+    instance->state = transitionTable[currentState][stopEvent];
 }
