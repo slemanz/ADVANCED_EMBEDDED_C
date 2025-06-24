@@ -27,6 +27,9 @@ OBJS		+= App/Build/config.o
 
 OBJS		+= App/Build/timeSource.o
 OBJS		+= App/Build/digitalStopWatch.o
+OBJS		+= App/Build/watchState.o
+OBJS		+= App/Build/startedState.o
+OBJS		+= App/Build/stoppedState.o
 
 OBJS		+= App/Build/driver_systick.o
 OBJS		+= App/Build/driver_gpio.o

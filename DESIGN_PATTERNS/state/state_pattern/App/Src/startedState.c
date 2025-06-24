@@ -3,7 +3,7 @@
 
 static void stopWatch(watchStatePtr state)
 {
-    transititionToStopped(state);
+    transitionToStopped(state);
 }
 
 void transitionToStarted(watchStatePtr state)
