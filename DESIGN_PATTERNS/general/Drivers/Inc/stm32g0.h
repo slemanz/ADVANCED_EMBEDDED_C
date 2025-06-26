@@ -11,6 +11,7 @@
 
 #define __vo volatile
 #define MMIO32(addr) (*(volatile uint32_t *)(addr))
+#define MMIO16(addr) (*(volatile uint16_t *)(addr))
 
 typedef void (*void_fn)(void);
 
@@ -58,6 +59,9 @@ typedef void (*void_fn)(void);
 #define SPI3_BASEADDR                   (0x40003C00U)
 
 #define DAC1_BASEADDR                   (0x40007400U)
+
+#define TS_CAL1_BASEADDR                (0x1FFF75A8)
+#define TS_CAL2_BASEADDR                (0x1FFF75CA)
 
 /*
  *    INTERRUPTS

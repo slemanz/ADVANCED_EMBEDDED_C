@@ -25,3 +25,21 @@ uint16_t adc_read(uint8_t channel)
 
     return ((uint16_t)ADC->DR);
 }
+
+void adc_init_temperature(void)
+{
+    MMIO32(ADC_CCR_BASEADDR) |= (1 << 23);
+    for(uint32_t i = 0; i < 10000; i++);
+}
+
+float adc_read_temperature(void)
+{
+    uint16_t adc_temp = adc_read(12);
+    float temperature, volt;
+
+
+    volt = ((double)adc_temp/4095.0)*3.3;
+    temperature = ((volt-0.76)/0.0025) + 25.0;
+
+    return temperature;
+}
