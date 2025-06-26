@@ -37,9 +37,8 @@ float adc_read_temperature(void)
     uint16_t adc_temp = adc_read(12);
     float temperature, volt;
 
-
     volt = ((double)adc_temp/4095.0)*3.3;
-    temperature = ((volt-0.76)/0.0025) + 25.0;
+    temperature = ((volt-0.76)/0.0025) + 30.0;
 
     return temperature;
 }
