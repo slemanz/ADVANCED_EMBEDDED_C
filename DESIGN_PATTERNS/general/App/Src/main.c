@@ -11,30 +11,33 @@ int main(void)
 
     uint64_t start_time = ticks_get();
 
+
     while(1)
     {
         btn_update();
 
-        if((ticks_get() - start_time) >= 10000)
+        if((ticks_get() - start_time) >= 500)
         {
-            printf("Working\n");
+            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_15);
             start_time = ticks_get();
         }
     }
 }
 
 uint8_t btnState = 0, btnStateOld = 0;
+uint16_t adc_value = 0;
 
 void btn_update(void)
 {
+
     btnState = GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13);
     if(btnState && (btnStateOld != btnState))
     {
-        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, GPIO_PIN_RESET);
+        adc_value = adc_read(0);
+        printf("Adc value: %d\n", adc_value);
         btnStateOld = btnState;
     }else if(btnStateOld != btnState)
     {
-        GPIO_WriteToOutputPin(GPIOA, GPIO_PIN_NO_5, GPIO_PIN_SET);
         btnStateOld = btnState;
     }
 }
