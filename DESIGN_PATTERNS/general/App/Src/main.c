@@ -11,6 +11,12 @@ int main(void)
 
     uint64_t start_time = ticks_get();
 
+    printf("TS_CAL1 = %d\n", MMIO16(TS_CAL1_BASEADDR));
+    printf("TS_CAL2 = %d\n", MMIO16(TS_CAL2_BASEADDR));
+    printf("ADC TEMP = %d\n\n\n", adc_read(12));
+
+    float test = adc_read_temperature();
+    printf("Temperature: %.2f C\n", test);
 
     while(1)
     {
@@ -18,13 +24,13 @@ int main(void)
 
         if((ticks_get() - start_time) >= 500)
         {
-            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_15);
+            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
             start_time = ticks_get();
         }
     }
 }
 
-uint8_t btnState = 0, btnStateOld = 0;
+uint8_t btnState = 0, btnStateOld = 1;
 uint16_t adc_value = 0;
 
 void btn_update(void)

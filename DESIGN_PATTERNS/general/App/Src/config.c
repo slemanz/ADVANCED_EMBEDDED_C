@@ -23,6 +23,7 @@ void config_drivers(void)
     config_gpio();
     uart2_init();
     adc_init();
+    adc_init_temperature();
     systick_init(1000, 16000000);
 
     setbuf(stdin, NULL);
