@@ -13,5 +13,6 @@ The basic structure:
 
 # List of design patterns
 
-1. [ADT](adt/)
-2. [Bit Fields](bit_fields/)
+1. **[ADT](adt/)**
+2. **[Bit Fields](bit_fields/)**
+3. **[State](state/)**
