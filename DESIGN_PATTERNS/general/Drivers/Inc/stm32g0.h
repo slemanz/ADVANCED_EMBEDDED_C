@@ -374,6 +374,7 @@ typedef struct
 #include "driver_systick.h"
 #include "driver_gpio.h"
 #include "driver_uart.h"
+#include "driver_adc.h"
 
 typedef uint32_t Pin_Type;
 
