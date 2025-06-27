@@ -16,3 +16,4 @@ The basic structure:
 1. **[ADT](adt/)**
 2. **[Bit Fields](bit_fields/)**
 3. **[State](state/)**
+3. **[Hardware Proxy](hardware_proxy/)**
