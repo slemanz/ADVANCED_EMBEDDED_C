@@ -71,7 +71,51 @@ void motorProxy_configure(motorProxy *const me, uint32_t length, volatile uint32
 
 Direction_e motorProxy_accessMotorDirection(motorProxy *const me)
 {
-    return NO_DIRECTION;
+    motorData mData;
+    if(!me->motorData)
+    {
+        return 0;
+    }
+
+    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+
+    return mData.direction;
+}
+
+uint32_t motorProxy_accessMotorSpeed(motorProxy *const me)
+{
+    motorData mData;
+    if(!me->motorData)
+    {
+        return 0;
+    }
+
+    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+
+    return mData.speed;
+}
+
+uint32_t motorProxy_accessMotorState(motorProxy *const me)
+{
+    motorData mData;
+    if(!me->motorData)
+    {
+        return 0;
+    }
+
+    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+
+    return mData.errorStatus;
+}
+
+void motorProxy_writeMotorSpeed(motorProxy *const me, Direction_e direction, uint32_t speed)
+{
+
+}
+
+void motorProxy_clearErrorStatus(motorProxy *const me)
+{
+
 }
 
 static uint32_t marshal(const motorData mData)
