@@ -17,3 +17,4 @@ The basic structure:
 2. **[Bit Fields](bit_fields/)**
 3. **[State](state/)**
 4. **[Hardware Proxy](hardware_proxy/)**
+5. **[Strategy](strategy/)**
