@@ -11,20 +11,32 @@ struct Device
 
 devicePtr device_create(const char *name, gpioStrategy deviceStrategy)
 {
-    return NULL;
-}
+    devicePtr new_device = calloc(sizeof(devicePtr), sizeof(devicePtr));
 
-void device_change(devicePtr device, gpioStrategy newDeviceStrategy)
-{
+    if(new_device)
+    {
+        new_device->name = name;
+        new_device->deviceStrategy = deviceStrategy;
+        printf("Device created succesfully!\n");
+    }else
+    {
+        printf("Low memory, device not created\n");
+    }
 
+    return new_device;
 }
 
 void device_set(devicePtr device, int device_num)
 {
+    device->deviceStrategy(device_num);
+}
 
+void device_change(devicePtr device, gpioStrategy newDeviceStrategy)
+{
+    device->deviceStrategy = newDeviceStrategy;
 }
 
 void device_destroy(devicePtr device)
 {
-
+    free(device);
 }
