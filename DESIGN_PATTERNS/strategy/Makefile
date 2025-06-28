@@ -31,6 +31,7 @@ OBJS		+= App/Build/driver_uart.o
 OBJS		+= App/Build/driver_adc.o
 
 OBJS		+= App/Build/gpioDevices.o
+OBJS		+= App/Build/device.o
 
 
 
