@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 static uint32_t marshal(const motorData mData);
+static motorData unmarshal(uint32_t encodedMData);
 
 motorProxy* motorProxy_create(const char *name)
 {
@@ -99,4 +100,37 @@ static uint32_t marshal(const motorData mData)
     if(mData.unknownError)          deviceCmd |= (1 << 15);
 
     return deviceCmd;
+}
+
+static motorData unmarshal(uint32_t encodedMData)
+{
+    motorData mData;
+    int temp;
+
+    mData.on_off = (encodedMData & 1);
+
+    temp = (encodedMData & (0x3 << 1)) >> 1;
+
+    if(temp == 1)
+    {
+        mData.direction = REVERSE;
+    }else if(temp == 2)
+    {
+        mData.direction = FORWARD;
+    }else
+    {
+        mData.direction = NO_DIRECTION;
+    }
+
+    mData.speed =                   (encodedMData >> 3)  & 31;
+    mData.errorStatus =             (encodedMData >> 8)  & 1;
+    mData.noPowerError =            (encodedMData >> 9)  & 1;
+    mData.noTorqueError =           (encodedMData >> 10) & 1;
+    mData.BITError =                (encodedMData >> 11) & 1;
+    mData.overTemperatureError =    (encodedMData >> 12) & 1;
+    mData.reserverdError1 =         (encodedMData >> 13) & 1;
+    mData.reserverdError2 =         (encodedMData >> 14) & 1;
+    mData.unknownError =            (encodedMData >> 15) & 1;
+
+    return mData;
 }
