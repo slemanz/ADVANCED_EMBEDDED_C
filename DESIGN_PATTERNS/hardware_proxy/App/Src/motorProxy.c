@@ -42,7 +42,7 @@ void motorProxy_enable(motorProxy *const me)
 
     (*(volatile uint32_t *)(*me->motorAddr)) |= 1;
 
-    printf("%s, %d, %p\n", __func__, *me->motorAddr, me->motorAddr);
+    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
 void motorProxy_disable(motorProxy *const me)
@@ -54,5 +54,19 @@ void motorProxy_disable(motorProxy *const me)
 
     (*(volatile uint32_t *)(*me->motorAddr)) &= ~1;
 
-    printf("%s, %d, %p\n", __func__, *me->motorAddr, me->motorAddr);
+    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+}
+
+void motorProxy_configure(motorProxy *const me, uint32_t length, volatile uint32_t *location, uint32_t *motorData)
+{
+    me->rotaryArmLength = length;
+    me->motorAddr = location;
+    me->motorData = motorData;
+
+    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+}
+
+Direction_e motorProxy_accessMotorDirection(motorProxy *const me)
+{
+    return NO_DIRECTION;
 }

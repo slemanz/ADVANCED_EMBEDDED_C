@@ -21,7 +21,7 @@ void motorProxy_init(motorProxy *const me, const char *name);
 void motorProxy_cleanUp(motorProxy *const me);
 void motorProxy_enable(motorProxy *const me);
 void motorProxy_disable(motorProxy *const me);
-void motorProxy_configure(motorProxy *const me, uint32_t length, volatile uint32_t *location, int32_t *motorData);
+void motorProxy_configure(motorProxy *const me, uint32_t length, volatile uint32_t *location, uint32_t *motorData);
 
 Direction_e motorProxy_accessMotorDirection(motorProxy *const me);
 uint32_t motorProxy_accessMotorSpeed(motorProxy *const me);
