@@ -8,7 +8,7 @@ static void _motorproxy_init(motorProxy *const me, const char *name);
 void motorProxy_initialize(motorProxy *const me)
 {
     motorData mData;
-    if(!me->motorAddr)
+    if(!me->motorData)
     {
         return;
     }
@@ -25,8 +25,8 @@ void motorProxy_initialize(motorProxy *const me)
     mData.reserverdError2 =         0;
     mData.unknownError =            0;
 
-    (*(volatile uint32_t*)(*me->motorAddr)) = marshal(mData);
-    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+    *me->motorAddr = marshal(mData);
+    printf("%s, 0x%lX, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
 motorProxy* motorProxy_create(const char *name)
@@ -68,9 +68,9 @@ void motorProxy_enable(motorProxy *const me)
         return;
     }
 
-    (*(volatile uint32_t *)(*me->motorAddr)) |= 1;
+    *me->motorAddr |= 1;
 
-    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+    printf("%s, 0x%lX, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
 void motorProxy_disable(motorProxy *const me)
@@ -80,18 +80,21 @@ void motorProxy_disable(motorProxy *const me)
         return;
     }
 
-    (*(volatile uint32_t *)(*me->motorAddr)) &= ~1;
+    *me->motorAddr &= ~1;
 
     printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
+/*
+    Fn: MotorProxy_configure
+*/
 void motorProxy_configure(motorProxy *const me, uint32_t length, volatile uint32_t *location, uint32_t *motorData)
 {
     me->rotaryArmLength = length;
     me->motorAddr = location;
     me->motorData = motorData;
 
-    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+    printf("%s, 0x%lX, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
 Direction_e motorProxy_accessMotorDirection(motorProxy *const me)
@@ -102,7 +105,7 @@ Direction_e motorProxy_accessMotorDirection(motorProxy *const me)
         return 0;
     }
 
-    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+    mData = unmarshal((*me->motorAddr));
 
     return mData.direction;
 }
@@ -115,7 +118,7 @@ uint32_t motorProxy_accessMotorSpeed(motorProxy *const me)
         return 0;
     }
 
-    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+    mData = unmarshal((*me->motorAddr));
 
     return mData.speed;
 }
@@ -128,7 +131,7 @@ uint32_t motorProxy_accessMotorState(motorProxy *const me)
         return 0;
     }
 
-    mData = unmarshal((*(volatile uint32_t *)(*me->motorAddr)));
+    mData = unmarshal((*me->motorAddr));
 
     return mData.errorStatus;
 }
@@ -145,7 +148,7 @@ void motorProxy_writeMotorSpeed(motorProxy *const me, Direction_e direction, uin
 
     if(me->rotaryArmLength > 0)
     {
-        mData = unmarshal((*(volatile uint32_t*)(*me->motorAddr)));
+        mData = unmarshal((*me->motorAddr));
         dSpeed = speed;
         mData.direction = direction;
         dArmLength = me->rotaryArmLength;
@@ -156,8 +159,8 @@ void motorProxy_writeMotorSpeed(motorProxy *const me, Direction_e direction, uin
         mData.speed = speed;
     }
 
-    (*(volatile uint32_t *)(*me->motorAddr)) = marshal(mData);
-    printf("%s, %ld, %p", __func__, *me->motorAddr, me->motorAddr);
+    *me->motorAddr = marshal(mData);
+    printf("%s, 0x%lX, %p\n", __func__, *me->motorAddr, me->motorAddr);
 }
 
 void motorProxy_clearErrorStatus(motorProxy *const me)
@@ -167,7 +170,7 @@ void motorProxy_clearErrorStatus(motorProxy *const me)
         return;
     }
 
-    (*(volatile uint32_t *)(*me->motorAddr)) &= ~(1 << 8);
+    *me->motorAddr &= ~(1 << 8);
 }
 
 static uint32_t marshal(const motorData mData)
