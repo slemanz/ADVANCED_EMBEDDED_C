@@ -3,13 +3,38 @@
 
 static uint32_t marshal(const motorData mData);
 static motorData unmarshal(uint32_t encodedMData);
+static void _motorproxy_init(motorProxy *const me, const char *name);
+
+void motorProxy_initialize(motorProxy *const me)
+{
+    motorData mData;
+    if(!me->motorAddr)
+    {
+        return;
+    }
+
+    mData.on_off =                  1;
+    mData.direction =               0;
+    mData.speed =                   0;
+    mData.errorStatus =             0;
+    mData.noPowerError =            0;
+    mData.noTorqueError =           0;
+    mData.BITError =                0;
+    mData.overTemperatureError =    0;
+    mData.reserverdError1 =         0;
+    mData.reserverdError2 =         0;
+    mData.unknownError =            0;
+
+    (*(volatile uint32_t*)(*me->motorAddr)) = marshal(mData);
+    printf("%s, %ld, %p\n", __func__, *me->motorAddr, me->motorAddr);
+}
 
 motorProxy* motorProxy_create(const char *name)
 {
     motorProxy *me = (motorProxy *)malloc(sizeof(motorProxy));
     if(me)
     {
-        motorProxy_init(me, name);
+        _motorproxy_init(me, name);
     }
 
     return me;
@@ -25,7 +50,7 @@ void motorProxy_destroy(motorProxy *const me)
     free(me);
 }
 
-void motorProxy_init(motorProxy *const me, const char *name)
+static void _motorproxy_init(motorProxy *const me, const char *name)
 {
     me->motorAddr = NULL;
     me->name = name;
@@ -110,12 +135,39 @@ uint32_t motorProxy_accessMotorState(motorProxy *const me)
 
 void motorProxy_writeMotorSpeed(motorProxy *const me, Direction_e direction, uint32_t speed)
 {
+    motorData mData;
+    double dPi = 3.14159, dArmLength, dSpeed, dAdjSpeed;
 
+    if(!me->motorData)
+    {
+        return;
+    }
+
+    if(me->rotaryArmLength > 0)
+    {
+        mData = unmarshal((*(volatile uint32_t*)(*me->motorAddr)));
+        dSpeed = speed;
+        mData.direction = direction;
+        dArmLength = me->rotaryArmLength;
+        dAdjSpeed = dSpeed/2.0/dPi/dArmLength*10.0;
+        mData.speed = (int)dAdjSpeed;
+    }else
+    {
+        mData.speed = speed;
+    }
+
+    (*(volatile uint32_t *)(*me->motorAddr)) = marshal(mData);
+    printf("%s, %ld, %p", __func__, *me->motorAddr, me->motorAddr);
 }
 
 void motorProxy_clearErrorStatus(motorProxy *const me)
 {
+    if(!me->motorAddr)
+    {
+        return;
+    }
 
+    (*(volatile uint32_t *)(*me->motorAddr)) &= ~(1 << 8);
 }
 
 static uint32_t marshal(const motorData mData)

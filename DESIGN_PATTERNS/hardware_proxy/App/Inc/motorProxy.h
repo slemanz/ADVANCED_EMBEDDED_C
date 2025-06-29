@@ -17,7 +17,7 @@ typedef struct motorProxy motorProxy;
 motorProxy* motorProxy_create(const char *name);
 void motorProxy_destroy(motorProxy *const me);
 
-void motorProxy_init(motorProxy *const me, const char *name);
+void motorProxy_initialize(motorProxy *const me);
 void motorProxy_cleanUp(motorProxy *const me);
 void motorProxy_enable(motorProxy *const me);
 void motorProxy_disable(motorProxy *const me);
