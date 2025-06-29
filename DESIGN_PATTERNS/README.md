@@ -18,3 +18,4 @@ The basic structure:
 3. **[State](state/)**
 4. **[Hardware Proxy](hardware_proxy/)**
 5. **[Strategy](strategy/)**
+6. **[Hardware Adapter](hardware_adapter/)**
