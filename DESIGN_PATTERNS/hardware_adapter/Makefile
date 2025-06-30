@@ -31,6 +31,7 @@ OBJS		+= App/Build/driver_uart.o
 OBJS		+= App/Build/driver_adc.o
 
 OBJS		+= App/Build/TIA_photoDiodeProxy.o
+OBJS		+= App/Build/TIA_pulseOximetryAdapter.o
 OBJS		+= App/Build/LTF_photoDiodeProxy.o
 
 

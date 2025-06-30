@@ -2,14 +2,10 @@
 
 uint32_t getSpO2(void)
 {
-    uint32_t volt;
-    volt = (adc_read(0))/(4095)*3.3;
-    return volt;
+    return (uint32_t)adc_read(9);
 }
 
 uint32_t getPulse(void)
 {
-    uint32_t volt;
-    volt = (adc_read(0))/(4095)*3.3;
-    return volt;
+    return (uint32_t)adc_read(9);
 }
