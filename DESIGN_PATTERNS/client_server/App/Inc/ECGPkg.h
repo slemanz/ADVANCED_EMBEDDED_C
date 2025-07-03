@@ -4,6 +4,7 @@
 #define QUEUE_SIZE      (10)
 
 struct TMDQueue;
+struct histogramDisplay;
 
 typedef unsigned char boolean;
 
