@@ -31,11 +31,40 @@ void TMDQueue_insert(TMDQueue *const me, const timeMarkedData tmd)
     me->buffer[me->head] = tmd;
     me->head = TMDQueue_getNextIndext(me, me->head);
 
+    if(me->size < QUEUE_SIZE) ++me->size;
+    printf("Storing data value: %d\n\r", tmd.dataValue);
 }
 
-uint8_t TMDQueue_isEmpty(TMDQueue *const me);
-timeMarkedData TMDQueue_remove(TMDQueue *const me, uint32_t index);
-uint32_t TMDQueue_getBuffer(TMDQueue *const me);
+uint8_t TMDQueue_isEmpty(TMDQueue *const me)
+{
+    return (uint8_t)(me->size == 0);
+}
 
-void TMDQueue_cleanUp(TMDQueue *const me);
-void TMDQueue_destroy(TMDQueue *const me);
+timeMarkedData TMDQueue_remove(TMDQueue *const me, uint32_t index)
+{
+    timeMarkedData tmd;
+    tmd.timeInterval = 99999;
+    tmd.dataValue = 99999;
+
+    if(!TMDQueue_isEmpty(me) && (index < QUEUE_SIZE) && (index < me->size))
+    {
+        tmd = me->buffer[index];
+    }
+
+    return tmd;
+}
+
+void TMDQueue_cleanUp(TMDQueue *const me)
+{
+    // do something
+    printf("Clean up complete...\n");
+}
+
+void TMDQueue_destroy(TMDQueue *const me)
+{
+    if(me != NULL)
+    {
+        TMDQueue_cleanUp(me);
+    }
+    free(me);
+}
