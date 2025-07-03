@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static uint32_t TMDQueue_getNextIndext(TMDQueue *const me, uint32_t index)
+uint32_t TMDQueue_getNextIndext(TMDQueue *const me, uint32_t index)
 {
     return (index + 1)%QUEUE_SIZE;
 }

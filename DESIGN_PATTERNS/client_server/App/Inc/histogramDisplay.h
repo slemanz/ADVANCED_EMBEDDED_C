@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "ECGPkg.h"
 
-typedef histogramDisplay histogramDisplay;
+typedef struct histogramDisplay histogramDisplay;
 
 struct histogramDisplay{
     uint32_t index;
