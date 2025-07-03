@@ -19,3 +19,4 @@ The basic structure:
 4. **[Hardware Proxy](hardware_proxy/)**
 5. **[Strategy](strategy/)**
 6. **[Hardware Adapter](hardware_adapter/)**
+7. **[Client-Server](client_server/)**
