@@ -7,7 +7,7 @@ static uint32_t TMDQueue_getNextIndext(TMDQueue *const me, uint32_t index)
     return (index + 1)%QUEUE_SIZE;
 }
 
-TMDQueue *TMDQueue_create(TMDQueue *const me)
+TMDQueue *TMDQueue_create(void)
 {
     TMDQueue *me = (TMDQueue*)malloc(sizeof(TMDQueue));
 
@@ -27,12 +27,12 @@ void TMDQueue_init(TMDQueue *const me)
 
 void TMDQueue_insert(TMDQueue *const me, const timeMarkedData tmd)
 {
-    printf("Inserting at: %d TimeInterval #: %d\n", me->head, tmd.timeInterval);
+    printf("Inserting at: %ld TimeInterval #: %ld\n", me->head, tmd.timeInterval);
     me->buffer[me->head] = tmd;
     me->head = TMDQueue_getNextIndext(me, me->head);
 
     if(me->size < QUEUE_SIZE) ++me->size;
-    printf("Storing data value: %d\n\r", tmd.dataValue);
+    printf("Storing data value: %ld\n\r", tmd.dataValue);
 }
 
 uint8_t TMDQueue_isEmpty(TMDQueue *const me)

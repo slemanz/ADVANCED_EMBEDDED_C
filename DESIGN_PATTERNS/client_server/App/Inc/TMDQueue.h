@@ -13,7 +13,7 @@ struct TMDQueue{
     timeMarkedData buffer[QUEUE_SIZE];
 };
 
-TMDQueue *TMDQueue_create(TMDQueue *const me);
+TMDQueue *TMDQueue_create(void);
 
 void TMDQueue_init(TMDQueue *const me);
 void TMDQueue_insert(TMDQueue *const me, const timeMarkedData tmd);
