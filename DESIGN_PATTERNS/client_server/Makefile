@@ -30,6 +30,8 @@ OBJS		+= App/Build/driver_gpio.o
 OBJS		+= App/Build/driver_uart.o
 OBJS		+= App/Build/driver_adc.o
 
+OBJS		+= App/Build/TMDQueue.o
+
 
 
 all: App/Build App/Build/$(TARGET).elf 

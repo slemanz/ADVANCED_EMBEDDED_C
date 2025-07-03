@@ -6,9 +6,9 @@
 
 typedef struct TMDQueue TMDQueue;
 
-struct TDMQueue{
+struct TMDQueue{
     uint32_t head;
-    uint32_t size_t;
+    uint32_t size;
 
     timeMarkedData buffer[QUEUE_SIZE];
 };
