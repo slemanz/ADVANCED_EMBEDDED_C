@@ -35,6 +35,7 @@ OBJS		+= App/Build/ECG_Module.o
 OBJS		+= App/Build/histogramDisplay.o
 OBJS		+= App/Build/systemManager.o
 OBJS		+= App/Build/arrythmiaDetector.o
+OBJS		+= App/Build/QRSDetector.o
 
 
 
