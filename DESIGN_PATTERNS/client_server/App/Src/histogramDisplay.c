@@ -29,7 +29,22 @@ void histogramDisplay_getValue(histogramDisplay *const me)
     me->index = TMDQueue_getNextIndext(me, me->index);
 }
 
-void histogramDisplay_update(histogramDisplay *const me);
-void histogramDisplay_setItsTMDQueue(histogramDisplay *const me, struct TMDQueue *pTMDQueue);
+void histogramDisplay_update(histogramDisplay *const me)
+{
+    // do something
+    printf("Histogram update...\n");
+}
 
-void histogramDisplay_destroy(histogramDisplay *const me);
+void histogramDisplay_setItsTMDQueue(histogramDisplay *const me, struct TMDQueue *pTMDQueue)
+{
+    me->itsTMDQueue = pTMDQueue;
+}
+
+void histogramDisplay_destroy(histogramDisplay *const me)
+{
+    if(me->itsTMDQueue != NULL)
+    {
+        me->itsTMDQueue = NULL;
+    }
+    free(me);
+}
