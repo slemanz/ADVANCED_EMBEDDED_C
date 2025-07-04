@@ -33,6 +33,7 @@ OBJS		+= App/Build/driver_adc.o
 OBJS		+= App/Build/TMDQueue.o
 OBJS		+= App/Build/ECG_Module.o
 OBJS		+= App/Build/histogramDisplay.o
+OBJS		+= App/Build/systemManager.o
 
 
 
