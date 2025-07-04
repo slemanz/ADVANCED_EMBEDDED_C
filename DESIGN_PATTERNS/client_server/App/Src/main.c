@@ -13,6 +13,8 @@ int main(void)
     systemManager *pSystemManager;
     pSystemManager = systemManager_create();
 
+    // client 1
+    ECG_Module_aquireValue(&(pSystemManager->itsECG_Module));
     ECG_Module_aquireValue(&(pSystemManager->itsECG_Module));
     ECG_Module_aquireValue(&(pSystemManager->itsECG_Module));
     ECG_Module_aquireValue(&(pSystemManager->itsECG_Module));
@@ -24,6 +26,18 @@ int main(void)
     histogramDisplay_getValue(&(pSystemManager->itsHistogramDisplay));
     histogramDisplay_getValue(&(pSystemManager->itsHistogramDisplay));
     histogramDisplay_getValue(&(pSystemManager->itsHistogramDisplay));
+
+    // client 2
+    QRSDetector_getDataSample(&(pSystemManager->itsQRSDetector));
+    QRSDetector_getDataSample(&(pSystemManager->itsQRSDetector));
+    
+    // client 1
+    histogramDisplay_getValue(&(pSystemManager->itsHistogramDisplay));
+
+    // client 3
+    arrythmiaDetector_getDataSample(&(pSystemManager->itsArrythmiaDetector));
+    arrythmiaDetector_getDataSample(&(pSystemManager->itsArrythmiaDetector));
+    arrythmiaDetector_getDataSample(&(pSystemManager->itsArrythmiaDetector));
 
     printf("Done!\n");
 
