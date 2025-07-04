@@ -2,6 +2,7 @@
 #include "TMDQueue.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "driver_adc.h"
 
 ECG_Module *ECG_Module_create(void)
 {
@@ -24,7 +25,7 @@ void ECG_Module_aquireValue(ECG_Module *const me)
 {
     timeMarkedData tmd;
 
-    tmd.dataValue = rand();
+    tmd.dataValue = adc_read(0);
     tmd.timeInterval = ++(me->dataNum);
     TMDQueue_insert(me->itsTMDQueue, tmd);
 }
