@@ -25,8 +25,8 @@ void histogramDisplay_getValue(histogramDisplay *const me)
 {
     timeMarkedData tmd;
     tmd = TMDQueue_remove(me->itsTMDQueue, me->index);
-    printf("Histogram index is: %ld TimeInterval: %ld DataValue: %ld\n", me->index, tmd.timeInterval, tmd.timeInterval);
-    me->index = TMDQueue_getNextIndext(me, me->index);
+    printf("Histogram index is: %ld TimeInterval: %ld DataValue: %ld\n", me->index, tmd.timeInterval, tmd.dataValue);
+    me->index = TMDQueue_getNextIndext(me->itsTMDQueue, me->index);
 }
 
 void histogramDisplay_update(histogramDisplay *const me)
