@@ -19,3 +19,10 @@ controlled. The proxy contains both pubilc functions and private encapsulate
 functions and data.
 
 ## Implementation Example
+
+**[main.c](App/Src/main.c)**
+
+- **[motor.h](App/Inc/motor.h)**
+- **[motorData.h](App/Inc/motorData.h)**
+- **[motorProxy.h](App/Inc/motorProxy.h)**
+- **[motorProxy.c](App/Src/motorProxy.c)**
