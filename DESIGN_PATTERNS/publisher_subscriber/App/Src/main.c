@@ -1,49 +1,44 @@
 #include "stm32g0.h"
 #include "config.h"
 #include <stdio.h>
-
-void btn_update(void);
+#include "env_sensor.h"
+#include "env_display_client.h"
+#include "fertilizer_mixer_client.h"
 
 int main(void)
 {
     config_drivers();
-    printf("Init\n");
+    printf("Init board...\n");
 
-    uint64_t start_time = ticks_get();
+    // setup server
+    env_sensor_t *sensor = env_sensor_create();
+
+    // setup client 1
+    display_client_t *lcd_display = display_client_create();
+    display_client_subscribe(lcd_display, sensor);
+
+    // setup client 2
+    fertilizer_mixer_client_t *fertilizer_mixer = fertilizer_mixer_client_create();
+    fertilizer_mixer_client_subscribe(fertilizer_mixer, sensor);
+
+    env_sensor_get_data(sensor);
+    env_sensor_get_data(sensor);
+
+    // test2
+    printf("\n\nUnsubscribe lcd display\n");
+    display_client_unsubscribe(lcd_display, sensor);
+    env_sensor_get_data(sensor);
+    env_sensor_get_data(sensor);
+
+
+    // test3
+    printf("\n\nSubscribe lcd display\n");
+    display_client_subscribe(lcd_display, sensor);
+    env_sensor_dumplist(sensor);
 
 
     while(1)
     {
-        btn_update();
 
-        if((ticks_get() - start_time) >= 500)
-        {
-            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
-            start_time = ticks_get();
-        }
     }
 }
-
-uint8_t btnState = 0, btnStateOld = 1;
-uint16_t adc_value = 0;
-float temperature_mcu = 0.0;
-
-void btn_update(void)
-{
-
-    btnState = GPIO_ReadFromInputPin(GPIOC, GPIO_PIN_NO_13);
-    if(btnState && (btnStateOld != btnState))
-    {
-        adc_value = adc_read(0);
-        printf("Adc value: %d\n", adc_value);
-
-        temperature_mcu = adc_read_temperature();
-        printf("Temperature: %.2f C\n", temperature_mcu);
-
-        btnStateOld = btnState;
-    }else if(btnStateOld != btnState)
-    {
-        btnStateOld = btnState;
-    }
-}
-
