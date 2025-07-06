@@ -9,7 +9,7 @@
 typedef void (*callback_fn)(void *pObject, env_data_t data);
 
 typedef struct notify_handler{
-    void *pObject; /* Pointer to client object */
+    void *pObject;          /* Pointer to client object */
     callback_fn fn_handler; /* Callback fn */
 }notify_handler_t;
 
@@ -23,7 +23,7 @@ typedef struct env_sensor{
 
 
 env_sensor_t *env_sensor_create(void);
-void env_sensor_init(env_data_t *const me);
+void env_sensor_init(env_sensor_t *const me);
 
 void env_sensor_get_data(env_sensor_t *const me);
 void env_sensor_notify(env_sensor_t *const me);
