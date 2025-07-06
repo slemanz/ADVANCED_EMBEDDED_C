@@ -1,11 +1,11 @@
-#include "stm32f401xx.h"
+#include "stm32f411xx.h"
 #include <stdio.h>
 
 uint64_t ticks = 0;
 
 // Define led
-#define LED_PORT        GPIOB
-#define LED_PIN         GPIO_PIN_NO_1
+#define LED_PORT        GPIOC
+#define LED_PIN         GPIO_PIN_NO_13
 
 uint64_t get_ticks(void)
 {
@@ -48,12 +48,13 @@ int main(void)
     systick_init(1000);
 
     uint64_t start_time = get_ticks();
+    printf("Hello world\n\r");
 
     while (1)
     {   
-        if((get_ticks() - start_time) >= 2000)
+        // blinky
+        if((get_ticks() - start_time) >= 500)
         {
-            printf("Hello world\n\r");
             GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
             start_time = get_ticks();
         }

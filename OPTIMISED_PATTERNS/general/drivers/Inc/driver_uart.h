@@ -1,7 +1,7 @@
 #ifndef DRIVER_UART_H_
 #define DRIVER_UART_H_
 
-#include "stm32f401xx.h"
+#include "stm32f411xx.h"
 
 
 void uart2_init(void);
