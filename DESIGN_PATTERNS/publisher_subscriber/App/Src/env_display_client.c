@@ -45,16 +45,17 @@ void display_client_subscribe(display_client_t *const me, env_sensor_t *const se
             server->n_client++;
             server->clients[i].pObject = me;
             server->clients[i].fn_handler = me->fn_handler;
-        }
 
-        // remove duplicate
-        for(int j = i +1; i < MAX_CLIENT; j++)
-        {
-            if(server->clients[j].pObject == me)
+            // remove duplicate
+            for(int j = i +1; j < MAX_CLIENT; j++)
             {
-                server->clients[j].pObject = NULL;
-                server->clients[j].fn_handler = NULL;
+                if(server->clients[j].pObject == me)
+                {
+                    server->clients[j].pObject = NULL;
+                    server->clients[j].fn_handler = NULL;
+                }
             }
+            return;
         }
     }
 }
@@ -67,6 +68,8 @@ void display_client_unsubscribe(display_client_t *const me, env_sensor_t *const 
         {
             server->clients[i].pObject = NULL;
             server->clients[i].fn_handler = NULL;
+            server->n_client--;
+            return;
         }
     }
 }

@@ -19,6 +19,7 @@ void env_sensor_init(env_sensor_t *const me)
         me->clients[i].pObject = NULL;
         me->clients[i].fn_handler = NULL;
     }
+    me->n_client = 0;
 }
 
 void env_sensor_get_data(env_sensor_t *const me)
