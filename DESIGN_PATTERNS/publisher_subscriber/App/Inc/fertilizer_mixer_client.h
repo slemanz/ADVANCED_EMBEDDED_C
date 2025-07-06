@@ -13,9 +13,9 @@ typedef struct fertilizer_mixer_client
 fertilizer_mixer_client_t *fertilizer_mixer_client_create(void);
 void fertilizer_mixer_client_init(fertilizer_mixer_client_t *const me);
 
-void fertilizer_mixer_client_handleNewData(fertilizer_mixer_client_t *const me);
-void fertilizer_mixer_client_subscribe(fertilizer_mixer_client_t *const me, env_sensor_t *const sensor);
-void fertilizer_mixer_client_unsubscribe(fertilizer_mixer_client_t *const me, env_sensor_t *const sensor);
+void fertilizer_mixer_client_handleNewData(void *me, env_data_t data);
+void fertilizer_mixer_client_subscribe(fertilizer_mixer_client_t *const me, env_sensor_t *const server);
+void fertilizer_mixer_client_unsubscribe(fertilizer_mixer_client_t *const me, env_sensor_t *const server);
 
 void fertilizer_mixer_client_destroy(fertilizer_mixer_client_t *const me);
 
