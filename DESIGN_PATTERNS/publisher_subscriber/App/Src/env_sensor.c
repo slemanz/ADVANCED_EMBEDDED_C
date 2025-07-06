@@ -44,7 +44,7 @@ void env_sensor_notify(env_sensor_t *const me)
 
 void env_sensor_dumplist(env_sensor_t *const me)
 {
-    printf("Dumplist: \t Number of clients %d\n", me->n_client);
+    printf("Dumplist: \t Number of clients %ld\n", me->n_client);
     for(int i = 0; i < MAX_CLIENT; i++)
     {
         if(me->clients[i].pObject != NULL && me->clients[i].fn_handler != NULL)

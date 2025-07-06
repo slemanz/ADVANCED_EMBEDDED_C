@@ -22,7 +22,7 @@ void fertilizer_mixer_client_handleNewData(void *me, env_data_t data)
     ((fertilizer_mixer_client_t *)me)->data = data;
 
     // process data
-    printf("fertilizer_mixer_module:\t New data: %d %d %d\n",
+    printf("fertilizer_mixer_module:\t New data: %ld %ld %d\n",
                             ((fertilizer_mixer_client_t*)me)->data.temperature,
                             ((fertilizer_mixer_client_t*)me)->data.humidity,
                             ((fertilizer_mixer_client_t*)me)->data.sprayed);
@@ -52,8 +52,8 @@ void fertilizer_mixer_client_subscribe(fertilizer_mixer_client_t *const me, env_
         {
             if(server->clients[j].pObject == me)
             {
-                server->clients[j].pObject == NULL;
-                server->clients[j].fn_handler == NULL;
+                server->clients[j].pObject = NULL;
+                server->clients[j].fn_handler = NULL;
             }
         }
     }
@@ -65,8 +65,8 @@ void fertilizer_mixer_client_unsubscribe(fertilizer_mixer_client_t *const me, en
     {
         if(server->clients[i].pObject == me)
         {
-            server->clients[i].pObject == NULL;
-            server->clients[i].fn_handler == NULL;
+            server->clients[i].pObject = NULL;
+            server->clients[i].fn_handler = NULL;
         }
     }
 }

@@ -30,6 +30,10 @@ OBJS		+= App/Build/driver_gpio.o
 OBJS		+= App/Build/driver_uart.o
 OBJS		+= App/Build/driver_adc.o
 
+OBJS		+= App/Build/env_sensor.o
+OBJS		+= App/Build/fertilizer_mixer_client.o
+OBJS		+= App/Build/env_display_client.o
+
 
 
 all: App/Build App/Build/$(TARGET).elf 
