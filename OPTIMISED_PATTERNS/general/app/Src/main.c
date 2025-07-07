@@ -43,12 +43,18 @@ void gpio_setup(void)
 
 int main(void)
  {
+    fpu_enable();
     gpio_setup();
     uart2_init();
     systick_init(1000);
 
     uint64_t start_time = get_ticks();
     printf("Hello world\n\r");
+
+    float n1 = 10.0;
+    float n2 = 7.0;
+    float result = n1/n2;
+    printf("%.2f/%.2f = %.5f\n", n1, n2, result);
 
     while (1)
     {   

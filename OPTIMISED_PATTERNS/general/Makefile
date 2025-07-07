@@ -1,6 +1,6 @@
 CC=arm-none-eabi-gcc
 MACH=cortex-m4
-FLOAT=soft
+FLOAT=hard
 LINKER_SCRIPT=linkers/STM32F411xC.ld
 MAP_FILE=app/Build/final.map
 
@@ -25,6 +25,7 @@ OBJS		+= app/Build/main.o
 OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
 
+OBJS		+= app/Build/driver_fpu.o
 OBJS		+= app/Build/driver_systick.o
 OBJS		+= app/Build/driver_gpio.o
 OBJS		+= app/Build/driver_uart.o
