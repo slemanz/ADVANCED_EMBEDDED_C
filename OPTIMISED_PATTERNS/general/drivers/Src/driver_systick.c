@@ -1,7 +1,12 @@
 #include "driver_systick.h"
 
-uint64_t ticks = 0;
+uint64_t g_ticks = 0;
+uint64_t g_ticks_p = 0;
 
+static void ticks_increment(void)
+{
+	g_ticks += 1;
+}
 
 void systick_init(uint32_t tick_hz)
 {
@@ -22,10 +27,30 @@ void systick_init(uint32_t tick_hz)
 
 uint64_t ticks_get(void)
 {
-    return ticks;
+    INTERRUPT_DISABLE();
+	g_ticks_p = g_ticks;
+	INTERRUPT_ENABLE();
+
+	return g_ticks_p;
+}
+
+void ticks_delay(uint64_t delay)
+{
+    uint64_t ticks_start = ticks_get();
+    uint64_t wait = delay;
+
+	if(wait < MAX_DELAY)
+	{
+		wait += 1;
+	}
+
+    while((ticks_get() - ticks_start) < wait)
+    {
+        __asm("NOP");
+    }
 }
 
 void SysTick_Handler(void)
 {
-    ticks++;
+    ticks_increment();
 }
