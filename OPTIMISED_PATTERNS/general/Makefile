@@ -22,8 +22,10 @@ INCLUDES+= -I drivers/Inc/
 # 				OUTPUT FILES
 
 OBJS		+= app/Build/main.o
+OBJS		+= app/Build/config.o
 OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
+
 
 OBJS		+= app/Build/driver_fpu.o
 OBJS		+= app/Build/driver_systick.o

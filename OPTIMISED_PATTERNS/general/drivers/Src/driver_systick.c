@@ -1,5 +1,7 @@
 #include "driver_systick.h"
 
+uint64_t ticks = 0;
+
 
 void systick_init(uint32_t tick_hz)
 {
@@ -16,4 +18,14 @@ void systick_init(uint32_t tick_hz)
     SYSTICK->CTRL |= (1 << 2);
 
     SYSTICK->CTRL |= (1 << 0);
+}
+
+uint64_t ticks_get(void)
+{
+    return ticks;
+}
+
+void SysTick_Handler(void)
+{
+    ticks++;
 }
