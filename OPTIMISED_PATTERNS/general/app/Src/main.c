@@ -31,5 +31,11 @@ int main(void)
         GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
         ticks_delay(500);
         */
+
+        if(!button_get_state())
+        {
+            printf("Button pressed\n");
+            while(!button_get_state());
+        }
     }
 }

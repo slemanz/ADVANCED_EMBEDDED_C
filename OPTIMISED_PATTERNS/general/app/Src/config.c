@@ -30,6 +30,7 @@ void config_drivers(void)
 void config_bsp(void)
 {
     led_init();
+    button_init();
 }
 
 // printf retarget
