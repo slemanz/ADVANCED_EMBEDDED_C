@@ -7,7 +7,7 @@ MAP_FILE=app/Build/final.map
 FINAL_FILE=app/Build/final.elf
 FLASH_FILE=app/Build/flash.bin
 
-CFLAGS= -c -mcpu=$(MACH) -mthumb -mfloat-abi=$(FLOAT) -std=gnu11 -Wall -O0 -ggdb
+CFLAGS= -c -mcpu=$(MACH) -mthumb -mfloat-abi=$(FLOAT) -std=gnu99 -Wall -O0 -ggdb
 LDFLAGS =  -mcpu=$(MACH) -mthumb -mfloat-abi=$(FLOAT) --specs=nano.specs -T $(LINKER_SCRIPT) -Wl,-Map=app/Build/$(TARGET).map -ggdb -u _printf_float -Wl,--print-memory-usage
 OBJCOPY=arm-none-eabi-objcopy
 
@@ -16,6 +16,7 @@ OBJCOPY=arm-none-eabi-objcopy
 
 INCLUDES+= -I app/Inc/
 INCLUDES+= -I drivers/Inc/ 
+INCLUDES+= -I bsp/Inc/ 
 
 
 ############################################
@@ -27,10 +28,13 @@ OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
 
 
-OBJS		+= app/Build/driver_fpu.o
-OBJS		+= app/Build/driver_systick.o
-OBJS		+= app/Build/driver_gpio.o
-OBJS		+= app/Build/driver_uart.o
+DRIVERS		+= app/Build/driver_fpu.o
+DRIVERS		+= app/Build/driver_systick.o
+DRIVERS		+= app/Build/driver_gpio.o
+DRIVERS		+= app/Build/driver_uart.o
+
+BSP			+= app/Build/led.o
+BSP			+= app/Build/button.o
 
 all: app/Build app/Build/final.elf
 
@@ -43,10 +47,13 @@ app/Build/%.o: app/Src/%.c
 app/Build/%.o: drivers/Src/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o app/Build/$(*).o drivers/Src/$(*).c
 
+app/Build/%.o: bsp/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o app/Build/$(*).o bsp/Src/$(*).c
+
 app/Build/%.o: linkers/*.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o app/Build/$(*).o linkers/$(*).c
 
-app/Build/final.elf: $(OBJS)
+app/Build/final.elf: $(OBJS) $(DRIVERS) $(BSP)
 	$(CC) $(LDFLAGS) -o $@ $^
 	$(OBJCOPY) -O binary app/Build/final.elf app/Build/flash.bin
 	arm-none-eabi-size app/Build/final.elf

@@ -1,9 +1,11 @@
 #include "config.h"
 #include "stm32f411xx.h"
+#include "led.h"
+#include "button.h"
 
-static void gpio_setup(void)
+void gpio_setup(void)
 {
-    // Set GPIOA pin 3 as output
+    // Set GPIOA pin 13 as output
     GPIO_Handle_t GpioLed;
 	GpioLed.pGPIOx = LED_PORT;
 	GpioLed.GPIO_PinConfig.GPIO_PinNumber = LED_PIN;
@@ -20,9 +22,14 @@ static void gpio_setup(void)
 void config_drivers(void)
 {
     fpu_enable();
-    gpio_setup();
+    //gpio_setup();
     uart2_init();
     systick_init(1000);
+}
+
+void config_bsp(void)
+{
+    led_init();
 }
 
 // printf retarget
