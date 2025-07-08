@@ -18,4 +18,6 @@ void spi_init(void)
 
     spiPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_7;
     GPIO_Init(&spiPins);
+
+    SPI1_PCLK_EN();
 }
