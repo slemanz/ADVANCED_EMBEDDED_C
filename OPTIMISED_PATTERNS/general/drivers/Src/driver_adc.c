@@ -9,7 +9,7 @@ void adc_pa1_init(void)
     adcPin.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_1;
     adcPin.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ANALOG;
     adcPin.GPIO_PinConfig.GPIO_PinAltFunMode = GPIO_PIN_NO_ALTFN;
-    adcPin.GPIO_PinConfig.GPIO_PinSpeed = GPIO_MODE_ANALOG;
+    adcPin.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
     adcPin.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
     adcPin.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 

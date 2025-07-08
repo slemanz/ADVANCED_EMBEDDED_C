@@ -33,6 +33,7 @@ DRIVERS		+= app/Build/driver_systick.o
 DRIVERS		+= app/Build/driver_gpio.o
 DRIVERS		+= app/Build/driver_uart.o
 DRIVERS		+= app/Build/driver_adc.o
+DRIVERS		+= app/Build/driver_spi.o
 
 BSP			+= app/Build/led.o
 BSP			+= app/Build/button.o
