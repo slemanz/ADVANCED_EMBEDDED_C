@@ -25,6 +25,7 @@ void config_drivers(void)
     //gpio_setup();
     uart2_init();
     systick_init(1000);
+    adc_pa1_init();
 }
 
 void config_bsp(void)

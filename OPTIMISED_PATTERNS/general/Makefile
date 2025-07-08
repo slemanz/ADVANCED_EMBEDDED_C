@@ -32,6 +32,7 @@ DRIVERS		+= app/Build/driver_fpu.o
 DRIVERS		+= app/Build/driver_systick.o
 DRIVERS		+= app/Build/driver_gpio.o
 DRIVERS		+= app/Build/driver_uart.o
+DRIVERS		+= app/Build/driver_adc.o
 
 BSP			+= app/Build/led.o
 BSP			+= app/Build/button.o

@@ -115,6 +115,12 @@
 
 #define UART2_BASEADDR						(APB1PERIPH_BASE + 0x4400U)
 
+/*
+ *  Base adress of ADC
+ */
+
+#define ADC1_BASEADDR                       (APB2PERIPH_BASE + 0x2000U)
+
 /*******************peripheral register definition structures*******************/
 
 typedef struct
@@ -219,6 +225,30 @@ typedef struct
   __vo uint32_t GTPR;       /*!< USART Guard time and prescaler register, Address offset: 0x18 */
 }UART_RegDef_t;
 
+typedef struct
+{
+    __vo uint32_t SR;     /*!< ADC status register,                         Address offset: 0x00 */
+    __vo uint32_t CR1;    /*!< ADC control register 1,                      Address offset: 0x04 */
+    __vo uint32_t CR2;    /*!< ADC control register 2,                      Address offset: 0x08 */
+    __vo uint32_t SMPR1;  /*!< ADC sample time register 1,                  Address offset: 0x0C */
+    __vo uint32_t SMPR2;  /*!< ADC sample time register 2,                  Address offset: 0x10 */
+    __vo uint32_t JOFR1;  /*!< ADC injected channel data offset register 1, Address offset: 0x14 */
+    __vo uint32_t JOFR2;  /*!< ADC injected channel data offset register 2, Address offset: 0x18 */
+    __vo uint32_t JOFR3;  /*!< ADC injected channel data offset register 3, Address offset: 0x1C */
+    __vo uint32_t JOFR4;  /*!< ADC injected channel data offset register 4, Address offset: 0x20 */
+    __vo uint32_t HTR;    /*!< ADC watchdog higher threshold register,      Address offset: 0x24 */
+    __vo uint32_t LTR;    /*!< ADC watchdog lower threshold register,       Address offset: 0x28 */
+    __vo uint32_t SQR1;   /*!< ADC regular sequence register 1,             Address offset: 0x2C */
+    __vo uint32_t SQR2;   /*!< ADC regular sequence register 2,             Address offset: 0x30 */
+    __vo uint32_t SQR3;   /*!< ADC regular sequence register 3,             Address offset: 0x34 */
+    __vo uint32_t JSQR;   /*!< ADC injected sequence register,              Address offset: 0x38*/
+    __vo uint32_t JDR1;   /*!< ADC injected data register 1,                Address offset: 0x3C */
+    __vo uint32_t JDR2;   /*!< ADC injected data register 2,                Address offset: 0x40 */
+    __vo uint32_t JDR3;   /*!< ADC injected data register 3,                Address offset: 0x44 */
+    __vo uint32_t JDR4;   /*!< ADC injected data register 4,                Address offset: 0x48 */
+    __vo uint32_t DR;     /*!< ADC regular data register,                   Address offset: 0x4C */
+} ADC_RegDef_t;
+
 
 
 /*
@@ -246,6 +276,8 @@ typedef struct
 #define TIM5			((TIM_RegDef_t*)TIM5_BASEADDR)
 
 #define UART2 			((UART_RegDef_t*)UART2_BASEADDR)
+
+#define ADC1            ((ADC_RegDef_t *)ADC1_BASEADDR)
 
 
 /*
@@ -302,6 +334,12 @@ typedef struct
 #define TIM4_PCLK_EN()		(RCC->APB1ENR |= (1 << 2))
 #define TIM5_PCLK_EN()		(RCC->APB1ENR |= (1 << 3))
 
+/*
+ * Clock enable macros for ADC peripherals
+ */
+
+#define ADC1_PCLK_EN()		(RCC->APB2ENR |= (1 << 8))
+
 
 /*
  * Clock disable macros for GPIOx peripherals
@@ -349,13 +387,19 @@ typedef struct
 #define SYSCFG_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 14))
 
 /*
- * Clock enable macros for TIMx peripherals
+ * Clock disable macros for TIMx peripherals
  */
 
 #define TIM2_PCLK_DI()		(RCC->APB1ENR &= ~(1 << 0))
 #define TIM3_PCLK_DI()		(RCC->APB1ENR &= ~(1 << 1))
 #define TIM4_PCLK_DI()		(RCC->APB1ENR &= ~(1 << 2))
 #define TIM5_PCLK_DI()		(RCC->APB1ENR &= ~(1 << 3))
+
+/*
+ * Clock disable macros for ADC peripherals
+ */
+
+#define ADC1_PCLK_DI()		(RCC->APB2ENR &= ~(1 << 8))
 
 /*
  * 	Macros to reset GPIOx peripherals
@@ -466,6 +510,7 @@ typedef struct
 #include "driver_systick.h"
 #include "driver_gpio.h"
 #include "driver_uart.h"
+#include "driver_adc.h"
 
 #define HSI_CLOCK				16000000U
 

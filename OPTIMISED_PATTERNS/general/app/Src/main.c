@@ -15,6 +15,8 @@ int main(void)
     float result = n1/n2;
     printf("%.2f/%.2f = %.5f\n", n1, n2, result);
 
+    uint32_t adc_value = 0;
+
     uint64_t start_time = ticks_get();
 
     while (1)
@@ -34,7 +36,9 @@ int main(void)
 
         if(!button_get_state())
         {
-            printf("Button pressed\n");
+            adc_start_conversion();
+            adc_value = adc_read();
+            printf("Adc: %ld\n", adc_value);
             while(!button_get_state());
         }
     }

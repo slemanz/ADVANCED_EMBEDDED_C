@@ -108,6 +108,8 @@ typedef struct
 #define GPIO_PIN_ALTFN_6            6
 #define GPIO_PIN_ALTFN_7            7
 
+#define GPIO_PIN_NO_ALTFN           0
+
 
 // GPIO_PIN_ALTFN_SPECIF_FUNCTION
 
