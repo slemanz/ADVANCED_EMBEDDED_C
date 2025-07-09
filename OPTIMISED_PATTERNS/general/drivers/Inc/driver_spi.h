@@ -13,14 +13,25 @@
  * Defines Regs
  */
 
-#define SPI_CR1_MSTR                (1U << 2)
-#define SPI_CR1_SSI                 (1U << 8)
 #define SPI_CR1_BIDIMODE            (1U << 15)
+#define SPI_CR1_CRCEN               (1U << 13)
 #define SPI_CR1_DFF                 (1U << 11)
-#define SPI_CR1_CPOL                (1U << 1)
+#define SPI_CR1_RXONLY              (1U << 10)
 #define SPI_CR1_SSM                 (1U << 9)
+#define SPI_CR1_SSI                 (1U << 8)
+#define SPI_CR1_LSBFIRST            (1U << 7)
+#define SPI_CR1_SPE                 (1U << 6)
+#define SPI_CR1_MSTR                (1U << 2)
+#define SPI_CR1_CPOL                (1U << 1)
+#define SPI_CR1_CPHA                (1U << 0)
+
+#define SPI_CR1_BR_Msk              (0x7UL << 3U)
+
 #define SPI_CR1_BR_2                (0U << 3)
 #define SPI_CR1_BR_4                (1U << 3)
+
+#define SPI_CR2_SSOE                (1U << 2)
+#define SPI_CR2_FRF                 (1U << 4)
 
 
 #define SPI_SR_RXNE                 (1U << 0)
@@ -65,7 +76,7 @@ typedef enum
 
 typedef struct
 {
-    SPI_RegDef_t    *instance;
+    SPI_RegDef_t    *Instance;
     SPI_Init_t      Init;
     uint8_t         *pTxBuffPtr;
     uint16_t        TxXferSize;
@@ -84,7 +95,7 @@ typedef struct
 #define SPI_ERROR_NONE              (0x00000000U)
 
 #define SPI_MODE_SLAVE              (0x00000000U)
-#define SPI_MODE_SLAVE              (SPI_CR1_MSTR | SPI_CR1_SSI)
+#define SPI_MODE_MASTER             (SPI_CR1_MSTR | SPI_CR1_SSI)
 
 #define SPI_DIRECTION_2LINES        (0x00000000U)
 #define SPI_DIRECTION_1LINES        SPI_CR1_BIDIMODE
@@ -109,7 +120,11 @@ typedef struct
 #define SPI_FLAG_BSY                SPI_SR_BSY
 #define SPI_FLAG_OVR                SPI_SR_OVR
 
+/*
+ * Functions
+ */
 
-void spi_init(void);
+void spi_gpio_init(void);
+SPI_Status_t spi_init(SPI_Handle_t *hspi);
 
 #endif /* INC_DRIVER_SPI_H_ */

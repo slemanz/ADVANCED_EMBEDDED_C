@@ -1,6 +1,7 @@
 #include "driver_spi.h"
+#include "stddef.h"
 
-void spi_init(void)
+void spi_gpio_init(void)
 {
     /* Config PA5,PA6,PA7*/
     GPIO_Handle_t spiPins;
@@ -20,4 +21,40 @@ void spi_init(void)
     GPIO_Init(&spiPins);
 
     SPI1_PCLK_EN();
+}
+
+SPI_Status_t spi_init(SPI_Handle_t *hspi)
+{
+    /* Check SPI Handle allocation */
+    if(hspi == NULL)
+    {
+        return DEV_ERROR;
+    }
+
+    hspi->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE; /* Disable CRC Calculation*/
+
+    if(hspi->State == SPI_STATE_RESET)
+    {
+        spi_gpio_init();
+    }
+
+    hspi->State = SPI_STATE_BUSY;
+    CLEAR_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
+
+    /* Configure CR1 */
+    WRITE_REG(hspi->Instance->CR1, ((hspi->Init.Mode & (SPI_CR1_MSTR | SPI_CR1_SSI)) |
+                                    (hspi->Init.Direction & (SPI_CR1_RXONLY | SPI_CR1_BIDIMODE)) |
+                                    (hspi->Init.DataSize & SPI_CR1_DFF) |
+                                    (hspi->Init.CLKPolarity & SPI_CR1_CPOL) |
+                                    (hspi->Init.CLKPhase & SPI_CR1_CPHA) |
+                                    (hspi->Init.NSS & SPI_CR1_SSM) |
+                                    (hspi->Init.BaudRatePrescaler & SPI_CR1_BR_Msk) |
+                                    (hspi->Init.FirstBit  & SPI_CR1_LSBFIRST) |
+                                    (hspi->Init.CRCCalculation & SPI_CR1_CRCEN)));
+    /* Configure : CR2 */
+    WRITE_REG(hspi->Instance->CR2, (((hspi->Init.NSS >> 16U) & SPI_CR2_SSOE) | (hspi->Init.TIMode & SPI_CR2_FRF)));
+
+    hspi->ErrorCode =  SPI_ERROR_NONE;
+    hspi->State =  SPI_STATE_READY;
+    return DEV_OK;
 }
