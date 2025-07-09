@@ -58,3 +58,48 @@ SPI_Status_t spi_init(SPI_Handle_t *hspi)
     hspi->State =  SPI_STATE_READY;
     return DEV_OK;
 }
+
+SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, uint64_t timeout)
+{
+    uint64_t tickstart;
+    SPI_Status_t error_code = DEV_OK;
+    uint16_t tx_xfer_cnt;
+
+    if(hspi->State != SPI_STATE_READY)
+    {
+        error_code = DEV_BUSY;
+        hspi->State = SPI_STATE_READY;
+        return error_code;
+    }
+
+    if((p_data == NULL) || (size == 0))
+    {
+        error_code = DEV_ERROR;
+        hspi->State = SPI_STATE_READY;
+        return error_code;
+    }
+
+    /* Set the transaction information */
+    hspi->State = SPI_STATE_BUSY_TX;
+    hspi->ErrorCode = SPI_ERROR_NONE;
+    hspi->pTxBuffPtr = (uint8_t*)p_data;
+    hspi->TxXferSize = size;
+    hspi->TxXferCount = size;
+    
+    hspi->pRxBuffPtr = (uint8_t*)NULL;
+    hspi->RxXferSize = 0;
+    hspi->RxXferCount = 0;
+
+    /* Configure communication direction */
+    if(hspi->Init.Direction == SPI_DIRECTION_1LINES)
+    {
+        CLEAR_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
+        SET_BIT(hspi->Instance->CR1, SPI_CR1_BIDIOE); /* Set 1 line TX */
+    }
+
+    if((hspi->Instance->CR1) != SPI_CR1_SPE)
+    {
+        SET_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
+    }
+
+}

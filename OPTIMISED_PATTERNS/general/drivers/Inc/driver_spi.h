@@ -14,6 +14,7 @@
  */
 
 #define SPI_CR1_BIDIMODE            (1U << 15)
+#define SPI_CR1_BIDIOE              (1U << 14)
 #define SPI_CR1_CRCEN               (1U << 13)
 #define SPI_CR1_DFF                 (1U << 11)
 #define SPI_CR1_RXONLY              (1U << 10)
