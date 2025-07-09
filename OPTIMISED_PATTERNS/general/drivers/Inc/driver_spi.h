@@ -127,5 +127,6 @@ typedef struct
 
 void spi_gpio_init(void);
 SPI_Status_t spi_init(SPI_Handle_t *hspi);
+SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, uint64_t timeout);
 
 #endif /* INC_DRIVER_SPI_H_ */

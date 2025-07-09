@@ -1,4 +1,5 @@
 #include "driver_spi.h"
+#include "driver_systick.h"
 #include "stddef.h"
 
 void spi_gpio_init(void)
@@ -63,7 +64,9 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
 {
     uint64_t tickstart;
     SPI_Status_t error_code = DEV_OK;
-    uint16_t tx_xfer_cnt;
+    uint16_t tx_xfer_cnt = size;
+
+    tickstart = ticks_get();
 
     if(hspi->State != SPI_STATE_READY)
     {
@@ -102,4 +105,33 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
         SET_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
     }
 
+    /* Transmit data in 16 bit mode */
+    if(hspi->Init.DataSize == SPI_DATASIZE_16BIT)
+    {
+        if((hspi->Init.Mode == SPI_MODE_SLAVE) || (tx_xfer_cnt == 1))
+        {
+            hspi->Instance->DR = *((uint16_t*)hspi->pTxBuffPtr);
+            hspi->pTxBuffPtr += sizeof(uint16_t);
+            hspi->TxXferCount--;
+        }
+
+        while(hspi->TxXferCount > 0)
+        {
+            /* Check if TXE flag to bet set and then send data */
+            if(hspi->Instance->SR & (SPI_FLAG_TXE))
+            {
+                hspi->Instance->DR = *((uint16_t*)hspi->pTxBuffPtr);
+                hspi->pTxBuffPtr += sizeof(uint16_t);
+                hspi->TxXferCount--;
+            }else
+            {
+                if(((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY) || (timeout == 0))
+                {
+                    error_code = DEV_TIMOUT;
+                    hspi->State = SPI_STATE_READY;
+                    return error_code;
+                }
+            }
+        }
+    }
 }
