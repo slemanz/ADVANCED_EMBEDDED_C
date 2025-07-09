@@ -125,7 +125,7 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
                 hspi->TxXferCount--;
             }else
             {
-                if(((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY) || (timeout == 0))
+                if((((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY)) || (timeout == 0))
                 {
                     error_code = DEV_TIMOUT;
                     hspi->State = SPI_STATE_READY;
@@ -134,4 +134,40 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
             }
         }
     }
+    /* Transmit data in 16 bit mode */
+    else
+    {
+        if((hspi->Init.Mode == SPI_MODE_SLAVE) || (tx_xfer_cnt == 1))
+        {
+            *((__vo uint8_t*)hspi->Instance->DR) = (*hspi->pTxBuffPtr);
+            hspi->pTxBuffPtr += sizeof(uint8_t);
+            hspi->TxXferCount--;
+        }
+        else
+        {
+            /* Check if TXE flag to bet set and then send data */
+            if(hspi->Instance->SR & (SPI_FLAG_TXE))
+            {
+                *((uint8_t*)hspi->Instance->DR) = (*hspi->pTxBuffPtr);
+                hspi->pTxBuffPtr += sizeof(uint8_t);
+                hspi->TxXferCount--;
+            }else
+            {
+                if((((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY)) || (timeout == 0))
+                {
+                    error_code = DEV_TIMOUT;
+                    hspi->State = SPI_STATE_READY;
+                    return error_code;
+                }
+            }
+        }
+    }
+
+    if(hspi->ErrorCode != SPI_ERROR_NONE)
+    {
+        error_code = DEV_ERROR;
+    }
+
+    hspi->State = SPI_STATE_READY;
+    return error_code;
 }
