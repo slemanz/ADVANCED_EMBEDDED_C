@@ -101,3 +101,49 @@ void i2c1_burst_read(char saddr, char maddr, char *data, int n)
         }
     }
 }
+
+void i2c1_write_byte(char saddr, char maddr, char data)
+{
+    volatile int tmp;
+
+    while (I2C1->SR2 & (SR2_BUSY)){} /*Wait until is BUS  not busy*/
+    I2C1->CR1 |= CR1_START; /*Generate start*/
+    while (!(I2C1->SR1 & (SR1_SB))){} /*Wait until start flag is set*/
+
+    I2C1->DR = saddr << 1; /*Transmit slave address + write*/
+    while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+    tmp = I2C1->SR2; /*Clear addr flag*/
+    (void)tmp;
+    
+    while (!(I2C1->SR1 & SR1_TXE)){} /*Wait until transmitter is empty*/
+    I2C1->DR = maddr; /*Send memory address*/
+    I2C1->DR = data; /*Send data*/
+    while (!(I2C1->SR1 & (SR1_BTF))){} /* Wait until transfer finished */
+
+    I2C1->CR1 |= CR1_STOP; /* Generate stop */
+}
+
+void i2c1_burst_write(char saddr,char maddr, char *data, int n)
+{
+    volatile int tmp;
+
+    while (I2C1->SR2 & (SR2_BUSY)){} /*Wait until is BUS  not busy*/
+    I2C1->CR1 |= CR1_START; /*Generate start*/
+    while (!(I2C1->SR1 & (SR1_SB))){} /*Wait until start flag is set*/
+
+    I2C1->DR = saddr << 1; /*Transmit slave address + write*/
+    while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+    tmp = I2C1->SR2; /*Clear addr flag*/
+    while (!(I2C1->SR1 & SR1_TXE)){} /*Wait until transmitter is empty*/
+    (void)tmp;
+
+    I2C1->DR = maddr; /*Send memory address*/
+
+    for(int i =0; i < n; i++)
+    {
+        while (!(I2C1->SR1 & SR1_TXE)){} /*Wait until transmitter is empty*/
+        I2C1->DR = *data++; /*Transmit data*/
+	}
+    while (!(I2C1->SR1 & (SR1_BTF))){} /* Wait until transfer finished */
+    I2C1->CR1 |= CR1_STOP; /* Generate stop */
+}
