@@ -28,3 +28,76 @@ void i2c1_init(void)
 
 	I2C1->CR1 |=(1U<<0); /*Enable I2C module*/
 }
+
+void i2c1_byte_read(char saddr,char maddr, char *data)
+{
+	volatile int tmp;
+
+	while (I2C1->SR2 & (SR2_BUSY)){} /*Wait until is BUS  not busy*/
+
+    I2C1->CR1 |= CR1_START; /*Generate start*/
+    while (!(I2C1->SR1 & (SR1_SB))){} /*Wait until start flag is set*/
+    I2C1->DR = saddr << 1; /*Transmit slave address + write*/
+	while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+    tmp = I2C1->SR2; /*Clear addr flag*/
+    (void)tmp;
+
+	I2C1->DR = maddr; /*Send memory address*/
+	while (!(I2C1->SR1 & SR1_TXE)){} /*Wait until transmitter is empty*/
+    I2C1->CR1 |= CR1_START; /*Generate restart*/
+    while (!(I2C1->SR1 & SR1_SB)){} /*Wait until start flag is set*/
+
+    I2C1->DR = saddr << 1 | 1; /*Transmit slave address + read*/
+
+    while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+    I2C1->CR1 &= ~CR1_ACK; /*Disable the Acknowledge*/
+	tmp = I2C1->SR2; /*Clear addr flag*/
+	I2C1->CR1 |= CR1_STOP; /*Generate stop after data is received*/
+	while (!(I2C1->SR1 & SR1_RXNE)){} /*Wait until RXNE flag is set*/
+	
+    *data++  =  I2C1->DR; /*Read data from DR*/
+
+}
+
+void i2c1_burst_read(char saddr, char maddr, char *data, int n)
+{
+
+    volatile int tmp;
+
+    while (I2C1->SR2 & (SR2_BUSY)){} /*Wait until is BUS  not busy*/
+    I2C1->CR1 |= CR1_START; /*Generate start*/
+    while (!(I2C1->SR1 & (SR1_SB))){} /*Wait until start flag is set*/
+
+    I2C1->DR = saddr << 1; /*Transmit slave address + write*/
+    while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+    tmp = I2C1->SR2; /*Clear addr flag*/
+    while (!(I2C1->SR1 & SR1_TXE)){} /*Wait until transmitter is empty*/
+
+    I2C1->DR = maddr; /*Send memory address*/
+    I2C1->CR1 |= CR1_START; /*Generate restart*/
+    while (!(I2C1->SR1 & SR1_SB)){} /*Wait until start flag is set*/
+    I2C1->DR = saddr << 1 | 1; /*Transmit slave address + read*/
+    while (!(I2C1->SR1 & (SR1_ADDR))){} /*Wait until address flag is set*/
+ 	tmp = I2C1->SR2; /*Clear addr flag*/
+    (void)tmp;
+
+    I2C1->CR1 |= CR1_ACK; /*Disable the Acknowledge*/
+
+    while(n > 0)
+    {
+        if(n == 1)
+        {
+            I2C1->CR1 &= ~CR1_ACK; /*Disable the Acknowledge*/
+            I2C1->CR1 |= CR1_STOP; /*Generate stop after data is received*/
+            while (!(I2C1->SR1 & SR1_RXNE)){} /*Wait until RXNE flag is set*/
+            *data++  =  I2C1->DR; /*Read data from DR*/
+            break;
+    	}
+        else
+        {
+            while (!(I2C1->SR1 & SR1_RXNE)){} /*Wait until RXNE flag is set*/
+            *data++  =  I2C1->DR; /*Read data from DR*/
+            n--;
+        }
+    }
+}
