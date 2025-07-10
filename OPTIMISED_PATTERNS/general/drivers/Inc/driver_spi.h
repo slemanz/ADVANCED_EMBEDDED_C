@@ -72,7 +72,7 @@ typedef enum
     DEV_OK      = 0x00,
     DEV_ERROR   = 0x01,
     DEV_BUSY    = 0x02,
-    DEV_TIMOUT  = 0x03
+    DEV_TIMEOUT = 0x03
 }SPI_Status_t;
 
 typedef struct
@@ -128,5 +128,6 @@ typedef struct
 void spi_gpio_init(void);
 SPI_Status_t spi_init(SPI_Handle_t *hspi);
 SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, uint64_t timeout);
+SPI_Status_t spi_receive(SPI_Handle_t *hspi,uint8_t *p_data, uint16_t size,uint32_t timeout);
 
 #endif /* INC_DRIVER_SPI_H_ */

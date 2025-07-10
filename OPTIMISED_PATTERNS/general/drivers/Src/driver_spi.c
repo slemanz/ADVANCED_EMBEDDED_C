@@ -1,4 +1,5 @@
 #include "driver_spi.h"
+#include "driver_gpio.h"
 #include "driver_systick.h"
 #include "stddef.h"
 
@@ -127,14 +128,14 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
             {
                 if((((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY)) || (timeout == 0))
                 {
-                    error_code = DEV_TIMOUT;
+                    error_code = DEV_TIMEOUT;
                     hspi->State = SPI_STATE_READY;
                     return error_code;
                 }
             }
         }
     }
-    /* Transmit data in 16 bit mode */
+    /* Transmit data in 8 bit mode */
     else
     {
         if((hspi->Init.Mode == SPI_MODE_SLAVE) || (tx_xfer_cnt == 1))
@@ -155,7 +156,7 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
             {
                 if((((ticks_get() - tickstart) > timeout) && (timeout != MAX_DELAY)) || (timeout == 0))
                 {
-                    error_code = DEV_TIMOUT;
+                    error_code = DEV_TIMEOUT;
                     hspi->State = SPI_STATE_READY;
                     return error_code;
                 }
@@ -170,4 +171,94 @@ SPI_Status_t spi_transmit(SPI_Handle_t *hspi, uint8_t *p_data, uint16_t size, ui
 
     hspi->State = SPI_STATE_READY;
     return error_code;
+}
+
+SPI_Status_t spi_receive(SPI_Handle_t *hspi,uint8_t *p_data, uint16_t size,uint32_t timeout)
+{
+	uint32_t tickstart;
+	SPI_Status_t error_code = DEV_OK;
+
+	tickstart = ticks_get();
+
+	if(hspi->State != SPI_STATE_READY)
+	{
+		error_code = DEV_BUSY;
+		hspi->State = SPI_STATE_READY;
+		return error_code;
+	}
+
+	if((p_data == NULL) || (size  == 0))
+	{
+		error_code =  DEV_ERROR;
+		hspi->State = SPI_STATE_READY;
+		return error_code;
+	}
+
+	/*Set the transaction information*/
+	hspi->State  = SPI_STATE_BUSY_RX;
+	hspi->ErrorCode = SPI_ERROR_NONE;
+	hspi->pRxBuffPtr = (uint8_t *)p_data;
+	hspi->RxXferSize =  size;
+	hspi->RxXferCount=  size;
+
+
+	hspi->pTxBuffPtr = (uint8_t *)NULL;
+	hspi->TxXferSize =  0;
+	hspi->TxXferCount=  0;
+
+	if((hspi->Instance->CR1 & SPI_CR1_SPE ) !=  SPI_CR1_SPE)
+	{
+		SET_BIT(hspi->Instance->CR1, SPI_CR1_SPE);
+	}
+
+	/*Receive data in 8 bit mode*/
+	if(hspi->Init.DataSize == SPI_DATASIZE_8BIT)
+	{
+		while(hspi->RxXferCount > 0)
+		{
+			if(hspi->Instance->SR &  (SPI_FLAG_RXNE))
+			{
+				*((uint8_t *)hspi->pRxBuffPtr) = *(__vo uint8_t *)&hspi->Instance->DR;
+				hspi->pRxBuffPtr += sizeof(uint8_t);
+				hspi->RxXferCount--;
+			}
+			else
+			{
+				if((((ticks_get() - tickstart) >= timeout )&&(timeout != MAX_DELAY)) || (timeout == 0 ))
+		         {
+					error_code = DEV_TIMEOUT;
+					hspi->State = SPI_STATE_READY;
+					return error_code;
+		           }
+			}
+		}
+	}
+	else
+	{
+		while(hspi->RxXferCount > 0)
+		{
+			if(hspi->Instance->SR &  (SPI_FLAG_RXNE))
+			{
+				*((uint16_t *)hspi->pRxBuffPtr) = ( uint16_t)hspi->Instance->DR;
+				hspi->pRxBuffPtr += sizeof(uint16_t);
+				hspi->RxXferCount--;
+			}
+			else
+			{
+				if((((ticks_get() - tickstart) >= timeout )&&(timeout != MAX_DELAY)) || (timeout == 0 ))
+		         {
+					error_code = DEV_TIMEOUT;
+					hspi->State = SPI_STATE_READY;
+					return error_code;
+		           }
+			}
+		}
+	}
+	if(hspi->ErrorCode  != SPI_ERROR_NONE )
+	{
+		error_code = DEV_ERROR;
+	}
+
+	hspi->State =  SPI_STATE_READY;
+	return error_code;
 }
