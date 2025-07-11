@@ -494,8 +494,13 @@ typedef struct
 #define NVIC_IRQ_PRI0		0
 #define NVIC_IRQ_PRI15		15
 
+#define SRAM_START      0x20000000U
+#define SRAM_SIZE       (128 * 1024) // 128K bytes
+#define SRAM_END        ((SRAM_START) + (SRAM_SIZE))
+#define STACK_START     (SRAM_END)
 
 #define MMIO32(addr) (*(volatile uint32_t *)(addr))
+#define STACK_RESET()               (__asm volatile("MSR MSP, %0": : "r" (STACK_START): ))
 
 #define SET_BIT(REG, BIT)     ((REG) |= (BIT))
 #define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
