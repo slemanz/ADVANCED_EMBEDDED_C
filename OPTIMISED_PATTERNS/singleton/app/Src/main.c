@@ -5,24 +5,20 @@
 #include "led.h"
 #include "button.h"
 
-#define UART_SINGLETON_ENABLE
 
 // printf retarget
 extern int __io_putchar(int ch)
 {
-#ifdef UART_SINGLETON_ENABLE
     UART_Singleton_t *uart = uart_get_instance();
 
+    /*
+     * Singleton ensures that that wont have redudant initialization
+     */
 	if(uart && uart->is_initialized)
 	{
 	    uart_write(uart, ch);
 	}
 	return ch;
-#else
-    uart2_write_byte((uint8_t)ch);
-    return ch;
-#endif
-
 }
 
 int main(void)
@@ -30,24 +26,10 @@ int main(void)
     config_drivers();
     config_bsp();
 
-#ifdef UART_SINGLETON_ENABLE
-    UART_Singleton_t *uart = uart_get_instance();
-#else
-    uart2_init();
-#endif
-
-
     printf("\nInit board...\n\r");
-
-#ifdef UART_SINGLETON_ENABLE
-    if(uart->is_initialized)
-    {
-        printf("Working\n");
-    }
-#endif
-
-
-
+    printf("Singleton working 1!!!\n");
+    printf("Singleton working 2!!!\n");
+    printf("Singleton working 3!!!\n");
 
     uint64_t start_time = ticks_get();
     while (1)

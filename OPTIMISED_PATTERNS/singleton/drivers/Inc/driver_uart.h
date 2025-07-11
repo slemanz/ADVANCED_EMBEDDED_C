@@ -17,6 +17,7 @@ typedef struct
 void uart2_init(void);
 void uart2_init_pins(void);
 void uart2_write_byte(uint8_t data);
+void uart2_write(const char *data, uint32_t len);
 
 // singleton functions
 UART_Singleton_t *uart_get_instance(void);

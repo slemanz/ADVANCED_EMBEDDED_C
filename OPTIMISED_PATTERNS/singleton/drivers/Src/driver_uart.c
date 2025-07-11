@@ -2,10 +2,28 @@
 
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate);
+static void uart_periphClkEnable(UART_RegDef_t *pUART, uint8_t EnorDi);
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate)
 {
     return ((PeriphClk + (BaudRate/2U))/BaudRate);
+}
+
+static void uart_periphClkEnable(UART_RegDef_t *pUART, uint8_t EnorDi)
+{
+    if(EnorDi == ENABLE)
+    {
+        if(pUART == UART2)
+        {
+            UART2_PCLK_EN();
+        }
+    }else
+    {
+        if(pUART == UART2)
+        {
+            UART2_PCLK_DI();
+        }
+    }
 }
 
 
@@ -26,6 +44,14 @@ void uart2_write_byte(uint8_t data)
 {
 	while(!(UART2->SR & UART_SR_TXE));
     UART2->DR = data;
+}
+
+void uart2_write(const char *data, uint32_t len)
+{
+    for(uint32_t i = 0; i < len; i++)
+    {
+        uart2_write_byte((uint8_t)data[i]);
+    }
 }
 
 void uart2_init_pins(void)
@@ -50,15 +76,15 @@ UART_Singleton_t *uart_get_instance(void)
     if(!(uart_singleton.is_initialized))
     {
         uart2_init_pins();
-        UART2_PCLK_EN();
+        uart_periphClkEnable(uart_singleton.uart_handle, ENABLE);
 
         uint32_t temp = ((UART_CR1_TE) | (1 << 2)); // tx and rx enable
-        UART2->CR1 = temp; 
-        UART2->BRR = compute_uart_div(16000000, 115200); // baurate
-
-        UART2->CR1 |= UART_CR1_UE;// enable uart periph
+        uart_singleton.uart_handle->CR1 = temp; 
+        uart_singleton.uart_handle->BRR = compute_uart_div(16000000, 115200); // baurate
+        uart_singleton.uart_handle->CR1 |= UART_CR1_UE;// enable uart periph
 
         uart_singleton.is_initialized = 1;
+        //uart2_write("\nInit singleton\n", 16);
     }
 
     return &uart_singleton;
