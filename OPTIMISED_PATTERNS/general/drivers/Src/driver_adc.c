@@ -1,4 +1,5 @@
 #include "driver_adc.h"
+#include "driver_gpio.h"
 
 void adc_pa1_init(void)
 {

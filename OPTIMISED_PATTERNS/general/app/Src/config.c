@@ -1,5 +1,8 @@
 #include "config.h"
-#include "stm32f411xx.h"
+
+#include "driver_gpio.h"
+#include "driver_adc.h"
+
 #include "led.h"
 #include "button.h"
 

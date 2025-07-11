@@ -1,4 +1,5 @@
 #include "driver_uart.h"
+#include "driver_gpio.h"
 
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate);

@@ -543,17 +543,8 @@ typedef struct
 
 #define INTERRUPT_ENABLE()          do{__asm volatile ("MOV R0, #0x0"); __asm volatile("MSR PRIMASK, R0");}while(0)
 #define INTERRUPT_DISABLE()         do{__asm volatile ("MOV R0, #0x1"); __asm volatile("MSR PRIMASK, R0");}while(0)
+// #define STACK_RESET()               (__asm volatile("MSR MSP, %0": : "r" (STACK_START): ))
 
-
-/*
- * Drivers includes
- */
-
-#include "driver_fpu.h"
-#include "driver_systick.h"
-#include "driver_gpio.h"
-#include "driver_uart.h"
-#include "driver_adc.h"
 
 #define HSI_CLOCK				16000000U
 
