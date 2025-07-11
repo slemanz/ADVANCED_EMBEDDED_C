@@ -19,7 +19,8 @@ void uart2_init_pins(void);
 void uart2_write_byte(uint8_t data);
 
 // singleton functions
-UART_Singleton_t *get_uart_instance(void);
+UART_Singleton_t *uart_get_instance(void);
+void uart_write(UART_Singleton_t *uart_singleton, int ch);
 
 
 #endif

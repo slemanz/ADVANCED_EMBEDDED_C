@@ -1,24 +1,55 @@
 #include "config.h"
 #include <stdio.h>
 #include "driver_systick.h"
+#include "driver_uart.h"
 #include "led.h"
 #include "button.h"
+
+#define UART_SINGLETON_ENABLE
+
+// printf retarget
+extern int __io_putchar(int ch)
+{
+#ifdef UART_SINGLETON_ENABLE
+    UART_Singleton_t *uart = uart_get_instance();
+
+	if(uart && uart->is_initialized)
+	{
+	    uart_write(uart, ch);
+	}
+	return ch;
+#else
+    uart2_write_byte((uint8_t)ch);
+    return ch;
+#endif
+
+}
 
 int main(void)
  {
     config_drivers();
     config_bsp();
 
+#ifdef UART_SINGLETON_ENABLE
+    UART_Singleton_t *uart = uart_get_instance();
+#else
+    uart2_init();
+#endif
+
+
     printf("\nInit board...\n\r");
 
-    float n1 = 10.0, n2 = 7.0;
-    float result = n1/n2;
-    printf("%.2f/%.2f = %.5f\n", n1, n2, result);
+#ifdef UART_SINGLETON_ENABLE
+    if(uart->is_initialized)
+    {
+        printf("Working\n");
+    }
+#endif
 
-    uint32_t adc_value = 0;
+
+
 
     uint64_t start_time = ticks_get();
-
     while (1)
     {   
         // blinky
@@ -26,20 +57,6 @@ int main(void)
         {
             led_toggle();
             start_time = ticks_get();
-        }
-
-        // blinky 2
-        /*
-        GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
-        ticks_delay(500);
-        */
-
-        if(!button_get_state())
-        {
-            adc_start_conversion();
-            adc_value = adc_read();
-            printf("Adc: %ld\n", adc_value);
-            while(!button_get_state());
         }
     }
 }

@@ -43,16 +43,15 @@ void uart2_init_pins(void)
     GPIO_Init(&UartPin);
 }
 
-UART_Singleton_t *get_uart_instance(void)
+UART_Singleton_t *uart_get_instance(void)
 {
     static UART_Singleton_t uart_singleton = {UART2, 0};
 
-    if(!uart_singleton.is_initialized)
+    if(!(uart_singleton.is_initialized))
     {
         uart2_init_pins();
         UART2_PCLK_EN();
 
-        // no flow control (default reset)
         uint32_t temp = ((UART_CR1_TE) | (1 << 2)); // tx and rx enable
         UART2->CR1 = temp; 
         UART2->BRR = compute_uart_div(16000000, 115200); // baurate
@@ -63,4 +62,10 @@ UART_Singleton_t *get_uart_instance(void)
     }
 
     return &uart_singleton;
+}
+
+void uart_write(UART_Singleton_t *uart_singleton, int ch)
+{
+    while(!(uart_singleton->uart_handle->SR & UART_SR_TXE));
+    uart_singleton->uart_handle->DR = (ch & 0xFF);
 }
