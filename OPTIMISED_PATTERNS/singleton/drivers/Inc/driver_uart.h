@@ -13,9 +13,13 @@ typedef struct
     uint8_t is_initialized;
 }UART_Singleton_t;
 
-
+// default functions
 void uart2_init(void);
 void uart2_init_pins(void);
 void uart2_write_byte(uint8_t data);
+
+// singleton functions
+UART_Singleton_t *get_uart_instance(void);
+
 
 #endif
