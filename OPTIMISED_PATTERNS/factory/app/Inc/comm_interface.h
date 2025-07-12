@@ -9,7 +9,7 @@ typedef enum
     PROTOCOL_UART,
     PROTOCOL_I2C,
     PROTOCOL_SPI
-}CommProtocol_e;
+}CommProtocolType_e;
 
 typedef struct
 {
@@ -18,5 +18,13 @@ typedef struct
     void (*receive)(uint8_t *buffer, uint32_t len);
     void (*deinit)(void);
 }CommProtocol_t;
+
+/* Factory Method */
+CommProtocol_t *CommProtocol_create(CommProtocolType_e type);
+
+extern const CommProtocol_t UART_Protocol;
+extern const CommProtocol_t I2C_Protocol;
+extern const CommProtocol_t SPI_Protocol;
+
 
 #endif /* INC_COMM_INTERFACE_H_ */
