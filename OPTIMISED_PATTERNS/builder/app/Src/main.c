@@ -1,45 +1,43 @@
 #include "config.h"
 #include <stdio.h>
+
 #include "driver_systick.h"
-#include "led.h"
-#include "button.h"
+#include "driver_uart.h"
+
+// printf retarget
+extern int __io_putchar(int ch)
+{
+    uart2_write_byte((uint8_t)ch);
+    return ch;
+}
 
 int main(void)
  {
     config_drivers();
     config_bsp();
 
+    // Uart builder
+    UART_Builder_t uart = uart_builder_init();
+
+    uart_set_baudrate(&uart, 9600);
+    uart_set_wordlength(&uart, UART_WORDLENGTH_8B);
+    uart_set_parity(&uart, UART_PARITY_NONE);
+    uart_set_mode(&uart, UART_MODE_TX);
+
+    // Apply configuration
+    uart_build(&uart);
+
     printf("\nInit board...\n\r");
-
-    float n1 = 10.0, n2 = 7.0;
-    float result = n1/n2;
-    printf("%.2f/%.2f = %.5f\n", n1, n2, result);
-
-    uint32_t adc_value = 0;
-
     uint64_t start_time = ticks_get();
 
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 500)
+        // Send Hello!
+        if((ticks_get() - start_time) >= 5000)
         {
-            led_toggle();
+            printf("Hello!\n");
             start_time = ticks_get();
         }
 
-        // blinky 2
-        /*
-        GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
-        ticks_delay(500);
-        */
-
-        if(!button_get_state())
-        {
-            adc_start_conversion();
-            adc_value = adc_read();
-            printf("Adc: %ld\n", adc_value);
-            while(!button_get_state());
-        }
     }
 }
