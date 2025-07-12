@@ -29,6 +29,8 @@ OBJS		+= app/Build/startup.o
 
 OBJS		+= app/Build/protocol_factory.o
 OBJS		+= app/Build/uart_protocol.o
+OBJS		+= app/Build/i2c_protocol.o
+OBJS		+= app/Build/spi_protocol.o
 
 
 DRIVERS		+= app/Build/driver_fpu.o
