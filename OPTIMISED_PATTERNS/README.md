@@ -72,3 +72,4 @@ Impact: Patterns must emphasize long-term maintainability and robustness.
 ## List of design patterns
 
 1. [Singleton Pattern](singleton/)
+2. [Builder Pattern](builder/)
