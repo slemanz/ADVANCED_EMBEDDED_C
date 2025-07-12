@@ -9,6 +9,22 @@ static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate)
     return ((PeriphClk + (BaudRate/2U))/BaudRate);
 }
 
+UART_Builder_t uart_builder_init(void)
+{
+    UART_Builder_t builder;
+    builder.BaudRate = 115200;
+    builder.WordLength = UART_WORDLENGTH_8B;
+    builder.Parity = UART_PARITY_NONE;
+    builder.Mode = UART_MODE_TX;
+
+    return builder;
+}
+
+
+
+/*
+ * OLD IMPLEMENTATION
+ */
 
 void uart2_init(void)
 {
