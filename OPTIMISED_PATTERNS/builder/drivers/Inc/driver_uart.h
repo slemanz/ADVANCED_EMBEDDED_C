@@ -40,6 +40,7 @@ typedef struct
     uint32_t Mode;
 }UART_Builder_t;
 
+
 /**
  * @brief Initializes a UART_Builder_t structure with default values.
  * @return Initialized UART_Builder_t object.
@@ -47,6 +48,47 @@ typedef struct
 UART_Builder_t uart_builder_init(void);
 
 
+/**
+ * @brief Sets the Baud Rate for the UART configuration.
+ * @param builder Pointer to UART_Builder structure.
+ * @param baudrate Desired baud rate.
+ * @return Pointer to updated UART_Builder structure.
+ */
+UART_Builder_t *uart_set_baudrate(UART_Builder_t *builder, uint32_t baudrate);
+
+
+/**
+ * @brief Sets the Word Length (8-bit or 9-bit) for UART.
+ * @param builder Pointer to UART_Builder structure.
+ * @param wordlength Desired word length.
+ * @return Pointer to updated UART_Builder structure.
+ */
+UART_Builder_t *uart_set_wordlength(UART_Builder_t *builder, uint32_t wordlength);
+
+
+/**
+ * @brief Sets the Parity mode for UART.
+ * @param builder Pointer to UART_Builder structure.
+ * @param parity Parity mode (None, Even, Odd).
+ * @return Pointer to updated UART_Builder structure.
+ */
+UART_Builder_t *uart_set_parity(UART_Builder_t *builder, uint32_t parity);
+
+
+/**
+ * @brief Sets the operation mode (Transmit, Receive, Both).
+ * @param builder Pointer to UART_Builder structure.
+ * @param mode UART mode.
+ * @return Pointer to updated UART_Builder structure.
+ */
+UART_Builder_t *uart_set_mode(UART_Builder_t *builder, uint32_t mode);
+
+
+/**
+ * @brief Builds the final UART configuration and applies it.
+ * @param builder Pointer to UART_Builder structure.
+ */
+void uart_build(UART_Builder_t *builder);
 
 
 /*

@@ -15,11 +15,55 @@ UART_Builder_t uart_builder_init(void)
     builder.BaudRate = 115200;
     builder.WordLength = UART_WORDLENGTH_8B;
     builder.Parity = UART_PARITY_NONE;
-    builder.Mode = UART_MODE_TX;
+    builder.Mode = UART_MODE_TX_RX;
 
     return builder;
 }
 
+void uart_build(UART_Builder_t *builder)
+{
+    UART2_PCLK_EN();
+
+    // set baudrate
+    UART2->BRR = compute_uart_div(APB1_CLK, builder->BaudRate);
+
+    // Configure word length, stop bits and parity
+    UART2->CR1 = (builder->WordLength | builder->Parity | builder->Mode);
+
+    // Enable uart module
+    UART2->CR1 |= UART_CR1_UE;
+}
+
+// Set baudrate
+UART_Builder_t *uart_set_baudrate(UART_Builder_t *builder, uint32_t baudrate)
+{
+    builder->BaudRate = baudrate;
+    return builder;
+}
+
+
+// Set word length (8-bit or 9-bit)
+UART_Builder_t *uart_set_wordlength(UART_Builder_t *builder, uint32_t wordlength)
+{
+    builder->WordLength = wordlength;
+    return builder;
+}
+
+
+// Set parity (None, even or odd)
+UART_Builder_t *uart_set_parity(UART_Builder_t *builder, uint32_t parity)
+{
+    builder->Parity = parity;
+    return builder;
+}
+
+
+// Set mode (transmit, receive or both)
+UART_Builder_t *uart_set_mode(UART_Builder_t *builder, uint32_t mode)
+{
+    builder->Mode = mode;
+    return builder;
+}
 
 
 /*
