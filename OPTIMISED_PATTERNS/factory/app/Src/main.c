@@ -1,45 +1,45 @@
 #include "config.h"
-#include <stdio.h>
 #include "driver_systick.h"
-#include "led.h"
-#include "button.h"
+
+#include "comm_interface.h"
+
+
+
+#define PROTO_ID                0
+
+static CommProtocolType_e detect_protocol(int protocol_id)
+{
+    switch (protocol_id)
+    {
+    case 0: return PROTOCOL_UART;
+    case 1: return PROTOCOL_I2C;
+    case 2: return PROTOCOL_SPI;
+    default: return PROTOCOL_UART;
+    }
+}
 
 int main(void)
  {
     config_drivers();
-    config_bsp();
 
-    printf("\nInit board...\n\r");
+    CommProtocolType_e protocol_type = detect_protocol(PROTO_ID);
+    CommProtocol_t *protocol = CommProtocol_create(protocol_type);
 
-    float n1 = 10.0, n2 = 7.0;
-    float result = n1/n2;
-    printf("%.2f/%.2f = %.5f\n", n1, n2, result);
+    if(!protocol)
+    {
+        while(1); //error
+    }
 
-    uint32_t adc_value = 0;
+    protocol->init();
+    const char *msg = "Hello from comm protocol!\n";
 
     uint64_t start_time = ticks_get();
-
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 500)
+        if((ticks_get() - start_time) >= 5000)
         {
-            led_toggle();
+            protocol->send((uint8_t*)msg, 26);
             start_time = ticks_get();
-        }
-
-        // blinky 2
-        /*
-        GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
-        ticks_delay(500);
-        */
-
-        if(!button_get_state())
-        {
-            adc_start_conversion();
-            adc_value = adc_read();
-            printf("Adc: %ld\n", adc_value);
-            while(!button_get_state());
         }
     }
 }
