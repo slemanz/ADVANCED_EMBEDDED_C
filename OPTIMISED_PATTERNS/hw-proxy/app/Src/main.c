@@ -1,8 +1,7 @@
-#include "config.h"
 #include <stdio.h>
+#include "config.h"
 #include "driver_systick.h"
-#include "led.h"
-#include "button.h"
+#include "gpio_proxy.h"
 
 int main(void)
  {
@@ -11,13 +10,18 @@ int main(void)
 
     printf("\nInit board...\n\r");
 
-    uint64_t start_time = ticks_get();
+	secure_gpio_out_init(5);
+    secure_gpio_out_init(8);
 
-    while (1)
-    {   
-        if((ticks_get() - start_time) >= 500)
-        {
-            start_time = ticks_get();
-        }
-    }
+    ticks_delay(5000);
+
+    secure_gpio_set_pin(&secure_gpio, 5);
+    secure_gpio_set_pin(&secure_gpio, 8);
+    ticks_delay(3000);
+
+    update_allowed_pins(&secure_gpio, (1U << 8) | (1U << 5));
+    secure_gpio_set_pin(&secure_gpio, 8);
+    secure_gpio_clear_pin(&secure_gpio, 5);
+
+    while (1) __asm("NOP");
 }
