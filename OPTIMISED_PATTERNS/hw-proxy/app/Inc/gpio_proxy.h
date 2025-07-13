@@ -20,4 +20,8 @@ typedef struct{
 void secure_gpio_out_init(uint32_t pin);
 void secure_gpio_in_init(uint32_t pin);
 
+void secure_gpio_set_pin(SecureGPIO_Proxy_t *proxy, uint32_t pin);
+int8_t secure_gpio_read_pin(SecureGPIO_Proxy_t *proxy, uint32_t pin);
+void secure_gpio_clear_pin(SecureGPIO_Proxy_t *proxy, uint32_t pin);
+
 #endif /* INC_GPIO_PROXY_H_ */
