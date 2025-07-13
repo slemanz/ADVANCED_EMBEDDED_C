@@ -103,3 +103,12 @@ void secure_gpio_clear_pin(SecureGPIO_Proxy_t *proxy, uint32_t pin)
         printf("Access denied: Pin not allowed\n");
     }
 }
+
+/*
+ * Function to update allowed pins at runtime
+ */
+
+void update_allowed_pins(SecureGPIO_Proxy_t *proxy, uint32_t new_allowed_pins)
+{
+	proxy->pins_allowed = new_allowed_pins;
+}
