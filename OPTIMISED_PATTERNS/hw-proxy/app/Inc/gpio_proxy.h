@@ -17,4 +17,7 @@ typedef struct{
     uint32_t pins_allowed; /* Premitted pins */
 }SecureGPIO_Proxy_t;
 
+void secure_gpio_out_init(uint32_t pin);
+void secure_gpio_in_init(uint32_t pin);
+
 #endif /* INC_GPIO_PROXY_H_ */
