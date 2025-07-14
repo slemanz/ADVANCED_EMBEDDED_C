@@ -8,6 +8,6 @@ typedef struct
     uint32_t (*read)(void);
 }ADCInterface_t;
 
-extern const ADCInterface_t BaseAdc;
+extern const ADCInterface_t BaseADC;
 
 #endif /* INC_ADC_INTERFACE_H_ */
