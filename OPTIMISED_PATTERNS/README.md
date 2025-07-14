@@ -75,3 +75,4 @@ Impact: Patterns must emphasize long-term maintainability and robustness.
 2. [Builder Pattern](builder/)
 3. [Factory Pattern](factory/)
 4. [Hardware Proxy Pattern](hw-proxy/)
+5. [Decorator Pattern](decorator/)
