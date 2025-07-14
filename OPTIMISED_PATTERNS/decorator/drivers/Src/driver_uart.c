@@ -29,6 +29,14 @@ void uart2_write_byte(uint8_t data)
     UART2->DR = data;
 }
 
+void uart2_transmit(const char *msg)
+{
+    while(*msg)
+    {
+        uart2_write_byte(*(msg++));
+    }
+}
+
 void uart2_init_pins(void)
 {
     GPIO_Handle_t UartPin;
