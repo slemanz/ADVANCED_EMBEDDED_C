@@ -76,3 +76,4 @@ Impact: Patterns must emphasize long-term maintainability and robustness.
 3. [Factory Pattern](factory/)
 4. [Hardware Proxy Pattern](hw-proxy/)
 5. [Decorator Pattern](decorator/)
+6. [Mediator Pattern](mediator/)
