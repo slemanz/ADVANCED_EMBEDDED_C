@@ -8,7 +8,7 @@
 typedef struct
 {
     Mediator_t *mediator;
-    int sensorValue;
+    int state;
 }Actuator_t;
 
 #endif /* INC_ACTUATOR_H_ */
