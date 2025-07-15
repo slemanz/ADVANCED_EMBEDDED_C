@@ -11,12 +11,12 @@ void concrete_notify(EmbeddedSystem_t *system, const char *event)
         {
             printf("Mediator: Sensor value high %u, activating actuator\n", sensor->sensorValue);
             system->mediator.notify(system, "Activate");
-        }else if(event && strcmp(event, "Activate") == 0)
-        {
-            system->actuator.state = 1;
-            led_on();
-            printf("Mediator: Actuator activated.\n");
         }
+    }else if(event && strcmp(event, "Activate") == 0)
+    {
+        system->actuator.state = 1;
+        led_on();
+        printf("Mediator: Actuator activated.\n");
     }
 }
 

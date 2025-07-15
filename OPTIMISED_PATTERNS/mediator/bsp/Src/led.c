@@ -16,12 +16,12 @@ void led_init(void)
 
 void led_on(void)
 {
-    GPIO_WriteToOutputPin(GPIOC, GPIO_PIN_NO_13, GPIO_PIN_SET);
+    GPIO_WriteToOutputPin(GPIOC, GPIO_PIN_NO_13, GPIO_PIN_RESET);
 }
 
 void led_off(void)
 {
-    GPIO_WriteToOutputPin(GPIOC, GPIO_PIN_NO_13, GPIO_PIN_RESET);
+    GPIO_WriteToOutputPin(GPIOC, GPIO_PIN_NO_13, GPIO_PIN_SET);
 }
 
 void led_toggle(void)
