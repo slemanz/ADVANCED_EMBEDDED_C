@@ -28,6 +28,7 @@ OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
 
 OBJS		+= app/Build/colleague.o
+OBJS		+= app/Build/mediator.o
 
 
 DRIVERS		+= app/Build/driver_fpu.o

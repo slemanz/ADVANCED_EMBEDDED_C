@@ -20,6 +20,11 @@ typedef struct {
     void *light;
     void *thermostat;
     void *securitySystem;
-};
+}HomeAutomationMediator_t;
+
+void homeAutomationNotify(Mediator_t * mediator, const char* event);
+HomeAutomationMediator_t *HomeAutomationMediator_create(void* light,
+                                                        void* thermostat,
+                                                        void* securitySystem);
 
 #endif /* INC_MEDIATOR_H_ */

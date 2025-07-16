@@ -4,12 +4,14 @@
 #include "mediator.h"
 
 /* Base colleague structure */
-typedef struct
+typedef struct Colleague_t Colleague_t;
+
+struct Colleague_t
 {
     Mediator_t *mediator;
-    void (*sendEvent)(void *colleague, const char *event);
-    void (*performAction)(void *colleague, const char *action);
-} Colleague_t;
+    void (*sendEvent)(Colleague_t *colleague, const char *event);
+    void (*performAction)(Colleague_t *colleague, const char *action);
+};
 
 
 /* Concrete object types */
