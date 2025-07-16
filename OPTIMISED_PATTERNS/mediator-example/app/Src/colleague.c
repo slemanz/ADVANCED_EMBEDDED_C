@@ -43,4 +43,52 @@ Light_t* light_create(Mediator_t* mediator) {
 
 /* Thermostat specific behavior */
 
+void thermostatPerformAction(Colleague_t* colleague, const char* action) {
+    if (strcmp(action, "adjust_low") == 0) {
+        printf("Thermostat: Lowering temperature.\n");
+        //do something....
+    } else if (strcmp(action, "adjust_high") == 0) {
+        printf("Thermostat: Raising temperature.\n");
+    } else {
+        printf("Thermostat: Unknown action '%s'.\n", action);
+    }
+}
+
+
+Thermostat_t *thermostat_create(Mediator_t *mediator) {
+    Thermostat_t* thermostat = (Thermostat_t*)malloc(sizeof(Thermostat_t));
+    if (thermostat) {
+        thermostat->base.mediator = mediator;
+        thermostat->base.sendEvent = colleagueSendEvent;
+        thermostat->base.performAction = thermostatPerformAction;
+    }
+    return thermostat;
+}
+
 /* Security system specific behavior */
+
+void securitySystemPerformAction(Colleague_t *colleague, const char *action)
+{
+    if(strcmp(action, "activate") == 0)
+    {
+        printf("Security System: activating security.\n");
+    }else if(strcmp(action, "deactivate") == 0)
+    {
+        printf("Security System: deactivating security.\n");
+    }else
+    {
+        printf("Security System: Unknown action '%s'\n", action);
+    }
+}
+
+SecuritySystem_t *securitySystem_create(Mediator_t *mediator)
+{
+    SecuritySystem_t *securitySystem = (SecuritySystem_t*)malloc(sizeof(securitySystem));
+    if(securitySystem)
+    {
+        securitySystem->base.mediator = mediator;
+        securitySystem->base.sendEvent = colleagueSendEvent;
+        securitySystem->base.performAction = securitySystemPerformAction;
+    }
+    return securitySystem;
+}
