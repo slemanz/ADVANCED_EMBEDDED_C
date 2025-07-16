@@ -1,0 +1,30 @@
+#ifndef INC_COLLEAGUE_H_
+#define INC_COLLEAGUE_H_
+
+#include "mediator.h"
+
+/* Base colleague structure */
+typedef struct
+{
+    Mediator_t *mediator;
+    void (*sendEvent)(void *colleague, const char *event);
+    void (*performAction)(void *colleague, const char *action);
+} Colleague_t;
+
+
+/* Concrete object types */
+
+typedef struct{
+    Colleague_t base;
+} Light_t;
+
+typedef struct{
+    Colleague_t base;
+} Thermostat_t;
+
+typedef struct{
+    Colleague_t base;
+} SecuritySystem_t;
+
+
+#endif /* INC_COLLEAGUE_H_  */
