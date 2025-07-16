@@ -11,7 +11,7 @@ typedef struct{
 
 /* base mediator structure */
 struct Mediator_t {
-    MediatorInterface_t *vtable;
+    MediatorInterface_t *vtable; // virtual table
 };
 
 typedef struct {
