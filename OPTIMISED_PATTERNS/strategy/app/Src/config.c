@@ -1,5 +1,8 @@
 #include "config.h"
 
+#include "driver_fpu.h"
+#include "driver_systick.h"
+#include "driver_uart.h"
 #include "driver_gpio.h"
 #include "driver_adc.h"
 
@@ -42,5 +45,4 @@ extern int __io_putchar(int ch)
 {
     uart2_write_byte((uint8_t)ch);
     return ch;
-
 }
