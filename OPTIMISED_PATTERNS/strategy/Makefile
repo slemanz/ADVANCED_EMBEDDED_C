@@ -28,6 +28,8 @@ OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
 
 OBJS		+= app/Build/filter_strategy.o
+OBJS		+= app/Build/adc_interface.o
+OBJS		+= app/Build/adc_reader.o
 
 
 DRIVERS		+= app/Build/driver_fpu.o
