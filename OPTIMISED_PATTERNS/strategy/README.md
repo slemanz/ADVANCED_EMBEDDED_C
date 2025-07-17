@@ -14,4 +14,49 @@ while maintaining code clarity and flexibility.
 - Enable runtime **algorithm swapping**
 - **Simplify maintenance** of multiple algorithm variants
 
+### Components
+
+1. Strategy Interface: declares a common interface for all supported
+algorithms. Defines the operation that each concrete strategy must
+implement.
+
+2. Context: maintains a reference to a strategy object. Delegates the
+execution of an algorithm to the currently assigned strategy. Provides
+a setter to change the strategy at runtime.
+
+3. Concrete Strategies: implement the strategy interface with specific
+algorithms. These modules encapsulates different behaviors or algorithms.
+
+### Importance
+
+Embedded Systems frequenly require adaptive behavior:
+
+- Different sensor filtering algorithms (Kalman vs. Moving avarage)
+- Multiple motor control strategies (PID vs. Fuzzy Logic)
+- Various power management approaches (Dynamic vs. static scaling)
+
+Direct implementation leads:
+
+- Complex conditional Logic (nested switch/if statements)
+- Code bloat (multiple algorithm versions in firmware)
+- Maintenance challenges (difficulty adding/removing strategies)
+
+The **Strategy Pattern** solves these by:
+
+- Isolating algorithm implementations
+- Providing clear interface contracts
+- Enabling how-swapping of strategies
+
+### Implementation
+
+| Component         | Implementation                | Responsability                |
+|---|---|---|
+| Strategy          | Struct with function pointers | Defines algorithm interface   |
+| Concrete Strategy | Struct                        | Implements specific algorithm |
+| Context           | Main application logic        | Maintains and uses strategy reference |
+
+- **Step 1:** define strategy interface
+- **Step 2:** implement concrete strategies
+- **Step 3:** configure context
+
 ## Code
