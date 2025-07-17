@@ -83,7 +83,7 @@ void securitySystemPerformAction(Colleague_t *colleague, const char *action)
 
 SecuritySystem_t *securitySystem_create(Mediator_t *mediator)
 {
-    SecuritySystem_t *securitySystem = (SecuritySystem_t*)malloc(sizeof(securitySystem));
+    SecuritySystem_t *securitySystem = (SecuritySystem_t*)malloc(sizeof(SecuritySystem_t));
     if(securitySystem)
     {
         securitySystem->base.mediator = mediator;
