@@ -4,7 +4,7 @@
 
 #define SENSOR_THRESH           1500
 
-void led_observer_update(struct observer_t *self, int data)
+void led_observer_update(struct observer *self, int data)
 {
     if(data > SENSOR_THRESH)
     {
