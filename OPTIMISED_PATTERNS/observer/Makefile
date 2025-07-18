@@ -27,6 +27,8 @@ OBJS		+= app/Build/config.o
 OBJS		+= app/Build/syscalls.o
 OBJS		+= app/Build/startup.o
 
+OBJS		+= app/Build/led_observer.o
+
 
 DRIVERS		+= app/Build/driver_fpu.o
 DRIVERS		+= app/Build/driver_systick.o
