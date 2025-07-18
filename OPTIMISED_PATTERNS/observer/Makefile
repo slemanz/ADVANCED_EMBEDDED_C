@@ -29,6 +29,7 @@ OBJS		+= app/Build/startup.o
 
 OBJS		+= app/Build/led_observer.o
 OBJS		+= app/Build/uart_observer.o
+OBJS		+= app/Build/subject.o
 
 
 DRIVERS		+= app/Build/driver_fpu.o
