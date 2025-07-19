@@ -1,6 +1,7 @@
 #include "config.h"
 #include <stdio.h>
 #include "driver_systick.h"
+#include "driver_adc.h"
 #include "led.h"
 #include "button.h"
 
@@ -24,21 +25,25 @@ int main(void)
 
     while (1)
     {   
-        if((ticks_get() - start_time) >= 500)
+        if((ticks_get() - start_time) >= 4000)
         {
+            runStateMachine();
             start_time = ticks_get();
         }
     }
 }
 
-void runStateHandler(void)
+void runStateMachine(void)
 {
-
+    if(currentState != NULL)
+    {
+        currentState();
+    }
 }
 
 void setNextState(StateHandler nextState)
 {
-
+    currentState = nextState;
 }
 
 void yellowStateHandler(void)
@@ -51,7 +56,7 @@ void yellowStateHandler(void)
 
 void greenStateHandler(void)
 {
-    printf("Green light: Vehicle can proced!\n");
+    printf("Green light: Vehicle can proceed!\n");
 
     // transition to yellow after delay
     setNextState(yellowStateHandler);
