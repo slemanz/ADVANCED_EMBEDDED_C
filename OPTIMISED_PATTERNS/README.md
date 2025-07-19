@@ -80,4 +80,5 @@ Impact: Patterns must emphasize long-term maintainability and robustness.
 7. [Mediator Example](mediator-example/)
 8. [Strategy Pattern](strategy/)
 9. [Observer Pattern](observer/)
-9. [State Pattern](state/)
+10. [State Pattern](state/)
+11. [State Example](state-example/)
