@@ -29,6 +29,10 @@ OBJS		+= app/Build/startup.o
 
 OBJS		+= app/Build/adc_dma.o
 OBJS		+= app/Build/state_machine.o
+OBJS		+= app/Build/state_error.o
+OBJS		+= app/Build/state_idle.o
+OBJS		+= app/Build/state_read_adc.o
+OBJS		+= app/Build/state_transmit.o
 
 
 DRIVERS		+= app/Build/driver_fpu.o

@@ -3,6 +3,6 @@
 
 #include "state_machine.h"
 
-extern state_t state_read_adc;
+extern state_t state_transmit;
 
 #endif /* INC_STATE_TRANSMIT_H_ */
