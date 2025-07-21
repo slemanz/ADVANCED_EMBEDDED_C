@@ -125,3 +125,15 @@ Obs: is just a convention to use the same name to output file, would be fine to 
 something like:
 
 `arm-none-eabe-gcc -c -mcpu=cortex-m4 -mthumb main.c -o other_name.o`
+
+- **Analyzing object files:**
+
+    `arm-none-eabe-objdump --help`
+
+    `arm-none-eabe-objdump -x main.o > header.txt`
+
+    `arm-none-eabe-objdump -D main.o > disassemble.txt`
+
+    `arm-none-eabe-objdump -d main.o > disassemble_exec.txt`
+
+    `arm-none-eabe-objdump -s main.o > contents.txt`
