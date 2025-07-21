@@ -107,5 +107,21 @@ GNU GCC Manual is the best reference.
 
     Compile, assemble and dont link!
 
+- **Compile adding options:**
 
+    `arm-none-eabe-gcc -c -mcpu=cortex-m4 -mthumb main.c -o main.o`
 
+    Compile, assemble and dont link with flags to specific arm.
+
+- **Stopping after compilation:**
+
+    `arm-none-eabe-gcc -S -mcpu=cortex-m4 -mthumb main.c -o main.s`
+
+- **Stopping after preprocessing:**
+
+    `arm-none-eabe-gcc -E -mcpu=cortex-m4 -mthumb main.c -o main.i`
+
+Obs: is just a convention to use the same name to output file, would be fine to be
+something like:
+
+`arm-none-eabe-gcc -c -mcpu=cortex-m4 -mthumb main.c -o other_name.o`
