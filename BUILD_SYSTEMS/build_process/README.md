@@ -94,4 +94,7 @@ analyze an object file.
 - **arm-none-eabi-objcopy** - used to convert object files form one format to another.
 Also used to make a copy of an object file.
 
+- **arm-none-eabi-gdb** - Debugging programs on ARM Cortex-M microcontrollers, it allows
+to inspect and control the execution of code running. Also used to flash code.
+
 ## Compiling and linking
