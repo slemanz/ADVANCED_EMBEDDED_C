@@ -97,4 +97,15 @@ Also used to make a copy of an object file.
 - **arm-none-eabi-gdb** - Debugging programs on ARM Cortex-M microcontrollers, it allows
 to inspect and control the execution of code running. Also used to flash code.
 
-## Compiling and linking
+## Exploring GNU Bin Tools
+
+GNU GCC Manual is the best reference.
+
+- **Compile:**
+
+    `arm-none-eabe-gcc -c main.c -o main.o`
+
+    Compile, assemble and dont link!
+
+
+
