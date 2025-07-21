@@ -60,3 +60,38 @@ File Format (COFF), Intel Hex Recordm Motorola S Record (SREC), ARM Image
 Format (AIF), Binary
 
 ## GNU Bin Tools
+
+- **arm-none-eabi-gcc** - Compile, assemble and link
+
+    - Example: arm-none-eabi-gcc main.c -o main.o
+
+| Option | Purpose
+|---|---|
+| -C        | Compile and Assemble, do not Link |
+| -o [FILE] | Compile, Assemble and Link to output FILE |
+| -g        | Generate Debugging Information in Executable |
+| -Wall     | Enable All Warning Messages |
+| -Werror   | Treat all Warnings as Errors |
+| -I[DIR]   | Include this DIR to look for header files |
+| --std = STANDARD | Specify which standard version to use |
+| -V        | Verbose output from GCC |
+| -mcpu = [NAME] | Specifies the target ARM Processor and architecture |
+| -march = [NAME] | Specifies the target ARM Architecture |
+| -mthumb | To generate code in Thumb Instruction Set Architecture (ISA) |
+| -marm | To generate code in ARM Instruction Set Architecture (ISA) |
+
+e.g: arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb main.c -o main.o
+
+- **arm-none-eabi-nm** - List the symbols from object files
+
+- **arm-none-eabi-size** - List the section sizes of object and executable files
+
+- **arm-none-eabi-objdump** - Dumps information about an object file. Used to
+analyze an object file.
+
+- **arm-none-eabi-readelf** - Read informations from elf files
+
+- **arm-none-eabi-objcopy** - used to convert object files form one format to another.
+Also used to make a copy of an object file.
+
+## Compiling and linking
