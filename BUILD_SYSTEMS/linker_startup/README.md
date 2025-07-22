@@ -129,6 +129,23 @@ In startup code, copy .data from `FLASH` to `SRAM`:
 └────────────────┘ 0x2000 0000
 ```
 
+### Some Commands
+
+- **ENTRY**: Sets program entry address.
+
+- **MEMORY**: Describes the locations and sizes of the different
+memories available.
+
+- **ALIGN**: Inserts padding to align location.
+
+- **SECTIONS**: Used to map input sections to output sections and
+describes how to place output sections in memory.
+
+- **KEEP**: Tells linker to keep the specified section even if no
+symbols in that section are referenced.
+
+- **AT >**: This is a directive, it tells the linker to load a section's
+data to somewhere other than the address it is located at.
 
 ## Startup Code
 
