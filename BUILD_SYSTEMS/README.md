@@ -36,3 +36,4 @@ Native compilation: compile code on a machine and run on the same machine.
 ## Going Further
 
 - **[Build Process](build_process/)**
+- **[Linker and Startup](linker_startup/)**
