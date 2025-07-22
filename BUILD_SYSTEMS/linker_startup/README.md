@@ -147,6 +147,23 @@ symbols in that section are referenced.
 - **AT >**: This is a directive, it tells the linker to load a section's
 data to somewhere other than the address it is located at.
 
+### Constants
+
+- The linker considers an integer with:
+    - 0 as Octal
+    - Ox as hexadecimal
+
+- Suffixes K and M may be used to scale a constant by 1024 or by
+1024*1024 respectively
+
+Different ways of writing the same quantity :
+
+- _four_1 = 4K
+
+- _four_2 = 4096;
+
+- _four_3 = 0x1000;
+
 ## Startup Code
 
 1. Reset Handler
