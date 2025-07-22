@@ -90,6 +90,46 @@ The 3 relevant sections:
 
 The Linker distinguishes between the VMA and LMA address.
 
+### Load memory
+
+Flash memory:
+
+```
+┌────────────────┐
+│                │
+│                │
+│                │
+├────────────────┤
+│                │
+│    .data       │
+│                │
+├────────────────┤
+│                │
+│   .rodata      │
+│                │
+├────────────────┤
+│                │
+│    .text       │
+│                │
+├────────────────┤
+│  .isr_vector   │
+└────────────────┘ 0x0800 0000
+```
+
+In startup code, copy .data from `FLASH` to `SRAM`:
+
+```
+┌────────────────┐
+│                │
+│                │
+├────────────────┤
+│     .bss       │
+├────────────────┤
+│     .data      │
+└────────────────┘ 0x2000 0000
+```
+
+
 ## Startup Code
 
 1. Reset Handler
