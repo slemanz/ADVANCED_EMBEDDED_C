@@ -12,21 +12,20 @@ Five keys steps are involved:
 - Locating
 
 ```
- ┌--------------┐                    ┌--------------------┐                 ┌----------------┐
- | Source files |--- Preprocessor -->| Preprocessed files | --- Compiler -->| Assembly Files |
+ ┌──────────────┐                    ┌────────────────────┐                 ┌────────────────┐
+ | Source files |─── Preprocessor ──>| Preprocessed files | ─── Compiler ──>| Assembly Files |
  |   (.c/.h)    |                    |        (.i)        |                 |      (.s)      |
- └--------------┘                    └--------------------┘                 └----------------┘
+ └──────────────┘                    └────────────────────┘                 └────────────────┘
                                                                                     |
-       ┌------------------------------ Assembler -----------------------------------┘
+       ┌────────────────────────────── Assembler ───────────────────────────────────┘
        ↓
- ┌--------------┐               ┌-------------------┐               ┌------------┐
+ ┌──────────────┐               ┌───────────────────┐               ┌────────────┐
  | Object files |               | Relocatable files |               | Executable |
- |     (.o)     |--- Linker --> |                   |--- Locator -->|            |
- └--------------┘               └-------------------┘               └------------┘
-
+ |     (.o)     |─── Linker ──> |                   |─── Locator ──>|            |
+ └──────────────┘               └───────────────────┘               └────────────┘
 ```
 
-### Prepocessor
+### Pre-processor
 
 - The pre-processor strips out comments from the input files.
 - The pre-processor also evaluates preprocessor directives by
