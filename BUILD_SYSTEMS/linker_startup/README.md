@@ -238,6 +238,28 @@ represent the same thing.
 Values may be assigned to symbols. This will define them and place them into
 the Symbol Table
 
+```
+┌────────────────┐ 
+│                │
+│                │
+│                │
+├────────────────┤ _edata
+│                │
+│    .data       │
+│                │
+├────────────────┤ _sdata
+│                │
+│   .rodata      │
+│                │
+├────────────────┤ _etext
+│                │
+│    .text       │
+│                │
+├────────────────┤
+│  .isr_vector   │
+└────────────────┘ 0x0800 0000
+```
+
 ### The Location Counter
 
 - It is a special linker symbol written as "." dot
@@ -271,6 +293,10 @@ SECTIONS
 }
 ```
 
+### Align
+
+To align sections use: `. = ALIGN(X);`
+
 ## Startup Code
 
 1. Reset Handler
@@ -295,4 +321,39 @@ __attribute__((section(".NAME")))
 ```bash
 arm-none-eabi-gcc -c startup.c -o startup.o
 arm-none-eabi-objdump -h startup.o > startup.txt
+```
+
+## Simple example
+
+Generate output files:
+
+```bash
+arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -std=gnu99 main.c -o main.o
+arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -std=gnu99 startup.c -o startup.o
+```
+
+Then, link:
+
+```bash
+arm-none-eabi-gcc -nostdlib -T linker.ld *.o -o flash.elf -Wl,-Map=flash.map
+```
+
+Dump the files:
+
+```bash
+arm-none-eabi-objdump -h main.o > main.txt
+arm-none-eabi-objdump -h flash.elf > flash.txt
+```
+
+Finally, load with openocd:
+
+```bash
+openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg -c init -c "reset init" \
+	-c "flash write_image erase flash.elf" -c "reset run" -c shutdown
+```
+
+Then, clean *.o files
+
+```bash
+rm *.o
 ```
