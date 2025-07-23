@@ -76,7 +76,7 @@ SECTIONS
 }
 ```
 
-The 3 relevant sections:
+### The 3 relevant sections
 
 - **.text** - Placed in the FLASH
 - **.data** - Placed in the SRAM
@@ -89,6 +89,7 @@ The 3 relevant sections:
 - **VMA:** Virtual Memory Address, the address of a section during execution.
 
 The Linker distinguishes between the VMA and LMA address.
+
 
 ### Load memory
 
@@ -196,6 +197,8 @@ Different ways of writing the same quantity :
 │  .isr_vector   │
 └────────────────┘ 0x0800 0000
 ```
+
+### Symbols
 
 ## Startup Code
 
