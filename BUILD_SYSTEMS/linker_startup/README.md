@@ -164,6 +164,39 @@ Different ways of writing the same quantity :
 
 - _four_3 = 0x1000;
 
+### Load Memory
+
+```
+┌────────────────┐ SRAM
+│                │
+│                │
+├────────────────┤
+│     .bss       │
+├────────────────┤
+│     .data      │
+└────────────────┘ 0x2000 0000
+
+┌────────────────┐ FLASH
+│                │
+│                │
+│                │
+├────────────────┤
+│                │ Copy .data section from FLASH
+│    .data       │ to SRAM
+│                │
+├────────────────┤
+│                │
+│   .rodata      │
+│                │
+├────────────────┤
+│                │
+│    .text       │
+│                │
+├────────────────┤
+│  .isr_vector   │
+└────────────────┘ 0x0800 0000
+```
+
 ## Startup Code
 
 1. Reset Handler
@@ -178,3 +211,14 @@ Different ways of writing the same quantity :
     - In order to allow application code to conveniently redefine the
     various interrupt handlers, every required vector is assigned an
     overideable `_weak` alias to a default function which loops forever.
+
+### Verify custom section
+
+```C
+__attribute__((section(".NAME")))
+```
+
+```bash
+arm-none-eabi-gcc -c startup.c -o startup.o
+arm-none-eabi-objdump -h startup.o > startup.txt
+```
