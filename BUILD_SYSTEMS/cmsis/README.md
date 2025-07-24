@@ -54,3 +54,33 @@ software toolchain that supports CMSIS DAP to connect to any hardware debug unit
 also supports _CMSIS DAP_.
 
 **And others...**
+
+### Basic
+
+- The CMSIS core specification provides a standard set of low-level functions, macros,
+and peripheral register definitions that allow your application code to easily access
+the Cortex-M processor and microcontroller peripheral registers.
+
+- The coding standard is based in MISRA C.
+
+| Standard ANSI C Type | MISRA C Type |
+| --- | --- |
+| Signed char | int8_t |
+| Signed short | int16_t |
+| Unigned int | uint32_t |
+
+| MISRA C Qualifier | ANSI C Type | Meaning |
+| --- | --- | --- |
+| #define __I | volatile const  | read only |
+| #define __Ο | volatile        | write only |
+| #define __IO | volatile       | read and write |
+
+### Adding CMSIS to a project
+
+Three files need to be added:
+
+- **The Startup file:** This file contains the default CMSIS vector table.
+- **The system_\<device\> file:** This file contains the necessary code to initialize
+the microcontroller system peripherals.
+- **The device include file:** This file imports the CMSIS header file that contains
+the CMSIS core functions and macros.
