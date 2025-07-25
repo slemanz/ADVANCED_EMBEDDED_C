@@ -41,3 +41,4 @@ Native compilation: compile code on a machine and run on the same machine.
 - **[CMSIS](cmsis/)**
 - **[Assembly](assembly/)**
 - **[Cpp](cpp/)**
+- **[Semihosting](semihosting/)**
