@@ -2,7 +2,12 @@ CC = arm-none-eabi-gcc
 CFLAGS = -c -mcpu=cortex-m4 -mthumb -std=gnu99
 LDFLAGS = -nostdlib -T linker.ld -Wl,-Map=flash.map
 
-all: flash.elf
+PREREQ = Build/
+
+all: $(PREREQ) flash.elf
+
+$(PREREQ):
+	mkdir $(PREREQ)
 
 main.o : main.c
 	$(CC) $(CFLAGS) $^ -o $@
