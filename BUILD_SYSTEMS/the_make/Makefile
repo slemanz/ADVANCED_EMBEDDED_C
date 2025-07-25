@@ -1,26 +1,29 @@
 CC = arm-none-eabi-gcc
 CFLAGS = -c -mcpu=cortex-m4 -mthumb -std=gnu99
-LDFLAGS = -nostdlib -T linker.ld -Wl,-Map=flash.map
 
-PREREQ = Build/
+LINKER = -T Src/linker.ld
+LDFLAGS = -nostdlib $(LINKER) -Wl,-Map=$(BUILD_DIR)/flash.map
 
-all: $(PREREQ) flash.elf
+BUILD_DIR = Build
+PREREQ = $(BUILD_DIR)/
+
+all: $(PREREQ) $(BUILD_DIR)/flash.elf
 
 $(PREREQ):
 	mkdir $(PREREQ)
 
-main.o : main.c
+$(BUILD_DIR)/main.o : Src/main.c
 	$(CC) $(CFLAGS) $^ -o $@
 	
-startup.o : startup.c
+$(BUILD_DIR)/startup.o : Src/startup.c
 	$(CC) $(CFLAGS) $^ -o $@
 	
-flash.elf : main.o startup.o
+$(BUILD_DIR)/flash.elf : $(BUILD_DIR)/main.o $(BUILD_DIR)/startup.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 load:
 	openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg \
-	-c "program flash.elf verify reset exit"
+	-c "program $(BUILD_DIR)/flash.elf verify reset exit"
 
 clean:
-	rm *.o 
+	rm -rf $(BUILD_DIR)/*.o 
