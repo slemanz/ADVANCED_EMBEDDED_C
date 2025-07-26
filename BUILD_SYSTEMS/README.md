@@ -42,3 +42,4 @@ Native compilation: compile code on a machine and run on the same machine.
 - **[Assembly](assembly/)**
 - **[Cpp](cpp/)**
 - **[Semihosting](semihosting/)**
+- **[Newlib](newlib/)**
