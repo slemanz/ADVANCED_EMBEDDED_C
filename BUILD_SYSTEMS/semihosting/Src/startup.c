@@ -6,6 +6,9 @@ extern uint32_t _sdata;
 extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
+extern uint32_t _ldata;
+
+void __libc_init_array(void);
 
 int main(void);
 void Reset_Handler(void);
@@ -192,13 +195,12 @@ void Reset_Handler(void)
     uint32_t data_mem_size =  (uint32_t)&_edata - (uint32_t)&_sdata;
 	uint32_t bss_mem_size  =   (uint32_t)&_ebss - (uint32_t)&_sbss;
 	
-	uint32_t *p_src_mem =  (uint32_t *)&_etext;
+	uint32_t *p_src_mem =  (uint32_t *)&_ldata;
 	uint32_t *p_dest_mem = (uint32_t *)&_sdata;
 	
 	for(uint32_t i = 0; i < data_mem_size; i++  )
 	{
 		/*Copy data section from FLASH to SRAM*/
-		
 		 *p_dest_mem++ = *p_src_mem++;
 	}
 
@@ -209,6 +211,7 @@ void Reset_Handler(void)
 		*p_dest_mem++ = 0;
 	}
 	
+    //__libc_init_array();
 	main();
 }
 
