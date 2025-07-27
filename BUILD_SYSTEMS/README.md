@@ -33,13 +33,13 @@ on another machine (target).
 
 Native compilation: compile code on a machine and run on the same machine.
 
-## Going Further
+## Deep Topics
 
-- **[Build Process](build_process/)**
-- **[Linker and Startup](linker_startup/)**
-- **[Make Build System](the_make/)**
-- **[CMSIS](cmsis/)**
-- **[Assembly](assembly/)**
-- **[Cpp](cpp/)**
-- **[Semihosting](semihosting/)**
-- **[Newlib](newlib/)**
+1. **[Build Process](build_process/)**
+2. **[Linker and Startup](linker_startup/)**
+3. **[Make Build System](the_make/)**
+4. **[CMSIS](cmsis/)**
+5. **[Assembly](assembly/)**
+6. **[Cpp](cpp/)**
+7. **[Semihosting](semihosting/)**
+8. **[Newlib](newlib/)**
