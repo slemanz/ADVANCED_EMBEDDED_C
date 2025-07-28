@@ -11,7 +11,7 @@ extern int errno;
 extern int __io_putchar(int ch) __attribute__((weak));
 extern int __io_getchar(void) __attribute__((weak));
 
-register int * stack_ptr asm("sp");
+register char * stack_ptr asm("sp");
 
 char *__env[1] = { 0 };
 char **environ = __env;
@@ -125,9 +125,9 @@ int _execve(char *name, char **argv, char **env)
 
 caddr_t _sbrk(int incr)
 {
-    extern int end asm("end");
-    static int *heap_end;
-    int *prev_heap_end;
+    extern char end asm("end");
+    static char *heap_end;
+    char *prev_heap_end;
 
     if (heap_end == 0)
     	heap_end = &end;
