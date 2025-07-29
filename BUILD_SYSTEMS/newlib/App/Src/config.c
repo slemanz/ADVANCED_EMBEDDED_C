@@ -1,6 +1,8 @@
 #include "config.h"
-#include "driver_gpio.h"
 #include "driver_fpu.h"
+#include "driver_gpio.h"
+#include "driver_systick.h"
+#include "driver_uart.h"
 
 void gpio_setup(void)
 {
@@ -17,7 +19,7 @@ void gpio_setup(void)
 
 void config_drivers(void)
 {
-    //fpu_enable();
+    fpu_enable();
     gpio_setup();
-
+    systick_init(1000);
 }
