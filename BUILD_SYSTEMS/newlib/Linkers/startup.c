@@ -232,5 +232,6 @@ void Reset_Handler(void)
 
     __libc_init_array();  // call init function of std. library
 
+    __asm volatile("MSR MSP, %0": : "r" (STACK_START): ); // stack reset
     main();
 }
