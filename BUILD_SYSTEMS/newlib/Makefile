@@ -1,14 +1,16 @@
 CC=arm-none-eabi-gcc
-MACH=cortex-m4
-FLOAT=soft
-LINKER_SCRIPT=Linkers/linker.ld
-MAP_FILE=App/Build/final.map
+TARGET=flash
 
-FINAL_FILE=App/Build/final.elf
-FLASH_FILE=App/Build/flash.bin
+MACH= -mcpu=cortex-m4
+FLOAT=-mfloat-abi=hard
 
-CFLAGS= -c -mcpu=$(MACH) -mthumb -mfloat-abi=$(FLOAT) -std=gnu99 -Wall -O0 -ggdb
-LDFLAGS =  -mcpu=$(MACH) -mthumb -mfloat-abi=$(FLOAT) --specs=nano.specs -T $(LINKER_SCRIPT) -Wl,-Map=App/Build/final.map -ggdb -u _printf_float -Wl,--print-memory-usage
+LINKER= -T Linkers/linker.ld
+MAP_FILE= -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+
+BUILD_DIR= Build
+
+CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 
+LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nano.specs $(LINKER) $(MAP_FILE) -u _printf_float -Wl,--print-memory-usage
 OBJCOPY=arm-none-eabi-objcopy
 
 ###########################################
@@ -21,39 +23,42 @@ INCLUDES+= -I Drivers/Inc/
 ############################################
 # 				OUTPUT FILES
 
-OBJS		+= App/Build/main.o
-OBJS		+= App/Build/config.o
-OBJS		+= App/Build/syscalls.o
-OBJS		+= App/Build/startup.o
+OBJS		+= $(BUILD_DIR)/main.o
+OBJS		+= $(BUILD_DIR)/config.o
+OBJS		+= $(BUILD_DIR)/syscalls.o
+OBJS		+= $(BUILD_DIR)/startup.o
+OBJS		+= $(BUILD_DIR)/constructors.o
 
 
-DRIVERS		+= App/Build/driver_fpu.o
-DRIVERS		+= App/Build/driver_systick.o
-DRIVERS		+= App/Build/driver_gpio.o
-DRIVERS		+= App/Build/driver_uart.o
+DRIVERS		+= $(BUILD_DIR)/driver_fpu.o
+DRIVERS		+= $(BUILD_DIR)/driver_systick.o
+DRIVERS		+= $(BUILD_DIR)/driver_gpio.o
+DRIVERS		+= $(BUILD_DIR)/driver_uart.o
 
-all: App/Build App/Build/final.elf
+PREREQ = $(BUILD_DIR)/
 
-App/Build:
-	mkdir App/Build
+all: $(PREREQ) $(BUILD_DIR)/$(TARGET).elf
 
-App/Build/%.o: App/Src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o App/Build/$(*).o App/Src/$(*).c
+$(PREREQ):
+	mkdir $(PREREQ)
 
-App/Build/%.o: Drivers/Src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o App/Build/$(*).o Drivers/Src/$(*).c
+$(BUILD_DIR)/%.o: App/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o App/Src/$(*).c
 
-App/Build/%.o: Linkers/*.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o App/Build/$(*).o Linkers/$(*).c
+$(BUILD_DIR)/%.o: Drivers/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o Drivers/Src/$(*).c
 
-App/Build/final.elf: $(OBJS) $(DRIVERS) $(BSP)
+$(BUILD_DIR)/%.o: Linkers/*.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o Linkers/$(*).c
+
+$(BUILD_DIR)/$(TARGET).elf: $(OBJS) $(DRIVERS) $(BSP)
 	$(CC) $(LDFLAGS) -o $@ $^
-	$(OBJCOPY) -O binary App/Build/final.elf App/Build/flash.bin
-	arm-none-eabi-size App/Build/final.elf
+	$(OBJCOPY) -O binary $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).bin
+	arm-none-eabi-size $(BUILD_DIR)/$(TARGET).elf
 
 load:
 	openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg \
-	-c "program App/Build/final.elf verify reset exit"
+	-c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
 
 clean:
-	rm -rf *.o App/Build/*.map App/Build/*.o
+	rm -rf $(BUILD_DIR)/*.map $(BUILD_DIR)/*.o
