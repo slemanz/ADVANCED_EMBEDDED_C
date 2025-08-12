@@ -43,3 +43,4 @@ Native compilation: compile code on a machine and run on the same machine.
 6. **[Cpp](cpp/)**
 7. **[Semihosting](semihosting/)**
 8. **[Newlib](newlib/)**
+8. **[Optimized](optimized/)**
