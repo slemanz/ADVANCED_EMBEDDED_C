@@ -17,54 +17,42 @@ SECTIONS
     {
         . = ALIGN(4);
         KEEP(*(.isr_vector))
+        . = ALIGN(4);
         *(.text)         
         *(.text.*)         
+        *(.glue_7)
+        *(.glue_7t)
+        *(.eh_frame)
+
+        KEEP(*(.init))
+        KEEP(*(.fini))
+        . = ALIGN(4);
+
         *(.rodata)        
         *(.rodata.*)        
 
-        *(.eh_frame)
-
         . = ALIGN(4);
         _etext = .;       
-
-        KEEP(*(.init))
-        . = ALIGN(4);
-        __preinit_array_start = .;
-        KEEP (*(.preinit_array))
-        __preinit_array_end = .;
-
-        . = ALIGN(4);
-        __init_array_start = .;
-        KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
-        __init_array_end = .;
-
-        . = ALIGN(4);
-        KEEP(*(.fini))
-
-        . = ALIGN(4);
-        __fini_array_start = .;
-        KEEP (*(.fini_array))
-        KEEP (*(SORT(.fini_array.*)))
-        __fini_array_end = .;
-
-        /* C++ runtime constructors */
-        . = ALIGN(4);
-        KEEP (*crtbegin.o(.ctors))
-        KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
-        KEEP (*(SORT(.ctors.*)))
-        KEEP (*crtend.o(.ctors))
-
-        /* C++ runtime destructors */
-        . = ALIGN(4);
-        KEEP (*crtbegin.o(.dtors))
-        KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
-        KEEP (*(SORT(.dtors.*)))
-        KEEP (*crtend.o(.dtors))
-      . = ALIGN(4);
-
     } > FLASH
-
+    
+    .arrays :
+    {
+        . = ALIGN(4);
+        PROVIDE_HIDDEN (__preinit_array_start = .);
+        KEEP (*(.preinit_array*))
+        PROVIDE_HIDDEN (__preinit_array_end = .);
+        . = ALIGN(4);
+        PROVIDE_HIDDEN (__init_array_start = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array*))
+        PROVIDE_HIDDEN (__init_array_end = .);
+        . = ALIGN(4);
+        PROVIDE_HIDDEN (__fini_array_start = .);
+        KEEP (*(SORT(.fini_array.*)))
+        KEEP (*(.fini_array*))
+        PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4);
+    } >FLASH
 
     _la_data = LOADADDR(.data);
     .data :
@@ -78,7 +66,7 @@ SECTIONS
         . = ALIGN(4);
         _edata = .;   
     } > SRAM AT> FLASH
-    
+
 
     .bss :
     {

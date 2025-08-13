@@ -4,14 +4,19 @@ TARGET=flash
 MACH= -mcpu=cortex-m4
 FLOAT=-mfloat-abi=hard
 
+BUILD_DIR= Build
+
 LINKER= -T Linkers/linker.ld
 MAP_FILE= -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
-BUILD_DIR= Build
 
-CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 
-LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nano.specs $(LINKER) $(MAP_FILE) \
+CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -Os \
+		--specs=nano.specs -ffunction-sections -fdata-sections
+
+LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) \
+			-Wl,--gc-sections -static --specs=nano.specs -Wl,--start-group -lc -lm -Wl,--end-group \
  			-Wl,--print-memory-usage
+
 OBJCOPY=arm-none-eabi-objcopy
 
 ###########################################

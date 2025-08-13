@@ -12,7 +12,7 @@ int main(void)
 
     while(1)
     {
-        if((ticks_get() - start_time) >= 500)
+        if((ticks_get() - start_time) >= 100)
         {
             GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_8);
             start_time = ticks_get();

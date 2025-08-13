@@ -44,3 +44,55 @@ Resulting binary size:
 | RAM           |   1.864 B |  60 KB | 3.03% |
 
 ## Linker and C flags optimizations
+
+- **`--specs=nosys.specs`**: Links against a “no system” implementation — tells
+the standard library to use **empty stubs** for system calls (like `_write`,
+`_read`, `_sbrk`) instead of trying to call an OS. Embedded bare-metal targets
+don’t have an OS; you provide your own low-level I/O if needed.
+
+- **`-Wl,--gc-sections`**: Garbage-collects unused sections from the final binary.
+When combined with `-ffunction-sections` and `-fdata-sections` during compile,
+the linker can remove unused functions and data, reducing binary size.
+
+- **`-static`**: Forces **static linking** — no shared libraries. Embedded
+firmware must be fully self-contained; no dynamic linking possible.
+
+- **`--specs=nano.specs`**: Links against the **newlib-nano** C library — a
+smaller, reduced-feature version of newlib. It is the default if not specified other lib. 
+Smaller printf/scanf features (unless linked with `-u _printf_float` to enable float formatting).
+
+- **`-Wl,--start-group ... -Wl,--end-group`**: Groups libraries for
+**multiple-pass linking**. In normal linking, if a library earlier in the
+command needs symbols from one later, it might fail. Grouping makes the linker
+search repeatedly until all symbols are resolved. Is used for circular
+dependencies between `libc`, `libm`, etc.
+
+- **`-lc`**: Link against the standard C library (`libc.a`). Standard C
+functions like `memcpy`, `strlen`, etc.
+
+- **`-lm`**: Link against the math library (`libm.a`). Provides: `sin`, `cos`,
+`sqrt`, `pow`, etc.
+
+Be careful: when using options like `-Wl,--gc-sections`, some sections in the
+linker script must be protected with `KEEP`, such as the vector table and other
+data arrays used by libc, like the `.init` and `.fini` sections.
+
+See the example in: [Linker with KEEP](Linkers/linker.ld)
+
+Here are the linker and C flags:
+
+```makefile
+CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 \
+		--specs=nano.specs -ffunction-sections -fdata-sections
+
+LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) \
+			-Wl,--gc-sections -static --specs=nano.specs -Wl,--start-group -lc -lm -Wl,--end-group \
+ 			-Wl,--print-memory-usage
+```
+
+Resulting binary size:
+
+| Memory Region | Used Size | Region Size | %age Used |
+| --- | --- | --- | --- |
+| FLASH         |  9.296 B | 256 KB | 3.55% |
+| RAM           |  1.704 B |  60 KB | 2.77% |
