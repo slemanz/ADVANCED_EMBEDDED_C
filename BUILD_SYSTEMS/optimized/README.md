@@ -96,3 +96,31 @@ Resulting binary size:
 | --- | --- | --- | --- |
 | FLASH         |  9.296 B | 256 KB | 3.55% |
 | RAM           |  1.704 B |  60 KB | 2.77% |
+
+## Flag -Os
+
+The last option is to use the `-Os` flag, but it’s not highly recommended because
+a lot of strange things can start to happen, so you need to have a deep
+understanding of the code you’re writing.
+
+```makefile
+CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -Os \
+		--specs=nano.specs -ffunction-sections -fdata-sections
+
+LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) \
+			-Wl,--gc-sections -static --specs=nano.specs -Wl,--start-group -lc -lm -Wl,--end-group \
+ 			-Wl,--print-memory-usage
+```
+
+Resulting binary size:
+
+| Memory Region | Used Size | Region Size | %age Used |
+| --- | --- | --- | --- |
+| FLASH         |  8.340 B | 256 KB | 3.18% |
+| RAM           |  1.704 B |  60 KB | 2.77% |
+
+---
+
+### Great reference
+
+[Demystifying Arm GNU Toolchain Specs: nano and nosys](https://metebalci.com/blog/demystifying-arm-gnu-toolchain-specs-nano-and-nosys/)
