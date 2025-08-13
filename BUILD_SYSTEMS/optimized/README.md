@@ -23,3 +23,24 @@ Resulting binary size:
 
 
 ## Remove Float Print
+
+The first thing that will help a lot is to avoid enabling floating-point support
+in `printf`.
+
+Here are the linker and C flags:
+
+```makefile
+CFLAGS  = -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0
+
+LDFLAGS = $(MACH) -mthumb $(FLOAT) --specs=nano.specs $(LINKER) $(MAP_FILE) \
+          -Wl,--print-memory-usage
+```
+
+Resulting binary size:
+
+| Memory Region | Used Size | Region Size | %age Used |
+| --- | --- | --- | --- |
+| FLASH         |  11.012 B | 256 KB | 4.20% |
+| RAM           |   1.864 B |  60 KB | 3.03% |
+
+## Linker and C flags optimizations

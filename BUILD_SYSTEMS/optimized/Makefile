@@ -11,7 +11,7 @@ BUILD_DIR= Build
 
 CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 
 LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nano.specs $(LINKER) $(MAP_FILE) \
- 			-u _printf_float -Wl,--print-memory-usage
+ 			-Wl,--print-memory-usage
 OBJCOPY=arm-none-eabi-objcopy
 
 ###########################################
@@ -57,8 +57,8 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJS) $(DRIVERS) $(BSP)
 	arm-none-eabi-size $(BUILD_DIR)/$(TARGET).elf
 
 load:
-	openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg \
-	-c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
+	openocd -f interface/jlink.cfg -c "transport select swd" -f target/stm32f4x.cfg -c init -c "reset init" \
+	-c "flash write_image erase Build/flash.elf" -c "reset run" -c shutdown
 
 clean:
 	rm -rf $(BUILD_DIR)/*.map $(BUILD_DIR)/*.o

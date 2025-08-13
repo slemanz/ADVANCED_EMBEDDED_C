@@ -14,7 +14,7 @@ int main(void)
     {
         if((ticks_get() - start_time) >= 500)
         {
-            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_5);
+            GPIO_ToggleOutputPin(GPIOA, GPIO_PIN_NO_8);
             start_time = ticks_get();
         }
     }
