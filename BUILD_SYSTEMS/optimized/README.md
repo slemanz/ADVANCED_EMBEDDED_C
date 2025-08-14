@@ -119,6 +119,21 @@ Resulting binary size:
 | FLASH         |  8.340 B | 256 KB | 3.18% |
 | RAM           |  1.704 B |  60 KB | 2.77% |
 
+## Compiler version
+
+Other thing that makes the difference is the compiler version, all the
+examples was made with: **arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)**.
+
+With we compile with the last linker and C flags in a newer version, for example: 
+**arm-none-eabi-gcc (Arm GNU Toolchain 12.3.Rel1 (Build arm-12.35)) 12.3.1 20230626**
+
+We will get the following, resulting binary size:
+
+| Memory Region | Used Size | Region Size | %age Used |
+| --- | --- | --- | --- |
+| FLASH         |  5.668 B | 256 KB | 2.16% |
+| RAM           |  2.016 B |  60 KB | 3.28% |
+
 ---
 
 ### Great reference
