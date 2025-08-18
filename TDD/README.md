@@ -41,3 +41,21 @@ assumptions into verified behavior.
 Among other reasons, TDD is needed to systematically get our code working as
 intended and to produce the automated test cases that keep the code working.
 
+### What is TDD?
+
+Test-Driven Development is a disciplined approach to coding where you write
+tests before writing production code. The process follows a simple rhythm:
+
+1. Write a small, failing test that defines the desired behavior.
+
+2. Write the minimal code to make the test pass.
+
+3. Refactor to improve design while keeping tests green.
+
+Unlike manual testing (slow, error-prone) or "test-later" approaches (where bugs
+pile up), TDD prevents defects upfront. The test suite becomes a living
+specification, growing alongside the code.
+
+### Topics
+
+[Intro](intro/)
