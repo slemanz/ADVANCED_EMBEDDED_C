@@ -58,4 +58,5 @@ specification, growing alongside the code.
 
 ### Topics
 
-[Intro](intro/)
+- [Intro](intro/)
+- [Tools](tools/)
