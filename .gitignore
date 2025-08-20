@@ -2,4 +2,6 @@
 
 *.elf
 *.map
+
 *.bin
+*run_tests*
