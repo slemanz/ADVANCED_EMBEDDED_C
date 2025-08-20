@@ -78,3 +78,78 @@ message for any failures.
 - [SprintfTest.c](unity_example/tests/SprintfTest.c)
 - [SprintfTestRunner.c](unity_example/tests/SprintfTestRunner.c)
 - [Makefile](unity_example/Makefile)
+
+### CPPUTest Framework
+
+CppUTest is a versatile unit test harness designed for both C and C++
+development, with a specific focus on embedded systems. Its key advantage is
+that it uses a simple subset of C++, allowing programmers to write tests using
+clear macros **without needing to know C++**. This makes it highly accessible
+for C developers. While the macros have different names (e.g., `LONGS_EQUAL`
+instead of `TEST_ASSERT_EQUAL`), the structure and logic of writing test cases
+and fixtures are nearly identical to Unity, making it easy to switch between the
+two.
+
+The most significant practical advantage of CppUTest is that it
+**self-installs**. Unlike Unity, which requires you to manually wire tests into
+a runner, CppUTest automatically discovers and runs your tests. This eliminates
+the tedious and error-prone process of maintaining `TEST_GROUP_RUNNER` and
+`RUN_TEST_GROUP` code, reducing the risk of tests being compiled but not
+executed.
+
+### **Key Comparisons and Concepts:**
+
+| Feature | Unity (C) | CppUTest (C++) | Didactic Note |
+| --- | --- | --- | --- |
+| **Test Case**         | `TEST(group, name)`           | `TEST(group, name)`           | The structure is identical.                           |
+| **Assertion**         | `TEST_ASSERT_EQUAL`           | `LONGS_EQUAL`                 | Functionally the same, different names.               |
+| **Fixture Setup**     | `TEST_SETUP(group)`           | `void setup()`                | `setup()` is automatically called before each test.   |
+| **Fixture Teardown**  | `TEST_TEAR_DOWN(group)`       | `void teardown()`             | `teardown()` is automatically called after each test. |
+| **Test Registration** | Manual (in Runner)            | **Automatic**                 | **CppUTest's biggest advantage:** no manual wiring.   |
+| **Output on Success** | `OK`                          | `OK`                          | Both are succinct.                                    |
+| **Output on Failure** | Detailed (file, line, reason) | Detailed (file, line, reason) | Both provide excellent debugging info.                |
+
+**Core Idea:** The principles of unit testing—writing focused tests, using
+assertions, and organizing code with fixtures to avoid duplication—are
+universal. CppUTest implements these principles in a way that is more automated
+and convenient, especially for larger projects. Choosing between Unity and
+CppUTest often comes down to personal preference or project constraints, but
+CppUTest's automatic test registration is a major productivity booster.
+
+### Unit Tests Can Crash
+
+Unit tests don't just fail with a clear error message; they can also crash or
+fail silently. This is especially true in C, where undefined behavior (like a
+buffer overrun in sprintf) can cause the test runner to exit unexpectedly. When
+this happens, the output is often useless because the crash prevents the harness
+from reporting the failure.
+
+**How to Debug a Crashing Test:**
+
+1.  **Use Verbose Mode:** Run the test harness with the `-v` (verbose)
+command-line option. This makes each test print its name *before* it runs. The
+last test name you see is the one that crashed.
+
+2.  **Filter Tests:** Use command-line options like `-g [groupname]` to run a
+specific test group or `-n [testname]` to run a single test. This isolates the
+problem, making it much easier to find.
+
+### **The Four-Phase Test Pattern: A Blueprint for Clarity**
+
+To write tests that are easy to read, understand, and maintain, follow the
+**Four-Phase Test** pattern. This structure acts as a recipe for every test you
+write:
+
+| Phase | Goal | What It Does |
+| --- | --- | --- |
+| **1. Setup**      | Create the preconditions  | Initialize variables, create objects, set up the test environment. |
+| **2. Exercise**   | Interact with the system  | Call the function or method you are testing. |
+| **3. Verify**     | Check the outcome         | Use assertion macros to confirm the result is what you expected. |
+| **4. Cleanup**    | Restore the initial state | Deallocate memory, close files, reset globals. (Often handled automatically by the test fixture's `teardown`). |
+
+**Why it matters:** Following this pattern makes your tests self-documenting.
+Anyone reading your test can immediately see what is being tested and what the
+expected behavior is. Breaking this pattern makes tests harder to debug and
+understand.
+
+
