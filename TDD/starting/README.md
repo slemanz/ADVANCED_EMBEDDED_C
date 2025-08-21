@@ -44,3 +44,34 @@ To consistently apply these concepts, follow this structure for each module you 
 | **Header (.h)** | **Public Interface** | Function prototypes. For ADTs, a `typedef` for a pointer to a hidden struct. |
 | **Source (.c)** | **Private Implementation** | The full code for all functions, private `static` helpers, and the actual definition of hidden data structs. |
 | **Test (.c or .cpp)** | **Verification** | All test cases for the module, separate from production code. |
+
+### Testable LED Driver Module**
+
+An LED driver is a software module that provides a clean interface to control
+hardware LEDs, abstracting away the low-level memory operations. The
+requirements specify control over 16 individual LEDs, including the ability to
+turn any single or all LEDs on/off, query their state, and ensure they start in
+an off state after initialization. The hardware interaction is defined by
+memory-mapping the LEDs to a 16-bit word where each bit corresponds to an LED
+(bit 0 for LED 1, bit 15 for LED 16), with a '1' lighting the LED and a '0'
+turning it off.
+
+To ensure reliability and testability off the target hardware, the driver will
+be designed as a single-instance module, hiding its internal data and operations
+behind a well-defined interface. This approach allows us to verify the driver's
+logic without physical hardware, using tests that simulate and check the memory
+writes and reads. The test list includes validating initialization, individual
+and group LED operations, state queries, and error handling for boundary and
+out-of-bounds values.
+
+LED Driver Tests:
+
+- All LEDs are off after the driver is initialized.
+- A single LED can be turned on.
+- A single LED can be turned off.
+- Multiple LEDs can be turned on/off .
+- Turn on all LEDs
+- Turn off all LEDs
+- Query LED state
+- Check boundary values
+- Check out-of-bounds values
