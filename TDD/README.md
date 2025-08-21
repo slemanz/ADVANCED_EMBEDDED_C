@@ -60,3 +60,4 @@ specification, growing alongside the code.
 
 - [Intro](intro/)
 - [Tools](tools/)
+- [Starting](starting/)
