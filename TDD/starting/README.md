@@ -35,7 +35,7 @@ data structure's internals:
     can hold and pass around a `CircularBuffer` pointer but cannot see or
     directly modify what's inside it.
 
-### **The Three-File Convention for Every Module:**
+### The Three-File Convention for Every Module
 
 To consistently apply these concepts, follow this structure for each module you create:
 
@@ -45,7 +45,7 @@ To consistently apply these concepts, follow this structure for each module you 
 | **Source (.c)** | **Private Implementation** | The full code for all functions, private `static` helpers, and the actual definition of hidden data structs. |
 | **Test (.c or .cpp)** | **Verification** | All test cases for the module, separate from production code. |
 
-### Testable LED Driver Module**
+### Testable LED Driver Module
 
 An LED driver is a software module that provides a clean interface to control
 hardware LEDs, abstracting away the low-level memory operations. The
@@ -75,3 +75,23 @@ LED Driver Tests:
 - Query LED state
 - Check boundary values
 - Check out-of-bounds values
+
+### Test List in TDD
+
+Creating a test list is the first crucial step in Test-Driven Development (TDD),
+acting as a practical roadmap derived directly from your requirements. This
+list—whether jotted on a notepad or typed as comments in your test file—captures
+your initial vision of what "done" looks like, including key behaviors and edge
+cases (like handling out-of-bounds values). It doesn’t need to be perfect; its
+purpose is to prevent oversight and provide direction. Spend only a few minutes
+drafting it, and stop once you hit diminishing returns (when new tests slow
+down). The list evolves as you code: tests may be split, combined, or added
+later, but it serves as a reorientation tool during deep dives.
+
+Contrary to the common advice of tackling the hardest problem first, TDD
+advocates starting with the simplest, most verifiable test that moves you toward
+your goal. This approach builds capability incrementally, ensuring a robust and
+well-tested foundation. Each small step is validated, reducing risk and
+clarifying design choices along the way. Over time, you’ll develop the skill to
+anticipate and prioritize tests effectively, turning uncertainty into structured
+progress.
