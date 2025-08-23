@@ -2,6 +2,7 @@
 
 *.elf
 *.map
+*.o
 
 *.bin
 *run_tests*
