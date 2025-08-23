@@ -128,3 +128,36 @@ the driver more reusable and flexible.
 
 ### Evolving the Interface and Implementation Through TDD
 
+A well-designed module starts with its interface, and TDD ensures we focus on
+this from the user’s perspective. The first tests act as the initial clients of
+the code, driving the design of how the module will be used. By starting with
+simple boundary conditions—like turning on LED 1, we gradually shape a clean and
+intuitive interface. This outside-in approach prioritizes usability and ensures
+the module meets actual needs before internal complexities are addressed.
+
+The process is guided by **Bob Martin’s Three Laws of TDD**:
+
+1.  **No production code without a failing test.**  
+2.  **No more test code than needed to fail.**  
+3.  **No more production code than needed to pass the test.**  
+
+These rules enforce discipline: each test must fail first, proving it can detect
+errors, and each production code change must be minimal and directly address the
+failure. This iterative cycle—red, green, refactor—builds reliability
+incrementally.
+
+Initially, implementations are intentionally simplistic—even "wrong"—like
+hardcoding `*ledsAddress = 1` in `TurnOn()`. This might feel uncomfortable, but
+it serves a critical purpose: it validates the test itself. By observing the
+test fail and then pass with the hardcoded value, we confirm the test is
+effective. This approach acts as a **software vice**, locking behavior in place
+and ensuring changes are controlled and deliberate.
+
+Resist the urge to over-engineer prematurely. Adding unneeded code introduces
+complexity without validation. Instead, trust the test list to guide progress.
+For example, after testing `TurnOn()`, the next logical step is `TurnOff()`,
+which complements the functionality and expands the interface. Each test forces
+the implementation to evolve—like storing the LED address only when
+necessary—ensuring every line of code is justified and tested. This structured
+procrastination leads to a robust, flexible design where the tests accumulate as
+a valuable artifact, documenting behavior and preventing regressions.
