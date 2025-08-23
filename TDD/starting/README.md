@@ -95,3 +95,33 @@ well-tested foundation. Each small step is validated, reducing risk and
 clarifying design choices along the way. Over time, you’ll develop the skill to
 anticipate and prioritize tests effectively, turning uncertainty into structured
 progress.
+
+### The First Test: Initializing the LED Driver
+
+The journey begins by creating the test file [LedDriverTest.c](tests/LedDriverTests.c)
+and setting up the basic structure with a `TEST_GROUP` and a failing test. The
+initial goal is to verify that all LEDs are off after initialization. To test this
+without real hardware, we use **dependency injection**: instead of hardcoding the
+hardware's memory address, the driver receives the address of a variable (`virtualLeds`)
+that simulates the LED bank in RAM. This technique "fakes out" the driver,
+allowing it to operate on a virtual representation that the test can inspect.
+The test sets `virtualLeds` to all ones (`0xffff`) before calling
+`LedDriver_Create()`, then asserts that the driver wrote zeros to it, proving it
+turned all LEDs off.
+
+The process follows TDD’s **red-green cycle**:
+
+1.  **Red:** Write a test that fails because the production function doesn’t
+exist or doesn’t work (`TEST_ASSERT_EQUAL_HEX16(0, virtualLeds)` fails).
+
+2.  **Green:** Implement the simplest code to pass the test (e.g., `*address = 0;`
+in `LedDriver_Create`).
+
+3.  **Refactor:** Improve the code without changing behavior (not needed yet).
+
+A key discipline is to **not let the code get ahead of the tests**. Even though
+you know the driver will need to store the LED address for future tests, you
+only add that functionality when a test requires it. This ensures every line of
+production code is justified by a test, leading to a robust and well-tested
+design. Dependency injection not only enables testing off-target but also makes
+the driver more reusable and flexible.
