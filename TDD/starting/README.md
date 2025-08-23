@@ -161,3 +161,44 @@ the implementation to evolve—like storing the LED address only when
 necessary—ensuring every line of code is justified and tested. This structured
 procrastination leads to a robust, flexible design where the tests accumulate as
 a valuable artifact, documenting behavior and preventing regressions.
+
+### The Philosophy of Incremental Progress in TDD
+
+1. **Embrace "Fake It 'Til You Make It" (DTSTTCPW):** A core principle in TDD is
+**Do The Simplest Thing That Could Possibly Work (DTSTTCPW)**. Early on, the
+simplest solution is often to "fake it" by hardcoding values, just as the LED
+driver hardcoded `*ledsAddress = 1` to turn on an LED. This might seem wrong or
+trivial, but it serves a critical purpose: it validates the test itself and
+quickly gets the test to pass. As more tests are added, faking becomes
+impractical, and the real implementation naturally emerges. The rule of thumb
+is simple: when faking becomes more effort than implementing the real logic,
+it’s time to "make it." This approach ensures you never over-engineer
+prematurely and that every change is justified by a test.
+
+2. **Keep Tests Small and Focused:** Each test should have a single, clear
+purpose. For example, instead of combining `TurnOn` and `TurnOff` into one test,
+we write separate tests. This ensures that a failure points directly to the
+broken functionality—if `TurnOff` fails, we know exactly where to look. Tests
+should follow the **Four-Phase Pattern** (Setup, Exercise, Verify, Cleanup) and
+be readable and concise. Avoid duplication by moving common setup code into
+fixtures (like `TEST_SETUP`), but keep each test focused on one behavior.
+Well-named tests act as documentation, describing the system’s intended
+behavior.
+
+3. **Refactor Only When Tests Are Green:** Refactoring—improving code structure
+without changing behavior—is safe only when **all tests are passing**. Passing
+tests act as a safety net, ensuring changes don’t break existing functionality.
+If tests are failing, avoid refactoring; focus instead on fixing the failure.
+Regularly clean up code smells (like duplication) during green phases to
+maintain design quality. For instance, if multiple tests initialize
+`virtualLeds` and call `LedDriver_Create`, move this duplication to a
+`TEST_SETUP` fixture to keep tests DRY (Don’t Repeat Yourself).
+
+4. **The TDD State Machine: A Disciplined Workflow:** TDD can be visualized as a state machine: 
+    - **Choose the next test** from your list, focusing on a small increment of behavior.
+    - **Write the test** and design the interface (e.g., adding function prototypes to headers).
+    - **Watch it fail** to confirm the test detects the missing or broken functionality.
+    - **Make it pass** with the simplest code possible, even if hardcoded.
+    - **Refactor** to eliminate duplication or improve design while tests are green.
+
+    This iterative cycle ensures focused progress, reduces errors, and builds a robust system one verified step at a time.
