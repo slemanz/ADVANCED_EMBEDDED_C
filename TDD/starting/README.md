@@ -201,4 +201,46 @@ maintain design quality. For instance, if multiple tests initialize
     - **Make it pass** with the simplest code possible, even if hardcoded.
     - **Refactor** to eliminate duplication or improve design while tests are green.
 
-    This iterative cycle ensures focused progress, reduces errors, and builds a robust system one verified step at a time.
+    This iterative cycle ensures focused progress, reduces errors, and builds a
+    robust system one verified step at a time.
+
+
+### The FIRST Principles of Effective Unit Testing
+
+Effective unit tests are **FIRST**, an acronym coined by Tim Ottinger and Jeff
+Langr that defines five critical attributes:
+
+- **Fast:** Tests must run quickly, enabling developers to execute them
+frequently without disrupting their workflow. Slow tests discourage regular use
+and break concentration.
+- **Isolated:** Tests should not depend on each other. Each test must set up its
+own environment and not rely on the state left by a previous test. This
+isolation ensures that a failure points directly to a specific problem.
+- **Repeatable:** Tests must produce the same results every time they are run,
+regardless of environment or order. This requires automation and consistency in
+test execution.
+- **Self-verifying:** A test should automatically determine whether it passed or
+failed, without requiring manual interpretation. It should output a clear "OK"
+for success or concise details for failure.
+- **Timely:** Tests are written *just before* the production code they validate,
+following the TDD cycle. This timeliness prevents bugs by ensuring requirements
+are defined and verified immediately.
+
+While TDD is more naturally associated with object-oriented (OO) languages due
+to their inherent modularity, the **FIRST** principles are equally vital in C.
+The challenge in C is that code is often less self-contained, with blurred
+module boundaries. However, by consciously designing modules with clear
+interfaces and hidden data (as discussed in earlier chapters), we can create
+testable units. Adhering to FIRST drives better design in C, it forces you to
+create modular, decoupled code that is easier to maintain and test, borrowing
+valuable lessons from OO design.
+
+The LedDriver example demonstrates how TDD methodically builds functionality
+through small, verified steps. Unlike "Debug-Later Programming," which risks
+overwhelming complexity and unexpected failures, TDD is like crossing a stream
+by stepping on rocks, each test is a secure step forward. The path may not be
+straight, but it is safe and controlled. Partial implementations and loose ends
+are acceptable because they are temporary; the test list guides future work, and
+each iteration adds new behavior without breaking existing functionality. This
+approach reduces risk, ensures continuous progress, and results in a robust,
+well-tested system.
