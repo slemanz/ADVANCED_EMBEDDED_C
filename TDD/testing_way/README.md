@@ -31,4 +31,15 @@ the LED states. All operations now update ledsImage and write it to virtualLeds
 via a new updateHardware() function. This ensures the driver works correctly
 regardless of hardware readability.
 
+Tests for upper/lower bounds (TurnOn(1) and TurnOn(16)) pass easily. However,
+out-of-bounds values (e.g., -1, 0, 17) cause unexpected behavior due to bit
+shifting quirks. We add guard clauses in TurnOn and TurnOff to ignore invalid
+inputs, ensuring safety.
+
+We discover that the guard clause in TurnOff was untested. We rename tests to be
+specific (e.g., OutOfBoundsTurnOnDoesNoHarm) and add
+OutOfBoundsTurnOffDoesNoHarm, which turns all LEDs on first to verify that
+TurnOff doesn’t alter valid states. This reinforces the rule: never let
+production code get ahead of tests. Always write a test for each new behavior.
+
 
