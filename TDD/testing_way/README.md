@@ -18,3 +18,17 @@ stability.
 With tests passing, we refactor the bit manipulation into a helper function,
 convertLedNumberToBit(), to improve readability. This follows the TDD cycle:
 after making a test pass, we improve the code without changing behavior.
+
+The test TurnOffAnyLed initially fails because the simple TurnOff implementation
+turns off all LEDs. To properly test masking (turning off one LED without
+affecting others), we first implement TurnAllOn (using 0xffff) and refactor
+magic numbers into enums (ALL_LEDS_ON, ALL_LEDS_OFF). Then, TurnOff uses bitwise
+AND with the complement of the LED bit: `*ledsAddress &= ~(convertLedNumberToBit(ledNumber));`.
+
+We learn the hardware LEDs are write-only, meaning the driver cannot read their
+state. To simulate this, we introduce ledsImage, a private variable that mirrors
+the LED states. All operations now update ledsImage and write it to virtualLeds
+via a new updateHardware() function. This ensures the driver works correctly
+regardless of hardware readability.
+
+
