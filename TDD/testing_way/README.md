@@ -42,4 +42,31 @@ OutOfBoundsTurnOffDoesNoHarm, which turns all LEDs on first to verify that
 TurnOff doesn’t alter valid states. This reinforces the rule: never let
 production code get ahead of tests. Always write a test for each new behavior.
 
+For better error handling, we use a `RUNTIME_ERROR()` macro to log out-of-bounds
+accesses. During tests, a stub captures the error message and parameters,
+allowing verification. The test OutOfBoundsProducesRuntimeError checks that
+calling TurnOn(-1) triggers the expected error.
+
+For unresolved questions, we use IGNORE_TEST to create executable reminders.
+These tests compile but don’t run, serving as TODOs that appear in test outputs.
+For example, IGNORE_TEST(LedDriver, OutOfBoundsToDo) prompts future action
+without breaking the build.
+
+Always remember:
+
+- TDD catches errors early, like the off-by-one mistake, preventing bugs from becoming entrenched.
+
+- Tests act as documentation, clearly specifying requirements through examples.
+
+- Refactor only when tests are green to maintain a safety net.
+
+- Never write code without a test to justify it, ensuring every change is verified.
+
+- Use stubs and mocks to isolate code from hardware dependencies, enabling off-target testing.
+
+
+
+
+
+
 
