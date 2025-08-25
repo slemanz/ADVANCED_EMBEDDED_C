@@ -33,7 +33,7 @@ regardless of hardware readability.
 
 Tests for upper/lower bounds (TurnOn(1) and TurnOn(16)) pass easily. However,
 out-of-bounds values (e.g., -1, 0, 17) cause unexpected behavior due to bit
-shifting quirks. We add guard clauses in TurnOn and TurnOff to ignore invalid
+shifting quirks. We add **guard clauses** in TurnOn and TurnOff to ignore invalid
 inputs, ensuring safety.
 
 We discover that the guard clause in TurnOff was untested. We rename tests to be
@@ -47,26 +47,71 @@ accesses. During tests, a stub captures the error message and parameters,
 allowing verification. The test OutOfBoundsProducesRuntimeError checks that
 calling TurnOn(-1) triggers the expected error.
 
-For unresolved questions, we use IGNORE_TEST to create executable reminders.
+For unresolved questions, we use `IGNORE_TEST` to create executable reminders.
 These tests compile but don’t run, serving as TODOs that appear in test outputs.
-For example, IGNORE_TEST(LedDriver, OutOfBoundsToDo) prompts future action
+For example, `IGNORE_TEST(LedDriver, OutOfBoundsToDo)` prompts future action
 without breaking the build.
 
-Always remember:
+### Keep Code Clean
 
-- TDD catches errors early, like the off-by-one mistake, preventing bugs from becoming entrenched.
+Always refactor **only when all tests are passing**. This is your safety net.
+Refactoring on green ensures that any structural changes you make don’t
+accidentally break existing functionality. If tests are failing, you lack the
+stability to safely improve the code.
 
-- Tests act as documentation, clearly specifying requirements through examples.
+Refactoring addresses code "smells" like duplication and magic numbers early,
+preventing them from evolving into larger problems. In the LedDriver, functions
+like `TurnOn` and `TurnOff` had duplicated logic for bounds checking and bit
+manipulation. By refactoring, we eliminate this duplication, making the code
+more maintainable and less error-prone.
 
-- Refactor only when tests are green to maintain a safety net.
+When extracting a new helper function (e.g., `IsLedOutOfBounds`), **copy the
+code first—don’t cut it**. Define the new function, paste the code, and adjust
+parameters and return types. Compile to ensure syntax correctness. Once it
+works, replace the original code with a call to the new function. This approach
+keeps you one undo away from working code if something goes wrong.
 
-- Never write code without a test to justify it, ensuring every change is verified.
+Magic numbers (like `1` and `16` for LED bounds) obscure meaning. Replace them
+with named constants (e.g., `FIRST_LED`, `LAST_LED`) to improve readability and
+centralize changes. This makes the code self-documenting and easier to modify.
 
-- Use stubs and mocks to isolate code from hardware dependencies, enabling off-target testing.
+Extract helper functions to match the abstraction level of the calling code. For
+example, `setLedImageBit` and `clearLedImageBit` hide the complex bit
+manipulation details, making `TurnOn` and `TurnOff` more readable and focused on
+their high-level goals.
 
+Refactoring in small, incremental steps reduces risk. Change one caller at a
+time to a new helper function, and verify tests pass after each change. If a
+test fails, **undo immediately** rather than debugging. This minimizes confusion
+and keeps you in a known good state.
 
+Duplicate code is a primary source of bugs. When the same logic appears in
+multiple places, a change in one spot must be replicated everywhere—a
+error-prone process. By centralizing logic into single functions, you ensure
+consistency and reduce future maintenance effort.
 
+Tips:
 
+- Use `static` helper functions to avoid polluting the global namespace.
+- Compile frequently to catch syntax errors early.
+- If a refactoring breaks tests, revert and reassess rather than pressing forward.
+- Keep functions small and focused on a single responsibility.
 
+**LED Driver Tests:**
 
+- ~~All LEDs are off after the driver is initialized.~~
+- ~~A single LED can be turned on.~~
+- ~~A single LED can be turned off.~~
+- Multiple LEDs can be turned ~~on~~/off.
+- ~~turn on all LEDs~~
+- Turn off all LEDs
+- Query LED state
+- ~~Check boundary values~~
+- Check out-of-bounds values
+    - ~~Beyond max breaks nothing~~
+    - ~~Under min breaks nothing~~
+    - ~~Runtime Error~~
+    - What should really happen?
+- ~~Hardware interaction~~
 
+### Repeat until Done
