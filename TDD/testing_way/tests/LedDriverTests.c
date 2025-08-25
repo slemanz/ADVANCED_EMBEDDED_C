@@ -1,5 +1,6 @@
 #include "unity_fixture.h"
 #include "LedDriver.h"
+#include "RuntimeErrorStub.h"
 
 static uint16_t virtualLeds;
 
@@ -16,7 +17,6 @@ TEST_TEAR_DOWN(LedDriver)
 
 TEST(LedDriver, LedsOffAfterCreate)
 {
-    //TEST_FAIL_MESSAGE("Start here");
     virtualLeds = 0xFFFF;
     LedDriver_Create(&virtualLeds);
     TEST_ASSERT_EQUAL_HEX16(0, virtualLeds);
@@ -91,6 +91,19 @@ TEST(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
     TEST_ASSERT_EQUAL_HEX16(0xffff, virtualLeds);
 }
 
+TEST(LedDriver, OutOfBoundsProducesRuntimeError)
+{
+    LedDriver_TurnOn(-1);
+    TEST_ASSERT_EQUAL_STRING("LED Driver: out-of-bounds LED",
+    RuntimeErrorStub_GetLastError());
+    TEST_ASSERT_EQUAL(-1, RuntimeErrorStub_GetLastParameter());
+}
+
+IGNORE_TEST(LedDriver, OutOfBoundsToDo)
+{
+    /* TODO: what should we do during runtime? */
+}
+
 
 TEST_GROUP_RUNNER(LedDriver)
 {
@@ -104,4 +117,6 @@ TEST_GROUP_RUNNER(LedDriver)
     RUN_TEST_CASE(LedDriver, UpperAndLowerBounds)
     RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOnDoesNoHarm)
     RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
+    RUN_TEST_CASE(LedDriver, OutOfBoundsProducesRuntimeError)
+    RUN_TEST_CASE(LedDriver, OutOfBoundsToDo)
 }
