@@ -8,7 +8,8 @@ SRC_DIR 	= src
 
 INCLUDES += -I ../unity
 INCLUDES += -I tests
-INCLUDES += -I src
+INCLUDES += -I inc
+INCLUDES += -I mocks
 
 SRC 	+= $(BUILD_DIR)/LedDriver.o
 
@@ -17,6 +18,8 @@ TESTS 	+= $(BUILD_DIR)/AllTestRunner.o
 
 UNITY 	+= $(BUILD_DIR)/unity_fixture.o
 UNITY 	+= $(BUILD_DIR)/unity.o
+
+MOCKS 	+= $(BUILD_DIR)/RuntimeErrorStub.o
 
 all: $(BUILD_DIR) test
 
@@ -32,7 +35,11 @@ $(BUILD_DIR)/%.o: $(UNITY_DIR)/%.c
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(SRC_DIR)/$(*).c
 
-test: $(TESTS) $(UNITY) $(SRC)
+$(BUILD_DIR)/%.o: mocks/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o mocks/$(*).c
+
+
+test: $(TESTS) $(UNITY) $(SRC) $(MOCKS)
 	$(CC) $^ -o $(BUILD_DIR)/run_tests
 	./$(BUILD_DIR)/run_tests
 
