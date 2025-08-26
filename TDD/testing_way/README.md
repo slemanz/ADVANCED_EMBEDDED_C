@@ -159,3 +159,31 @@ TDD isn’t just about passing tests—it’s about creating maintainable,
 well-documented code. By methodically addressing each test, you build a reliable
 system incrementally. The LedDriver is now complete, with all features
 implemented and verified.
+
+### The Final Review
+
+Before declaring a module complete, always step back to review the code and
+tests for cleanliness and completeness. In the LedDriver, the production code is
+in good shape: functions are short, names are clear, and magic numbers have been
+eliminated. However, some magic numbers remain in the test code. This is a
+conscious trade-off—keeping these values visible in tests can enhance
+readability and serve as direct documentation of the expected behavior. The
+decision to refactor further is a judgment call based on whether the code's
+clarity or maintainability is at risk.
+
+As the design evolved, so did the testing strategy. Early tests relied on
+checking the raw `virtualLeds` variable, while later tests used the higher-level
+query functions like `IsOn` and `IsOff`. This shift suggests an opportunity to
+refactor tests for consistency, perhaps using query functions more broadly.
+However, it remains crucial to retain some tests that verify the exact bit
+patterns written to the hardware, ensuring low-level correctness. The balance
+between these approaches depends on the project's needs and the team's
+standards. 
+
+This LedDriver example provided a hands-on look at TDD in action. The test list
+evolved naturally, with new tests added as understanding deepened and others
+completed or adjusted. This adaptability is a strength of TDD, allowing you to
+respond to insights gained during development. 
+
+TDD requires discipline, but over time, the rapid feedback and confidence it
+provides become addictive, transforming how you approach coding and design.
