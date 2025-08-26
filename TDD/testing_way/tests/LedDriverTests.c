@@ -95,13 +95,50 @@ TEST(LedDriver, OutOfBoundsProducesRuntimeError)
 {
     LedDriver_TurnOn(-1);
     TEST_ASSERT_EQUAL_STRING("LED Driver: out-of-bounds LED",
-    RuntimeErrorStub_GetLastError());
+                                RuntimeErrorStub_GetLastError());
     TEST_ASSERT_EQUAL(-1, RuntimeErrorStub_GetLastParameter());
 }
 
 IGNORE_TEST(LedDriver, OutOfBoundsToDo)
 {
     /* TODO: what should we do during runtime? */
+}
+
+TEST(LedDriver, IsOn)
+{
+    TEST_ASSERT_FALSE(LedDriver_IsOn(11));
+    LedDriver_TurnOn(11);
+    TEST_ASSERT_TRUE(LedDriver_IsOn(11));
+}
+
+TEST(LedDriver, IsOff)
+{
+    TEST_ASSERT_TRUE(LedDriver_IsOff(12));
+    LedDriver_TurnOn(12);
+    TEST_ASSERT_FALSE(LedDriver_IsOff(12));
+}
+
+TEST(LedDriver, OutOfBoundsLedsAreAlwaysOff)
+{
+    TEST_ASSERT_TRUE(LedDriver_IsOff(0));
+    TEST_ASSERT_TRUE(LedDriver_IsOff(17));
+    TEST_ASSERT_FALSE(LedDriver_IsOn(0));
+    TEST_ASSERT_FALSE(LedDriver_IsOn(17));
+}
+
+TEST(LedDriver, TurnOffMultipleLeds)
+{
+    LedDriver_TurnAllOn();
+    LedDriver_TurnOff(9);
+    LedDriver_TurnOff(8);
+    TEST_ASSERT_EQUAL_HEX16((~0x180)&0xffff, virtualLeds);
+}
+
+TEST(LedDriver, AllOff)
+{
+    LedDriver_TurnAllOn();
+    LedDriver_TurnAllOff();
+    TEST_ASSERT_EQUAL_HEX16(0, virtualLeds);
 }
 
 
@@ -114,9 +151,14 @@ TEST_GROUP_RUNNER(LedDriver)
     RUN_TEST_CASE(LedDriver, TurnOffAnyLed);
     RUN_TEST_CASE(LedDriver, AllOn);
     RUN_TEST_CASE(LedDriver, LedMemoryIsNotReadable);
-    RUN_TEST_CASE(LedDriver, UpperAndLowerBounds)
-    RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOnDoesNoHarm)
-    RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
-    RUN_TEST_CASE(LedDriver, OutOfBoundsProducesRuntimeError)
-    RUN_TEST_CASE(LedDriver, OutOfBoundsToDo)
+    RUN_TEST_CASE(LedDriver, UpperAndLowerBounds);
+    RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOnDoesNoHarm);
+    RUN_TEST_CASE(LedDriver, OutOfBoundsTurnOffDoesNoHarm);
+    RUN_TEST_CASE(LedDriver, OutOfBoundsProducesRuntimeError);
+    RUN_TEST_CASE(LedDriver, OutOfBoundsToDo);
+    RUN_TEST_CASE(LedDriver, IsOn);
+    RUN_TEST_CASE(LedDriver, IsOff);
+    RUN_TEST_CASE(LedDriver, OutOfBoundsLedsAreAlwaysOff);
+    RUN_TEST_CASE(LedDriver, TurnOffMultipleLeds);
+    RUN_TEST_CASE(LedDriver, AllOff);
 }
