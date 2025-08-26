@@ -187,3 +187,16 @@ respond to insights gained during development.
 
 TDD requires discipline, but over time, the rapid feedback and confidence it
 provides become addictive, transforming how you approach coding and design.
+
+### Code
+
+- **[LedDriver.h](inc/LedDriver.h)**
+- **[LedDriver.c](src/LedDriver.c)**
+- **[LedDriverTests.c](tests/LedDriverTests.c)**
+- **[AllLedDriverTests.c](tests/AllTestRunner.c)**
+
+Others:
+
+- **[RuntimeError.h](inc/util/RuntimeError.h)**
+- **[RuntimeErrorStub.h](mocks/RuntimeErrorStub.h)**
+- **[RuntimeErrorStub.c](mocks/RuntimeErrorStub.c)**
