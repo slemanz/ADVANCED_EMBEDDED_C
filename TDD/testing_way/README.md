@@ -115,3 +115,47 @@ Tips:
 - ~~Hardware interaction~~
 
 ### Repeat until Done
+
+As you progress in TDD, your test list evolves. Completed tests are checked off,
+and new tests are added as your understanding deepens. This is natural—TDD is a
+learning process. The goal is to systematically address each requirement until
+the module is complete.
+
+The next feature is querying LED states with `LedDriver_IsOn()`. Since the
+hardware is write-only, the driver internally tracks state via `ledsImage`. The
+test first checks that an LED is off, turns it on, and verifies it is on. After
+adding the function prototype and a failing implementation (`return FALSE;`),
+you implement the logic: `return ledsImage & (convertLedNumberToBit(ledNumber));`.
+
+Duplicate code violates the **DRY (Don’t Repeat Yourself)** principle. For
+example, bounds checking appeared in multiple functions. Centralizing this into
+`IsLedOutOfBounds()` reduces maintenance risk and improves readability.
+Performance concerns are secondary; prioritize clean design unless profiling
+proves otherwise.
+
+For `LedDriver_IsOn()`, out-of-bounds LEDs should return `FALSE` (off). To
+validate the test, temporarily hardcode `return TRUE;` and watch it fail. Then
+add the guard clause: `if (IsLedOutOfBounds(ledNumber)) return FALSE;`. This
+ensures robustness.
+
+Instead of duplicating logic, implement `LedDriver_IsOff()` by reusing
+`LedDriver_IsOn()`: `return !LedDriver_IsOn(ledNumber);`. However,
+**always write tests first**, even for seemingly simple functions. Test both
+normal and out-of-bounds cases to ensure correctness.
+
+The tests `TurnOffMultipleLeds` and `AllOff` leverage existing functions.
+`TurnOffMultipleLeds` turns on all LEDs, turns off two, and checks the result.
+`AllOff` turns all LEDs on and then off, verifying the state. These tests pass
+without new code because the implementation is already generalized—a sign of
+good design.
+
+After implementing all tests, step back and review. Ensure:
+- All requirements are met.
+- Tests cover normal, edge, and error cases.
+- Code is clean and free of duplication.
+- Documentation (via test names) is clear.
+
+TDD isn’t just about passing tests—it’s about creating maintainable,
+well-documented code. By methodically addressing each test, you build a reliable
+system incrementally. The LedDriver is now complete, with all features
+implemented and verified.
