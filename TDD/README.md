@@ -63,3 +63,4 @@ specification, growing alongside the code.
 - [Starting](starting/)
 - [Testing your Way](testing_way/)
 - [Strategy](strategy/)
+- [Doubts](doubts/)
