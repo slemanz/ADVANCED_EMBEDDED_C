@@ -133,3 +133,37 @@ requires a single-command build process for both host and target. CI servers
 monitor code repositories, trigger builds on changes, and notify teams of
 failures. For embedded systems, this means running host tests first, followed by
 target tests, ensuring compatibility at every step.
+
+### Testing with Hardware
+
+While TDD and off-target testing build confidence in software logic, hardware
+interaction must ultimately be validated on real hardware. Automated tests alone
+cannot catch all hardware-related issues, such as incorrect memory mapping,
+signal inversion, or physical defects. Testing with hardware ensures the entire
+system—software and hardware—works together as intended.
+
+Automated tests can verify hardware functionality when the hardware supports
+self-interrogation. For example, a CFI-compliant flash memory device responds to
+specific commands with known values. Writing tests that send these commands and
+check responses provides a quick sanity check. These tests can be integrated
+into CI pipelines and even shipped as built-in diagnostics.
+
+As in Randy Coulman’s story, writing hardware acceptance tests before hardware
+is available fosters collaboration between software and hardware teams. These
+tests, run against simulations initially and later on real hardware, catch
+misinterpretations of specs, compiler issues, and FPGA regressions. Automated
+builds that run these tests give hardware engineers confidence in their changes,
+even during off-hours.
+
+Some tests require human observation, such as verifying that the correct LED
+lights up. Partially automated tests prompt operators to check physical outputs.
+These tests are costly but necessary for validating hardware-dependent code.
+They should be run sparingly—triggered by hardware changes or major software
+updates—to minimize manual effort while ensuring correctness.
+
+Specialized test equipment can automate complex hardware validation. Dee’s story
+shows how controlling instruments via scripts (e.g., serial commands to a T1
+signal generator) enables comprehensive testing of error conditions and
+real-world scenarios. This approach transforms tedious manual tests into
+repeatable, automated regressions, catching defects early and improving overall
+quality.
