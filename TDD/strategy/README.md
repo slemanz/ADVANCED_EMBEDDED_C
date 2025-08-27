@@ -90,3 +90,46 @@ project progresses, eval board testing (Stage 3) might be reduced if the target
 is reliable. However, Stage 1 (host-based TDD) remains the core throughout,
 enabling continuous progress regardless of hardware constraints. This flexible,
 risk-aware approach ensures robust, portable embedded software.
+
+### Dual-Target Incompatibilities
+
+> The world is real, not ideal.
+
+The embedded world is far from ideal; differences between development and target
+environments are inevitable. These disparities—compiler bugs, library
+inconsistencies, header file variations, and data handling quirks, can cause code
+to behave differently across platforms. Acknowledging and addressing these
+issues is crucial for reliable dual-target testing.
+
+A real-world example involved a target compiler’s `strstr()` function, which
+incorrectly handled empty strings, a deviation from the standard behavior. This
+caused tests to pass on the host but fail on the target. The solution was to
+create a platform-specific adapter function, `PlatformSpecificStrStr()`, which
+encapsulated the workaround. This approach isolated the fix, maintained clarity
+through comments, and ensured consistent behavior across environments.
+
+Header files often differ between platforms, such as the safer `sprintf`
+variants: `snprintf` in Unix and `_snprintf` in Windows. Conditional compilation
+(e.g., `#ifdef`) can clutter code and reduce readability. Instead, use
+platform-specific directories and headers to map functions, leveraging the
+compiler and linker rather than preprocessor directives. This keeps code clean
+and maintainable.
+
+The adapter pattern is a powerful tool for resolving platform differences. By
+defining a common interface (e.g., `PlatformSpecificSprintf`) and implementing
+it for each platform, you decouple your code from platform-specific details.
+This pattern transforms incompatible interfaces into consistent ones, ensuring
+behavior aligns across environments. Tests define the expected behavior, driving
+the adapter’s implementation.
+
+Write platform-independent tests to validate adapter functions. For example,
+tests for `PlatformSpecificSprintf` should check both success and edge cases
+(e.g., buffer overflows). Differences in implementation details (like return
+values for truncated output) must be reconciled to meet test expectations, even
+if it means modifying one platform’s behavior to match the other.
+
+CI automates builds and tests across platforms, catching issues early. It
+requires a single-command build process for both host and target. CI servers
+monitor code repositories, trigger builds on changes, and notify teams of
+failures. For embedded systems, this means running host tests first, followed by
+target tests, ensuring compatibility at every step.
