@@ -168,3 +168,22 @@ drivers), we use mocks to simulate specific interaction sequences rather than
 building full simulators. This targeted simulation approach is far less complex
 than full hardware simulation while remaining highly effective for testing
 critical hardware interactions.
+
+### C++ Test Harness for Testing C
+
+C-only test harnesses like Unity require a multi-step process to install test
+cases, making it easy to forget to install tests. This creates a risk where
+tests appear to pass simply because they weren't run. The manual installation
+process also makes test refactoring difficult, as changes require updates in
+multiple places.
+
+CppUTest uses C++ features to automatically install tests through file-scope
+object initialization. The TEST() macro creates a C++ object whose constructor
+installs the test into a global list before main() runs. This eliminates manual
+test registration and ensures no tests are accidentally omitted.
+
+Using a C++ test harness for C code provides additional advantages: it helps
+identify portability issues when compiling with different compilers, reduces
+resistance to C++ adoption, and offers conversion tools to Unity for target
+execution if needed. The automated approach encourages better testing practices
+and reduces maintenance overhead.
