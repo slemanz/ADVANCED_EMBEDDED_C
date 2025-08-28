@@ -88,3 +88,22 @@ in complex systems. TDD catches these mistakes immediately during development,
 preventing them from evolving into larger issues. While not foolproof, TDD is
 highly effective at minimizing wasted effort and ensuring that changes have only
 their intended consequences.
+
+### We Have a Long Build Time
+
+A core requirement for Test-Driven Development is a rapid edit/build/test cycle,
+ideally measured in seconds. However, large embedded projects often suffer from
+build times that take hours, which is incompatible with the TDD rhythm. This
+doesn't mean abandoning TDD but rather adapting the build process to support it.
+
+The solution is to avoid building the entire system for TDD. Instead, create
+multiple smaller unit test builds that compile only specific parts of the
+system. This approach leverages the existing modular structure of your project
+(libraries, components, subsystems) and uses tailored makefiles or build targets
+to generate focused test executables quickly.
+
+The main obstacle to creating these smaller test builds is often the codebase
+itself. A common antipattern where data structures and function calls are
+tightly entangled across the system ("free-for-all") makes isolation difficult.
+Overcoming this requires techniques for breaking dependencies, which will be
+essential for enabling effective TDD in complex embedded systems.
