@@ -126,4 +126,45 @@ without disrupting ongoing development. By focusing on areas you're actively
 working on, you systematically build a safety net that makes future changes
 safer and more predictable.
 
-### 
+### We Have Constrained Memory
+
+Embedded systems often have severe memory constraints that aren't present in
+development environments. To effectively practice TDD under these conditions,
+use dual-targeting to test most code off-target, select a minimal test harness
+like Unity, create a lab version with expanded memory, and organize tests into
+multiple smaller runners that fit within memory limits.
+
+Track target memory usage systematically. For example, if your system has 1MB of
+flash, use your continuous integration system to build the binary and generate a
+map file. A simple script can extract memory consumption data from this file,
+allowing you to monitor usage patterns over time.
+
+Display memory usage trends on a Big Visible Chart (BVC) that the entire team
+can see. This visual tracking helps identify unexpected spikes 
+and enables quick investigation of changes that caused increased
+memory consumption. You can also set memory budgets for each iteration and
+configure builds to fail when exceeding these limits, ensuring immediate
+attention to resource issues. This approach works for tracking any critical
+resource like RAM, CPU idle time, or I/O data rates.
+
+### Interact with Hardware
+
+Tests that interact with hardware can be effectively written and run off-target.
+The LedDriver example demonstrated how to verify that code meets our
+understanding of hardware specifications without requiring actual hardware.
+While this doesn't guarantee hardware compatibility, it ensures the logic is
+sound. Any hardware misunderstandings discovered during integration can then be
+corrected in both production code and tests.
+
+Many drivers involve more complex hardware interactions than the LedDriver. For
+these cases, we use test doubles (stubs and mocks) to simulate hardware
+behavior. This approach allows comprehensive testing of software-hardware
+interactions without physical hardware, making it practical to test complex
+scenarios thoroughly.
+
+We can treat time as a function call, allowing us to control and test
+time-dependent code effectively. When working close to hardware (like device
+drivers), we use mocks to simulate specific interaction sequences rather than
+building full simulators. This targeted simulation approach is far less complex
+than full hardware simulation while remaining highly effective for testing
+critical hardware interactions.
