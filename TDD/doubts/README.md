@@ -67,3 +67,24 @@ hunting through existing code to find the source, wasting valuable time. TDD
 also naturally results in comprehensive and rigorous test coverage tailored to
 the code's requirements, whereas Test-After often leads to gaps in coverage and
 less effective tests.
+
+### Unit Tests Don’t Find All the Bugs
+
+TDD ensures that each individual unit of code—each "building block", behaves
+exactly as intended. While it cannot catch every possible bug, it creates a
+reliable foundation by verifying that every line of code meets expectations.
+This precision at the unit level is crucial for constructing complex systems
+that function correctly.
+
+TDD is not a substitute for other testing types. Integration tests, acceptance
+tests, exploratory tests, and load tests are still essential. These higher-level
+tests focus on broader issues: integration problems, requirement validation, and
+system performance. TDD reduces unit-level defects, allowing these other tests
+to uncover more appropriate and complex issues rather than being bogged down by
+simple coding errors.
+
+Small errors, like a single typo, can lead to significant and hard-to-find bugs
+in complex systems. TDD catches these mistakes immediately during development,
+preventing them from evolving into larger issues. While not foolproof, TDD is
+highly effective at minimizing wasted effort and ensuring that changes have only
+their intended consequences.
