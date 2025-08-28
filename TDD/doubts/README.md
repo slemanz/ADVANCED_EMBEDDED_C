@@ -107,3 +107,23 @@ itself. A common antipattern where data structures and function calls are
 tightly entangled across the system ("free-for-all") makes isolation difficult.
 Overcoming this requires techniques for breaking dependencies, which will be
 essential for enabling effective TDD in complex embedded systems.
+
+### We Have Existing Code
+
+Most developers work with existing code that has few or no automated unit tests.
+This does not prevent you from starting TDD. The key insight is that you don't
+need to write tests for the entire codebase at once—this would be impractical
+and halt development.
+
+The recommended strategy is to incrementally add tests while continuing to
+deliver new functionality. This involves four practical techniques: using TDD
+for all new code you write, adding tests whenever you modify existing code,
+writing tests to cover bug fixes, and proactively investing in strategic tests
+for critical components.
+
+This approach allows you to gradually improve your codebase's test coverage
+without disrupting ongoing development. By focusing on areas you're actively
+working on, you systematically build a safety net that makes future changes
+safer and more predictable.
+
+### 
