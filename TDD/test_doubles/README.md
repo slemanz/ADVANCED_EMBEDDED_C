@@ -61,6 +61,7 @@ than creating a fake one. The test can then verify that the code correctly
 manipulates the real data structure.
 
 Test doubles become essential in specific situations: 
+
 1) Achieving hardware independence for testing without physical devices.
 2) Injecting difficult-to-produce inputs to trigger rare execution paths.
 3) Replacing slow collaborators like databases to maintain test speed. 
@@ -68,5 +69,42 @@ Test doubles become essential in specific situations:
 5) Working with unfinished components during concurrent development. 
 6) Avoiding complex configuration requirements of certain dependencies.
 
-**3. Flexible Application in Testing**
-Using test doubles isn't an all-or-nothing decision. Most tests will use a combination of real collaborators and test doubles, and the same code might use different configurations for different test scenarios. This flexible approach allows for comprehensive testing while maintaining practical constraints.
+Using test doubles isn't an all-or-nothing decision. Most tests will use a
+combination of real collaborators and test doubles, and the same code might use
+different configurations for different test scenarios. This flexible approach
+allows for comprehensive testing while maintaining practical constraints.
+
+### Faking It in C
+
+C offers only three fundamental techniques for implementing test doubles: linker
+substitution, function pointer substitution, and preprocessor substitution. Each
+method serves different purposes and has specific use cases. Understanding when
+to apply each technique is crucial for effective testing in C environments.
+
+Link-time substitution replaces an entire module for testing purposes. This
+approach is ideal when you need to substitute hardware-dependent modules,
+third-party libraries, or operating system dependencies for off-target testing.
+It's particularly useful when you don't control the interface of the module
+being replaced. However, if you need to test the actual module itself, you'll
+require a separate test executable without the test double.
+
+Function pointer substitution provides precise control by allowing you to
+replace specific functions for individual test cases. While this method offers
+great flexibility, it comes with trade-offs: increased complexity, RAM usage,
+and potential impacts on function declaration readability. This technique works
+best when you control the interface and need selective replacement of functions
+rather than whole modules.
+
+Preprocessor substitution should be used sparingly, only when other methods
+won't work. It can break unwanted include chains or temporarily override
+function names, as demonstrated by CppUTest's memory allocation monitoring.
+However, this technique fundamentally changes the compiled code and has
+widespread effects. Whenever possible, consider wrapping problematic code with a
+controllable interface instead of using preprocessor substitution.
+
+You can combine link-time and function pointer substitution for enhanced
+flexibility. This hybrid approach uses link-time stubs containing function
+pointers that can be dynamically overridden by test cases. This provides the
+control of function pointers without requiring interface changes to the
+depended-on components, offering a powerful solution for complex testing
+scenarios.
