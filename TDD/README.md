@@ -64,3 +64,5 @@ specification, growing alongside the code.
 - [Testing your Way](testing_way/)
 - [Strategy](strategy/)
 - [Doubts](doubts/)
+- [Test Doubles](test_doubles/)
+- [Production Code](production_code/)

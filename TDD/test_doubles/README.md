@@ -29,3 +29,26 @@ specific interactions (like method calls with correct parameters) occurred
 during the test. You use a stub when you need a component to return specific
 data to test your code's behavior, and a mock when you need to check how your
 code interacted with a dependency. 
+
+### Breaking Dependencies
+
+Real-world code typically depends on other modules, operating systems, or
+hardware devices, making automated testing difficult. These dependencies can
+resist testing when they're hard to control or unpredictable. The solution lies
+in designing testable code through rigorous use of interfaces, encapsulation,
+and data hiding, rather than relying on unprotected global data.
+
+We should use the real production collaborators when possible, but test doubles
+become necessary when collaborators interfere with automated testing. This
+occurs when we need precise control over behavior - such as simulating network
+failures at specific moments during message sequences. Test doubles allow us to
+create repeatable test scenarios that would be impossible or impractical with
+real collaborators.
+
+Without test doubles, testing becomes complex as test cases must manage all
+direct and transitive dependencies, leading to fragile tests that break with
+design changes. Test doubles act as substitutes for real collaborators,
+simplifying tests by eliminating dependency chains. They provide controlled
+inputs to the code under test and capture outputs for verification, while
+remaining much simpler than the actual components they replace.
+
