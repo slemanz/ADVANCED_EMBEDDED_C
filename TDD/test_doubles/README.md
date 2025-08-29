@@ -52,3 +52,21 @@ simplifying tests by eliminating dependency chains. They provide controlled
 inputs to the code under test and capture outputs for verification, while
 remaining much simpler than the actual components they replace.
 
+### Use of Test Doubles
+
+The fundamental rule for test doubles is to use real production code whenever
+possible, and only resort to test doubles when necessary. For example, if your
+code uses a linked list, test with the actual linked list implementation rather
+than creating a fake one. The test can then verify that the code correctly
+manipulates the real data structure.
+
+Test doubles become essential in specific situations: 
+1) Achieving hardware independence for testing without physical devices.
+2) Injecting difficult-to-produce inputs to trigger rare execution paths.
+3) Replacing slow collaborators like databases to maintain test speed. 
+4) Controlling volatile dependencies like system clocks for reproducible tests. 
+5) Working with unfinished components during concurrent development. 
+6) Avoiding complex configuration requirements of certain dependencies.
+
+**3. Flexible Application in Testing**
+Using test doubles isn't an all-or-nothing decision. Most tests will use a combination of real collaborators and test doubles, and the same code might use different configurations for different test scenarios. This flexible approach allows for comprehensive testing while maintaining practical constraints.
