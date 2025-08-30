@@ -63,3 +63,9 @@ logic, LightController manages hardware interactions, and TimeService provides
 OS time services. This separation enables effective testing by allowing
 independent verification of each layer's functionality through appropriate test
 doubles.
+
+### Understanding Link-Time Substitution
+
+Link-time substitution works by separating interface from implementation. The LightScheduler depends only on interface headers, while the actual implementation is determined at link time. This creates what Michael Feathers calls a "link seam" - a point where we can flexibly substitute different implementations. The production code binds to real implementations, but tests can leverage this seam to provide alternatives.
+
+In practice, we compile production code into a library while keeping test doubles as object files. The test build's makefile explicitly links the test double objects before linking the production library. This ordering allows test versions to override production functions with the same names, effectively breaking dependencies on hardware and OS components during testing.
