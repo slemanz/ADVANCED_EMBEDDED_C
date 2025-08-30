@@ -66,6 +66,35 @@ doubles.
 
 ### Understanding Link-Time Substitution
 
-Link-time substitution works by separating interface from implementation. The LightScheduler depends only on interface headers, while the actual implementation is determined at link time. This creates what Michael Feathers calls a "link seam" - a point where we can flexibly substitute different implementations. The production code binds to real implementations, but tests can leverage this seam to provide alternatives.
+Link-time substitution works by separating interface from implementation. The
+LightScheduler depends only on interface headers, while the actual
+implementation is determined at link time. This creates what Michael Feathers
+calls a "link seam" - a point where we can flexibly substitute different
+implementations. The production code binds to real implementations, but tests
+can leverage this seam to provide alternatives.
 
-In practice, we compile production code into a library while keeping test doubles as object files. The test build's makefile explicitly links the test double objects before linking the production library. This ordering allows test versions to override production functions with the same names, effectively breaking dependencies on hardware and OS components during testing.
+In practice, we compile production code into a library while keeping test
+doubles as object files. The test build's makefile explicitly links the test
+double objects before linking the production library. This ordering allows test
+versions to override production functions with the same names, effectively
+breaking dependencies on hardware and OS components during testing.
+
+### Light Scheduler Tests
+
+- Lights are not changed at initialization
+- Time is wrong, day is wrong, no lights are changed
+- Day is right, time is wrong, no lights are changed
+- Day is wrong, time is right, no lights are changed
+- Day is right, time is right, the right light is turned on
+- Day is right, time is right, the right light is turned off
+- Schedule every day
+- Schedule a specific day
+- Schedule all weekdays
+- Schedule weekend days
+- Remove scheduled event
+- Remove non-existent event
+- Multiple scheduled events at the same time
+- Multiple scheduled events for the same light
+- Remove non scheduled light schedule
+- Schedule the maximum supported number of events (128)
+- Schedule too many events
