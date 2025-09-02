@@ -98,3 +98,26 @@ breaking dependencies on hardware and OS components during testing.
 - Remove non scheduled light schedule
 - Schedule the maximum supported number of events (128)
 - Schedule too many events
+
+### Using Test Spies 
+
+Test spies act as covert operatives that intercept communications between the
+code under test and its dependencies. They capture parameters and return values
+without the production code's knowledge. In the LightScheduler example, the
+LightControllerSpy secretly records which lights were controlled and their
+states, while the FakeTimeService allows precise control over time reporting for
+reproducible tests.
+
+The LightControllerSpy implementation uses static variables (lastId and
+lastState) as a "dead drop" to store intercepted information. It implements the
+same interface as the real LightController, with `On()` and `Off()` functions that
+capture the parameters instead of controlling actual hardware. After test
+execution, special spy functions (GetLastId() and GetLastState()) retrieve the
+captured data for verification.
+
+This approach allows development to proceed even when hardware details are
+unknown. By defining clear interfaces for dependencies like time services and
+light controllers, we can create test doubles that simulate the eventual
+implementation. This leads to cleaner, more abstract interfaces that aren't
+polluted with low-level details and remain flexible for different hardware
+implementations.
