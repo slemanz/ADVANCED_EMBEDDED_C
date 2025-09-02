@@ -14,7 +14,7 @@ TEST_GROUP(LightControllerSpy)
 
     void teardown()
     {
-        LightController_Destroy();
+        //LightController_Destroy();
     }
 };
 

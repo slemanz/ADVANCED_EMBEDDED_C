@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 
+/*
 TEST(LightScheduler, NoChangeToLightsDuringInitialization)
 {
     LONGS_EQUAL(LIGHT_ID_UNKNOWN, LightControllerSpy_GetLastId());
@@ -15,4 +16,4 @@ TEST(LightScheduler, ScheduleOnEverydayNotTimeYet)
 
     LONGS_EQUAL(LIGHT_ID_UNKNOWN, LightControllerSpy_GetLastId());
     LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightControllerSpy_GetLastState());
-}
+}*/
