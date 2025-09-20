@@ -82,3 +82,61 @@ Data structure selection should align with the processing power and memory
 constraints of the chosen MCU.
 
 ### Memory Systems in MCUs
+
+Memory is a critical component of microcontroller (MCU) systems, impacting
+performance, efficiency, and the types of applications an embedded system can
+support.
+
+Unlike general-purpose computing devices, MCUs have constrained memory
+resources, making efficient memory management essential.
+
+**Types of Memory:**
+
+Microcontrollers typically employ a mix of volatile and non-volatile memory to
+store firmware, runtime data, and configuration parameters.
+
+The three most common types of memory found in MCUS are Static RAM (SRAM), Flash
+memory, and Electrically Erasable Programmable Read-Only Memory (EEPROM).
+
+- SRAM (Static Random Access Memory)
+    - Volatile: Loses data when power is removed.
+    - Fast access: Provides quick read/write speeds, making it suitable for
+    stack and heap storage.
+    - Limited capacity: Typically ranges from 2 KB to 512 KB in most
+    microcontrollers.
+    - Storage of runtime variables (local variables, function parameters).
+    - Stack memory for function calls and return addresses.
+    - Heap allocation for dynamic memory management.
+    - Fast read/write operations (single-cycle access).
+    - No need for periodic refreshing (unlike DRAM).
+    - Ideal for real-time and deterministic operations.
+
+- Flash memory (Program Memory)
+    - Non-volatile: Retains data even when power is lost.
+    - Slower write speed: Writing/erasing is slower than SRAM.
+    - Limited write endurance: Typically 10,000 to 100,000 write cycles before
+    degradation.
+    - Stores firmware and bootloaders.
+    - Often used for non-volatile storage of read-only data.
+    - Retains program code after power loss.
+    - High storage capacity (compared to SRAM).
+    - More cost-effective than SRAM for storing large amounts of data.
+
+- EEPROM (Electrically Erasable Programmable Read-Only Memory)
+    - Non-volatile: Retains data after power loss: This characteristic is
+    crucial for applications that require data persistence, such as storing
+    configuration settings and firmware in embedded systems
+    - Byte-level write access: Unlike Flash memory, which typically requires
+    data to be written or erased in larger blocks (sectors), EEPROM allows for
+    individual bytes to be written or erased independently. This feature makes
+    EEPROM suitable for applications that need frequent updates to small amounts
+    of data.
+    - Lower storage capacity: Typically 128 bytes to 512 KB.  This limitation
+    makes EEPROM less suitable for applications requiring large data storage
+    - EEPROM generally has a higher number of write cycles compared to Flash
+    memory. While Flash memory typically supports 10,000 to 100,000 write cycles
+    per block, EEPROM can endure 100,000 to 1,000,000+ write cycles per byte.
+    - Storing calibration data, device configurations, and unique IDs.
+    - Used in applications requiring occasional updates without frequent reprogramming.
+
+### Architectures
