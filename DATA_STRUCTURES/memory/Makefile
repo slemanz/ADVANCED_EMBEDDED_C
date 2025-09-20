@@ -15,7 +15,7 @@ CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 \
 
 LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) \
 			-Wl,--gc-sections -static --specs=nano.specs -Wl,--start-group -lc -lm -Wl,--end-group \
- 			-Wl,--print-memory-usage
+ 			-Wl,--print-memory-usage -u _printf_float
 
 OBJCOPY=arm-none-eabi-objcopy
 
