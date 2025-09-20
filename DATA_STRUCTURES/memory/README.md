@@ -83,5 +83,8 @@ maintainability challenges.
 | Data Inconsistency        | If a variable is modified in multiple locations, debugging becomes complex. |
 | Race Conditions           | In multi-threaded or interrupt-driven systems, global variables require synchronization. |
 
+### Practical Examples
+
+- [Static Allocation](app/Src/static_allocation.c)
 
 
