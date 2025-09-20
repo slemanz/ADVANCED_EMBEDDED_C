@@ -119,6 +119,30 @@ void reallocExample()
 }
 
 
+// Function demonstrating double-free error
+void doubleFreeExample()
+{
+    printf("\n--- Double-Free Example ---\n");
+
+    int *ptr = (int *)malloc(5 * sizeof(int));
+
+    if (ptr == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    free(ptr);  // Free memory
+    printf("Memory freed successfully.\n");
+
+    // Attempting to free again
+    // modern compilers wont let this obvious double free
+    //free(ptr); // Uncommenting this line will cause a double-free warning
+    printf("Double-free avoided by commenting out redundant free().\n");
+}
+
+
+
 int main(void)
  {
     config_drivers();
@@ -132,12 +156,15 @@ int main(void)
     callocExample();
     reallocExample();
 
+    doubleFreeExample();
+
+
     while (1)
     {   
         // blinky
         if((ticks_get() - start_time) >= 500)
         {
-            //led_toggle();
+            led_toggle();
             start_time = ticks_get();
         }
 
