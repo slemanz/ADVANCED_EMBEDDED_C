@@ -37,6 +37,87 @@ void mallocExample()
     printf("Memory freed successfully.\n");
 }
 
+// Funtion demonstrating calloc()
+void callocExample()
+{
+    printf("\n--- calloc() Example ---\n");
+
+    // Allocatinting memory for 5 intengers, initialized to 0
+    int *ptr = (int *)calloc(5, sizeof(int));
+
+    if(ptr == NULL) // check if allocation failed
+    {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    // Display allocated memory (should be initialized to 0)
+    printf("Dynamic Allocated Array (initialized to 0): ");
+    for(int i = 0; i < 5; i++)
+    {
+        printf("%d ", ptr[i]);
+    }
+    printf("\n");
+
+    free(ptr);  // Freeing memory
+    printf("Memory freed successfully.\n");
+}
+
+// Function demonstrating realloc()
+void reallocExample()
+{
+    printf("\n--- realloc() Example ---\n");
+    
+    // Initial allocation for 3 intengers
+    int *ptr = (int *)malloc(3*sizeof(int));
+
+    if(ptr == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    // assign values
+    for(int i = 0; i < 3; i++)
+    {
+        ptr[i] = i*5;
+    }
+
+    // Display initial allocation
+    printf("Initial Allocated Array: ");
+    for(int i = 0; i < 3; i++)
+    {
+        printf("%d ", ptr[i]);
+    }
+    printf("\n");
+
+    // Resize memory for 5 intengers
+    ptr = (int *)realloc(ptr, 5*sizeof(int));
+
+    if(ptr == NULL)
+    {
+        printf("Memory reallocation failed!\n");
+        return;
+    }
+
+    // assign values to new memory locations
+    for(int i = 3; i < 5; i++)
+    {
+        ptr[i] = i*5;
+    }
+
+    // Display redized array
+    printf("Resized Array: ");
+    for(int i = 0; i < 5; i++)
+    {
+        printf("%d ", ptr[i]);
+    }
+    printf("\n");
+
+    free(ptr); // freeing memory
+    printf("Memory freed sucessfully.\n");
+}
+
 
 int main(void)
  {
@@ -47,6 +128,9 @@ int main(void)
     printf("### Dynamic Memory Allocation Demonstration ###\n");
     
     mallocExample();
+
+    callocExample();
+    reallocExample();
 
     while (1)
     {   
