@@ -140,3 +140,56 @@ memory, and Electrically Erasable Programmable Read-Only Memory (EEPROM).
     - Used in applications requiring occasional updates without frequent reprogramming.
 
 ### Architectures
+
+The two main architectures used are Harvard and von Neumann, which differ in how
+they separate or unify program and data memory.
+
+**Harvard Architecture**
+
+- **Separate buses** for program memory (Flash) and data memory (SRAM).
+- Allows simultaneous instruction fetch and data access, improving execution
+speed.
+- Higher performance due to parallel data and instruction access.
+- Prevents unintended modification of program memory.
+- Reduces bus contention, improving real-time performance.
+- More complex hardware design due to separate buses.
+- Less flexibility in sharing memory between instructions and data.
+
+**Von Neumann Architecture**
+
+- Unified memory for both instructions and data
+- Simpler design with a single address bus and data bus
+- Simpler hardware implementation, reducing cost.
+- More flexibility in memory usage.
+- Memory bandwidth limitations can cause bottlenecks.
+- Susceptible to self-modifying code errors.
+
+###  Endianess Consideration
+
+Endianness defines how multi-byte data is stored in memory.
+
+**Types of Endianness**
+
+- Little-Endian: Stores the least significant byte (LSB) first. (Example
+architectures: Intel x86, ARM Cortex-M.)
+- Big-Endian: Stores the most significant byte (MSB) first (Example
+architectures: PowerPC, some RISC architectures.)
+
+**Impact on Embedded Systems**
+
+- Cross-platform compatibility: Endianness differences must be accounted for in
+network protocols (e.g., TCP/IP).
+- Peripheral communication: SPI and I²C devices may expect data in a specific
+endian format.
+- Data serialization: MCUs interfacing with external memory or cloud services
+need consistent endianness.
+
+Example: 
+
+- The Ethernet protocol (TCP/IP) uses big-endian format, requiring little-endian
+MCUs (e.g., ARM Cortex-M) to convert values before transmission.
+
+
+### List of Data Structures
+
+- [Memory Allocations](memory)
