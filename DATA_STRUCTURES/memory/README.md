@@ -86,5 +86,62 @@ maintainability challenges.
 ### Practical Examples
 
 - [Static Allocation](app/Src/static_allocation.c)
+- [Dynamic Allocation](app/Src/dynamic_allocation.c)
 
+### Common Memory Corruption Issue
 
+**Memory Collision Risk:**
+
+- If an embedded system has limited RAM, the stack and heap can collide, leading
+to catastrophic failures.
+- Solution: Use stack guards, heap analysis tools, and configure linker scripts
+to define memory limits.
+
+Memory corruption occurs when the code accidentally modifies memory regions it
+is not meant to modify, leading to erratic behavior, system crashes, or security
+vulnerabilities.
+
+**Buffer Overflow**
+
+- Occurs when writing occurs beyond allocated memory boundaries.
+- Impact: Overwrites adjacent memory, leading to unpredictable behavior.
+
+```C
+char buffer[10];
+strcpy(buffer, "This is too long!"); // Buffer overflow
+```
+
+Solution in this case:
+
+1. Use strncpy() instead of strcpy(): The strncpy() function allows safe copying
+with size restrictions, ensuring that only the allocated buffer size is written
+to.
+
+2. Enabling Compiler Warnings (-Woverflow in GCC): Many Compilers provide static
+analysis tools to detect buffer overflows at compile-time. The -Woverflow flag
+in GCC (GNU Compiler Collection) warns us when a buffer is too small for the
+assigned value.
+
+3. Implementing Stack Canaries: A stack canary is a random security value placed
+between the function stack frame and the return address. If a buffer overflow
+occurs and attempts to overwrite the return address, the canary value is
+altered, triggering a system abort or exception.
+
+How Stack Canaries Work
+- Before a function executes, a random value (the canary) is stored.
+- Before returning from the function, the canary value is checked.
+- If the canary has been modified, the program detects a buffer overflow and
+halts execution.
+
+**Other possible issues when using dynamic memory:**
+
+| Problem | Cause | Primary Consequence |
+| --- | --- | --- |
+| **Double Free** | Freeing a pointer twice. | Heap corruption -> Crash or undefined behavior. |
+| **Use After Free** | Using a pointer after its memory is freed. | Data corruption or security vulnerabilities. |
+| **Memory Leak** | Not freeing memory that is no longer needed. | Resource exhaustion → Program or system failure. |
+| **Null Pointer Deref**| Using the result of a failed `malloc()` without checking. | Immediate program crash (segmentation fault). |
+| **Buffer Overflow** | Writing past the end of an allocated block. | Corruption of heap metadata or adjacent data. |
+| **Allocation Failure** | Heap is exhausted or fragmented. | Program cannot proceed if error is unhandled. |
+| **Invalid Free** | Freeing a non-heap or corrupted pointer. | Severe heap corruption -> Immediate crash. |
+| **Fragmentation** | Many small gaps between allocated blocks. | Failure to allocate large contiguous blocks. |
