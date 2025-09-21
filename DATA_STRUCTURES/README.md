@@ -193,3 +193,4 @@ MCUs (e.g., ARM Cortex-M) to convert values before transmission.
 ### List of Data Structures
 
 - [Memory Allocations](memory)
+- [Bit-Packed](bit_packed/)
