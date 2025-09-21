@@ -14,4 +14,4 @@ storage requirements, and optimizing CPU processing speed.
 | Faster Processing         | Reduces cache misses and improves CPU efficiency. |
 | Low-Power Optimization    | Decreases memory access operations, saving energy. |
 
-- [Bad Example](/)
+- [Bad Example](app/Src/bad.c)
