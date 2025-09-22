@@ -58,4 +58,5 @@ significant limitations:
     - Use `__attribute__((packed))` for memory-efficient structures
 
 - [Better Example](app/Src/better.c)
+- [GPIO Bit Packing](app/Src/gpio_packed.c)
 
