@@ -35,7 +35,7 @@
  */
 uint8_t pack_gpio_settings(uint8_t mode, uint8_t state, uint8_t speed)
 {
-
+    return ((mode & 0x03) | ((state & 0x01) << 2) | ((speed & 0x07) << 3));
 }
 
 
@@ -45,7 +45,9 @@ uint8_t pack_gpio_settings(uint8_t mode, uint8_t state, uint8_t speed)
  */
 void unpack_gpio_settings(uint8_t data, uint8_t *mode, uint8_t *state, uint8_t *speed)
 {
-
+    *mode = (data & GPIO_MODE_MASK);
+    *state = (data & GPIO_STATE_MASK) >> 2;
+    *speed = (data & GPIO_SPEED_MASK) >> 3;
 }
 
 
@@ -55,7 +57,39 @@ void unpack_gpio_settings(uint8_t data, uint8_t *mode, uint8_t *state, uint8_t *
  */
 void configure_led(uint8_t packed_data)
 {
+    uint8_t mode, state, speed;
+    unpack_gpio_settings(packed_data, &mode, &state, &speed);
 
+    /* Enable GPIO Clock for port C */
+    GPIOC_PCLK_EN();
+
+    /* Configure GPIO Mode */
+    if(mode == GPIO_MODE_OUTPUT)
+    {
+        GPIOC->MODER &= ~(3 << (LED_PIN * 2)); // Clear mode bits
+        GPIOC->MODER |=  (1 << (LED_PIN * 2)); // Set as output
+        printf("LED configured as OUTPUT.\n");
+    }else
+    {
+        GPIOA->MODER &= ~(3 << (LED_PIN * 2)); // Set as input (default)
+        printf("LED configured as INPUT.\n");
+    }
+
+    /* Configure GPIO Speed */
+    GPIOA->OSPEEDR &= ~(3 << (LED_PIN * 2));   // Clear speed bits
+    GPIOA->OSPEEDR |= (speed << (LED_PIN * 2)); // Set speed
+    printf("LED speed set to level %u.\n", speed);
+
+    /* Set LED State */
+    if((state == GPIO_ON) && (mode == GPIO_MODE_OUTPUT))
+    {
+        GPIOA->ODR |= (1 << LED_PIN);
+        printf("LED TURNED ON.\n");
+    }else if(mode == GPIO_MODE_OUTPUT)
+    {
+        GPIOA->ODR &= ~(1 << LED_PIN);
+        printf("LED TURNED OFF.\n");
+    }
 }
 
 
@@ -66,7 +100,6 @@ void configure_led(uint8_t packed_data)
  */
 uint8_t toggle_led(uint8_t packed_data)
 {
-    
 }
 
 
@@ -76,6 +109,8 @@ int main(void)
     //config_bsp();
     printf("\n");
 
+    /* Pack GPIO Settings for LED (MODE: Output=1, State: ON=1, Speed: Medium=1)*/
+    uint8_t led_settings = pack_gpio_settings(GPIO_MODE_OUTPUT, GPIO_ON, GPIO_SPEED_MEDIUM);
 
     while (1)
     {   
