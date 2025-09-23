@@ -112,13 +112,34 @@ int main(void)
     }
 }
 
+uint8_t received_data;
+
 void USART2_IRQHandler(void)
 {
-    uint8_t ch;
-
     if(UART2->SR & UART_SR_RXNE)
     {
-        ch = UART2->DR;
-        uart2_write_byte(ch);
+        received_data = UART2->DR;
+        Command_t command; // create a new command struct
+
+        switch(received_data)
+        {
+            case '1':
+                command.command_type = COMMAND_LED_ON;
+                command.data = 0;
+                insert_at_tail(&command_queue, command);
+                break;
+            case '2':
+                command.command_type = COMMAND_LED_OFF;
+                command.data = 0;
+                insert_at_tail(&command_queue, command);
+                break;
+            case '3':
+                command.command_type = COMMAND_READ_ADC;
+                command.data = adc_read();
+                insert_at_tail(&command_queue, command);
+                break;
+            default:
+                break;
+        }
     }
 }
