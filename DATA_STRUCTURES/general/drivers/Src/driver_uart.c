@@ -1,6 +1,6 @@
 #include "driver_uart.h"
 #include "driver_gpio.h"
-
+#include "driver_interrupt.h"
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate);
 
@@ -16,9 +16,12 @@ void uart2_init(void)
     UART2_PCLK_EN();
 
     // no flow control (default reset)
-    uint32_t temp = ((UART_CR1_TE) | (1 << 2)); // tx and rx enable
+    uint32_t temp = ((UART_CR1_TE) | (UART_CR1_RE)); // tx and rx enable
+    temp |= (UART_CR1_RXNEIE);
     UART2->CR1 = temp; 
     UART2->BRR = compute_uart_div(16000000, 115200); // baurate
+
+    interrupt_config(38, ENABLE); // enable usart2 interrupt
 
     UART2->CR1 |= UART_CR1_UE;// enable uart periph
 }
@@ -41,5 +44,8 @@ void uart2_init_pins(void)
     UartPin.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
     UartPin.GPIO_PinConfig.GPIO_PinAltFunMode = PA2_ALTFN_UART2_TX;
 
+    GPIO_Init(&UartPin);
+
+    UartPin.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_3;
     GPIO_Init(&UartPin);
 }
