@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "config.h"
 #include "driver_systick.h"
 #include "driver_uart.h"
@@ -34,6 +36,46 @@ typedef struct{
 }LinkedList_t;
 
 static LinkedList_t command_queue;
+
+
+/**
+ * @brief Inserts a command at the tail of the linked list (command queue)
+ * @param list Pointer to the linked list (command queue)
+ * @param command The command to be added
+ * @return true if successful, false if not
+ */
+static inline bool insert_at_tail(LinkedList_t *list, Command_t command)
+{
+    Node_t *newNode = (Node_t*)malloc(sizeof(Node_t)); // allocate a new node
+
+    if(newNode == NULL)
+    {
+        return false; // Allocation failed
+    }
+
+    newNode->command = command;
+    newNode->next = NULL;
+
+    if(list->head == NULL)
+    {
+        list->head = newNode;
+    }else
+    {
+        // if list is not empty, traverse to the last node
+        Node_t* current = list->head;
+        while(current->next != NULL)
+        {
+            // move to the next node until the last node is reached
+            current = current->next;
+        }
+
+        // Link the new node to the current last node
+        current->next = newNode; // add to tail
+    }
+
+    return true;
+}
+
 
 int main(void)
  {
