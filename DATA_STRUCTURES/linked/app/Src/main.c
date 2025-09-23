@@ -77,6 +77,27 @@ static inline bool insert_at_tail(LinkedList_t *list, Command_t command)
 }
 
 
+/**
+ * @brief Removes a command from the head of the command queue.
+ * @param list Pointer to the linked list.
+ * @param command Pointer to store the command in.
+ * @return True if successful, false if not
+ */
+static inline bool remove_at_head(LinkedList_t *list, Command_t *command)
+{
+    if(list->head == NULL)
+    {
+        return false; // list is empty, nothing to remove
+    }
+
+    Node_t *temp = list->head;  // get the first node.
+    *command = temp->command;   // copy the command
+    list->head = temp->next;    // update head
+    free(temp);                 // free node memory
+    return true;
+}
+
+
 int main(void)
  {
     config_drivers();
