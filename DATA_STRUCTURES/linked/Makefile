@@ -44,6 +44,7 @@ DRIVERS		+= $(BUILD_DIR)/driver_adc.o
 DRIVERS		+= $(BUILD_DIR)/driver_spi.o
 DRIVERS		+= $(BUILD_DIR)/driver_i2c.o
 DRIVERS		+= $(BUILD_DIR)/driver_interrupt.o
+DRIVERS		+= $(BUILD_DIR)/driver_rtc.o
 
 BSP			+= $(BUILD_DIR)/led.o
 BSP			+= $(BUILD_DIR)/button.o
