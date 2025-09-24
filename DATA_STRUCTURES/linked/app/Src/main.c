@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include "config.h"
 #include "driver_systick.h"
 #include "driver_uart.h"
+#include "driver_rtc.h"
 
 #include "led.h"
 #include "driver_adc.h"
@@ -105,7 +107,13 @@ void remove_event(uint32_t timestamp)
  */
 static uint32_t get_current_timestamp(void)
 {
-    return 0;
+    uint32_t hour   =  rtc_time_get_hour();
+	uint32_t minute =  rtc_time_get_minute();
+	uint32_t second =  rtc_time_get_second();
+
+    printf("%02lx:%02lx:%02lx\n", hour, minute, second);
+
+    return (hour * 3600) + (minute * 60) + second;
 }
 
 int main(void)
@@ -117,11 +125,13 @@ int main(void)
     printf("\nInit board...\n\r");
 
     //uint64_t start_time = ticks_get();
+    rtc_init();
 
 
     while (1)
     {   
-        ticks_delay(100);
+        get_current_timestamp();
+        ticks_delay(5000);
     }
 }
 

@@ -97,7 +97,7 @@ void rtc_timestamp_init(void)
 
 
 	/*Enable Alarm Interrupt in NVIC*/
-	NVIC_EnableIRQ(TAMP_STAMP_IRQn);
+	interrupt_config(TAMP_STAMP_IRQn, ENABLE);
 
 	/*Enter Initialization mode*/
 	if(rtc_init_seq() != 1)
