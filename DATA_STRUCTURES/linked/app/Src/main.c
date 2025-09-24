@@ -8,97 +8,56 @@
 #include "led.h"
 #include "driver_adc.h"
 
-#define COMMAND_QUEUE_SIZE      32  // Maximum number of commands that can be stored
 
-// Enumeration for the different kinds of commands
-typedef enum{
-    COMMAND_LED_ON = 1, // Turn the LED on
-    COMMAND_LED_OFF,    // Turn the LED off
-    COMMAND_READ_ADC    // Read the ADC value
-}CommandType_t;
+#define MAX_EVENT_DESC_LEN      32
 
-// Struct representing the command.
-typedef struct{
-    CommandType_t command_type;     // type of command
-    uint32_t data;                  // command data
-}Command_t;
+typedef struct EventNode{
+    uint32_t timestamp;                     // Timestamp from RTC
+    char description[MAX_EVENT_DESC_LEN];   // Event description
+    struct EventNode *next;                 // Pointer to the next node
+}EventNode_t;
 
-// Structure to represent a node in the linked list
-typedef struct node
+static EventNode_t *event_list_head = NULL;
+static uint32_t get_current_timestamp(void);
+
+void add_event(const char *description)
 {
-    Command_t command;  // Command to be performed
-    struct node *next;  // poiner to next node in the list
-}Node_t;
-
-// Structure representing the linked list of commands
-typedef struct{
-    Node_t *head;
-}LinkedList_t;
-
-
-static LinkedList_t command_queue;
-static void process_commands(void);
-
-
-/**
- * @brief Inserts a command at the tail of the linked list (command queue)
- * @param list Pointer to the linked list (command queue)
- * @param command The command to be added
- * @return true if successful, false if not
- */
-static inline bool insert_at_tail(LinkedList_t *list, Command_t command)
-{
-    Node_t *newNode = (Node_t*)malloc(sizeof(Node_t)); // allocate a new node
-
-    if(newNode == NULL)
+    // Allocate memory for the new node
+    EventNode_t *new_event = (EventNode_t*)malloc(sizeof(EventNode_t));
+    if(!new_event)
     {
-        return false; // Allocation failed
+        printf("Memory allocation failed\n");
+        return;
     }
 
-    newNode->command = command;
-    newNode->next = NULL;
+    // populate the new event node
+    new_event->timestamp = get_current_timestamp();
+    snprintf(new_event->description, MAX_EVENT_DESC_LEN, "%s", description);
+    new_event->next = NULL;
 
-    if(list->head == NULL)
+    // Insert the new event at the end of the list
+    if(!event_list_head)
     {
-        list->head = newNode;
+        event_list_head = new_event;
     }else
     {
-        // if list is not empty, traverse to the last node
-        Node_t* current = list->head;
-        while(current->next != NULL)
+        EventNode_t *current = event_list_head;
+        while(current->next)
         {
-            // move to the next node until the last node is reached
             current = current->next;
         }
-
-        // Link the new node to the current last node
-        current->next = newNode; // add to tail
+        current->next = new_event;
     }
-
-    return true;
 }
-
 
 /**
- * @brief Removes a command from the head of the command queue.
- * @param list Pointer to the linked list.
- * @param command Pointer to store the command in.
- * @return True if successful, false if not
+ * @brief Get the current timestamp from the RTC.
+ * @return Current timestamp as a 32-bit integer.
  */
-static inline bool remove_at_head(LinkedList_t *list, Command_t *command)
+static uint32_t get_current_timestamp(void)
 {
-    if(list->head == NULL)
-    {
-        return false; // list is empty, nothing to remove
-    }
-
-    Node_t *temp = list->head;  // get the first node.
-    *command = temp->command;   // copy the command
-    list->head = temp->next;    // update head
-    free(temp);                 // free node memory
-    return true;
+    return 0;
 }
-
 
 int main(void)
  {
@@ -110,79 +69,20 @@ int main(void)
 
     //uint64_t start_time = ticks_get();
 
-    // Initialize the command queue
-    command_queue.head = NULL;
 
     while (1)
     {   
-        process_commands();
         ticks_delay(100);
     }
 }
 
-uint8_t received_data;
 
+uint8_t received_data;
 void USART2_IRQHandler(void)
 {
     if(UART2->SR & UART_SR_RXNE)
     {
         received_data = UART2->DR;
-        Command_t command; // create a new command struct
-
-        switch(received_data)
-        {
-            case '1':
-                command.command_type = COMMAND_LED_ON;
-                command.data = 0;
-                insert_at_tail(&command_queue, command);
-                break;
-            case '2':
-                command.command_type = COMMAND_LED_OFF;
-                command.data = 0;
-                insert_at_tail(&command_queue, command);
-                break;
-            case '3':
-                command.command_type = COMMAND_READ_ADC;
-                command.data = adc_read();
-                insert_at_tail(&command_queue, command);
-                break;
-            default:
-                break;
-        }
     }
 }
             
-
-void process_adc_command(Command_t *command)
-{
-    printf("ADC Value %lu\n", command->data);
-}
-
-
-static void process_commands(void)
-{
-    Command_t command;
-
-    while(remove_at_head(&command_queue, &command))
-    {
-        switch (command.command_type)
-        {
-        case COMMAND_LED_ON:
-            led_on();
-            printf("LED Turned on\n");
-            break;
-
-        case COMMAND_LED_OFF:
-            led_off();
-            printf("LED Turned off\n");
-            break;
-
-        case COMMAND_READ_ADC:
-            process_adc_command(&command);
-            break;
-        
-        default:
-            break;
-        }
-    }
-}
