@@ -68,6 +68,36 @@ void print_event_list(void)
     }
 }
 
+
+/**
+ * @brief Remove an event by its timestamp.
+ * @param timestamp Timestamp of the event to remove.
+ */
+void remove_event(uint32_t timestamp)
+{
+    EventNode_t *current = event_list_head;
+    EventNode_t *prev = NULL;
+
+    while(current)
+    {
+        if(current->timestamp == timestamp)
+        {
+            if(prev)
+            {
+                prev->next = current->next;
+            }else
+            {
+                event_list_head = current->next;
+            }
+            free(current);
+            printf("Event with timestamp %lu removed.\n", timestamp);
+        }
+
+        prev = current;
+        current = current->next;
+    }
+}
+
 /**
  * @brief Get the current timestamp from the RTC.
  * @return Current timestamp as a 32-bit integer.
