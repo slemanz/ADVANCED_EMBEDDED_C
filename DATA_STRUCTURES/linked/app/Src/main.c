@@ -19,6 +19,7 @@ typedef struct EventNode{
 
 static EventNode_t *event_list_head = NULL;
 static uint32_t get_current_timestamp(void);
+void  handle_uart_command(const char * command);
 
 void add_event(const char *description)
 {
@@ -134,3 +135,26 @@ void USART2_IRQHandler(void)
     }
 }
             
+
+void  handle_uart_command(const char * command)
+{
+    if(strstr(command, "add_event") == command)
+    {
+        char description[MAX_EVENT_DESC_LEN];
+        sscanf(command, "add_event %s", description);
+        add_event(description);
+    }
+    else if(strcmp(command, "print_events") == 0)
+    {
+        print_event_list();
+    }else if(strstr(command, "remove_event") == command)
+    {
+        uint32_t timestamp;
+        sscanf(command, "remove_event %lu", &timestamp);
+        remove_event(timestamp);
+    }
+    else
+    {
+        printf("Unknown command: %s\n", command);
+    }
+}
