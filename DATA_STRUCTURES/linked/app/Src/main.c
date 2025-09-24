@@ -50,6 +50,24 @@ void add_event(const char *description)
     }
 }
 
+void print_event_list(void)
+{
+    if(!event_list_head)
+    {
+        printf("No event to display\n");
+        return;
+    }
+
+    EventNode_t *current = event_list_head;
+    printf("Event list: \n");
+
+    while(current)
+    {
+        printf("Timestamp %lu, Description: %s\n", current->timestamp, current->description);
+        current = current->next;
+    }
+}
+
 /**
  * @brief Get the current timestamp from the RTC.
  * @return Current timestamp as a 32-bit integer.
