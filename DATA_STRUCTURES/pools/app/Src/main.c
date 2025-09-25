@@ -7,50 +7,34 @@
 #include "driver_uart.h"
 #include "driver_rtc.h"
 
-static void get_current_timestamp(void)
-{
-    uint32_t hour   =  rtc_time_get_hour();
-	uint32_t minute =  rtc_time_get_minute();
-	uint32_t second =  rtc_time_get_second();
+/* Configuration patameters */
 
-    printf("%02lx:%02lx:%02lx\n", hour, minute, second);
-}
+#define MEMORY_POOL_SIZE        10  // Number of memory pools
+#define MEMORY_BLOCK_SIZE       32  // Size of each memory block in bytes
+#define ALIGNMENT               4   // Align memory blocks to 4-byte boundaries
+
+/* Memory Pool Data Structure */
+typedef struct MemBlock
+{
+    struct MemBlock *next;      // Pointer to the next free block
+}MemBlock_t;
+
+typedef struct{
+    uint8_t pool[MEMORY_POOL_SIZE][MEMORY_BLOCK_SIZE];    // Pre-allocated memory
+    MemBlock_t *freelist;               // Linked list of free block
+}MemoryPool_t;
+
 
 int main(void)
  {
     config_drivers();
     config_bsp();
-    rtc_init();
 
     printf("\nInit board...\n\r");
 
-    uint32_t adc_value = 0;
-
-    uint64_t start_time = ticks_get();
-    uint64_t start_time2 = ticks_get();
 
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 500)
-        {
-            led_toggle();
-            start_time = ticks_get();
-        }
-
-        if((ticks_get() - start_time2) >= 5000)
-        {
-            get_current_timestamp();
-            start_time2 = ticks_get();
-        }
-
-        if(!button_get_state())
-        {
-            adc_start_conversion();
-            adc_value = adc_read();
-            printf("Adc: %ld\n", adc_value);
-            while(!button_get_state());
-        }
     }
 }
 
