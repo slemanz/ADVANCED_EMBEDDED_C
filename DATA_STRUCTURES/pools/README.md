@@ -28,3 +28,23 @@ arrays).
 
 5. **No Fragmentation:** Because the blocks are fixed sized and they are never
 subdivided, there is no fragmentation.
+
+### Comparing UART Memory Pool Implementation with other Data Structures
+
+The choice of data structures impacts performance, memory usage, determinism,
+and reliability.
+
+UART Buffering can implemented using various data structures:
+- Memory Pool (Fixed Block Allocation)
+- FIFO Circular Buffer
+- Linked List-Based Buffering
+- Dynamic Heap Allocation (malloc/free)
+
+| Method | Deterministic? | Memory Overhead | Fragmentation? | Best For |
+| --- | --- | --- | --- | --- |
+| Memory Pool                   | Yes | Low  | No  | Real-time, fixed-size buffers |
+| Circular Buffer (FIFO)        | Yes | Low  | No  | Continuous UART streaming |
+| Linked List                   | No  | High | Yes | Variable-size messages |
+| Heap Allocation (malloc/free) | No  | High | Yes | Dynamic, large buffers |
+
+### Implementation
