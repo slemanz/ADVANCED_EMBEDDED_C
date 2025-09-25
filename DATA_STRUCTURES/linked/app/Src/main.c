@@ -12,6 +12,8 @@
 
 
 #define MAX_EVENT_DESC_LEN      32
+#define MAX_COMMAND_LENGTH		64
+
 
 typedef struct EventNode{
     uint32_t timestamp;                     // Timestamp from RTC
@@ -21,7 +23,7 @@ typedef struct EventNode{
 
 static EventNode_t *event_list_head = NULL;
 static uint32_t get_current_timestamp(void);
-void  handle_uart_command(const char * command);
+static void process_uart_command(const char * command);
 
 void add_event(const char *description)
 {
@@ -95,6 +97,7 @@ void remove_event(uint32_t timestamp)
             }
             free(current);
             printf("Event with timestamp %lu removed.\n", timestamp);
+            return;
         }
 
         prev = current;
@@ -127,27 +130,9 @@ int main(void)
     //uint64_t start_time = ticks_get();
     rtc_init();
 
-    printf("********Add Event Test***************\n\r");
-	//Simulate 'add_event'
-    add_event("PowerOn");
-    ticks_delay(1000);
-    add_event("SensorInit");
-    ticks_delay(1000);
-
-    printf("********Print Events Test***************\n\r");
-
-    print_event_list();
-    ticks_delay(1000);
-
-    printf("********Handle Events Test***************\n\r");
-    handle_uart_command("add_event ButtonPressed");
-    ticks_delay(1000);
-
-    handle_uart_command("print_events");
-    ticks_delay(1000);
-
-    handle_uart_command("remove_event 3679");
-    ticks_delay(1000);
+    //handle_uart_command("add_event ButtonPressed");
+    //handle_uart_command("print_events");
+    //handle_uart_command("remove_event 3679");
 
 
     while (1)
@@ -157,16 +142,36 @@ int main(void)
 
 
 uint8_t received_data;
+static uint8_t command_buffer[MAX_COMMAND_LENGTH];
+static uint8_t buffer_index = 0;
+
 void USART2_IRQHandler(void)
 {
     if(UART2->SR & UART_SR_RXNE)
     {
-        received_data = UART2->DR;
+        received_data = (uint8_t)UART2->DR;
+
+        if(received_data == '*')
+        {  
+            //Command Termination
+			command_buffer[buffer_index] = '\0'; //Null-terminate the string
+
+			//Process the command
+			process_uart_command((const char *)command_buffer);
+			buffer_index = 0;
+		}else
+		{
+			if(buffer_index < (MAX_COMMAND_LENGTH -1))
+            {
+                if(received_data != '\n' && received_data != '\r') command_buffer[buffer_index++] =  received_data;
+			}
+
+		}
     }
 }
             
 
-void  handle_uart_command(const char * command)
+static void  process_uart_command(const char * command)
 {
     if(strstr(command, "add_event") == command)
     {
