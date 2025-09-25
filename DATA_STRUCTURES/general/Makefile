@@ -39,6 +39,7 @@ OBJS		+= $(BUILD_DIR)/startup.o
 DRIVERS		+= $(BUILD_DIR)/driver_fpu.o
 DRIVERS		+= $(BUILD_DIR)/driver_systick.o
 DRIVERS		+= $(BUILD_DIR)/driver_interrupt.o
+DRIVERS		+= $(BUILD_DIR)/driver_rtc.o
 DRIVERS		+= $(BUILD_DIR)/driver_gpio.o
 DRIVERS		+= $(BUILD_DIR)/driver_uart.o
 DRIVERS		+= $(BUILD_DIR)/driver_adc.o

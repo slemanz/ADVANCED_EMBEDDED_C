@@ -91,6 +91,7 @@
 
 #define EXTI_BASEADDR						(APB2PERIPH_BASE + 0x3C00U)
 #define SYSCFG_BASEADDR						(APB2PERIPH_BASE + 0x3800U)
+#define PWR_BASEADDR                        (APB1PERIPH_BASE + 0x7000UL)
 
 #define SPI1_BASEADDR						(APB2PERIPH_BASE + 0x3000U)
 #define SPI4_BASEADDR						(APB2PERIPH_BASE + 0x3400U)
@@ -105,10 +106,11 @@
 #define SCS_BASE            				(0xE000E000UL)
 #define SYSTICK_BASEADDR					(SCS_BASE + 0x0010UL)
 
-#define TIM2_BASEADDR						(APB1PERIPH_BASE + 0x0000U)
-#define TIM3_BASEADDR						(APB1PERIPH_BASE + 0x0400U)
-#define TIM4_BASEADDR						(APB1PERIPH_BASE + 0x0800U)
-#define TIM5_BASEADDR						(APB1PERIPH_BASE + 0x0C00U)
+#define TIM2_BASEADDR						(APB1PERIPH_BASE + 0x0000UL)
+#define TIM3_BASEADDR						(APB1PERIPH_BASE + 0x0400UL)
+#define TIM4_BASEADDR						(APB1PERIPH_BASE + 0x0800UL)
+#define TIM5_BASEADDR						(APB1PERIPH_BASE + 0x0C00UL)
+#define RTC_BASEADDR                        (APB1PERIPH_BASE + 0x2800UL)
 
 /*
  *  Base adress of UART
@@ -176,6 +178,12 @@ typedef struct{
 	__vo uint32_t reserved[2];
 	__vo uint32_t CMPCR;
 }SYSCFG_RegDef_t;
+
+typedef struct
+{
+    __vo uint32_t CR;           /*!< PWR power control register,        Address offset 0x00 */
+    __vo uint32_t CSR;          /*!< PWR power control/status register, Address offset 0x04 */
+} PWR_TypeDef;
 
 typedef struct{
 	__vo uint32_t IMR;
@@ -277,6 +285,50 @@ typedef struct
     __vo uint32_t FLTR;       /*!< I2C FLTR register,          Address offset: 0x24 */
 } I2C_RegDef_t;
 
+typedef struct
+{
+    __vo uint32_t TR;         /*!< RTC time register,                                        Address offset: 0x00 */
+    __vo uint32_t DR;         /*!< RTC date register,                                        Address offset: 0x04 */
+    __vo uint32_t CR;         /*!< RTC control register,                                     Address offset: 0x08 */
+    __vo uint32_t ISR;        /*!< RTC initialization and status register,                   Address offset: 0x0C */
+    __vo uint32_t PRER;       /*!< RTC prescaler register,                                   Address offset: 0x10 */
+    __vo uint32_t WUTR;       /*!< RTC wakeup timer register,                                Address offset: 0x14 */
+    __vo uint32_t CALIBR;     /*!< RTC calibration register,                                 Address offset: 0x18 */
+    __vo uint32_t ALRMAR;     /*!< RTC alarm A register,                                     Address offset: 0x1C */
+    __vo uint32_t ALRMBR;     /*!< RTC alarm B register,                                     Address offset: 0x20 */
+    __vo uint32_t WPR;        /*!< RTC write protection register,                            Address offset: 0x24 */
+    __vo uint32_t SSR;        /*!< RTC sub second register,                                  Address offset: 0x28 */
+    __vo uint32_t SHIFTR;     /*!< RTC shift control register,                               Address offset: 0x2C */
+    __vo uint32_t TSTR;       /*!< RTC time stamp time register,                             Address offset: 0x30 */
+    __vo uint32_t TSDR;       /*!< RTC time stamp date register,                             Address offset: 0x34 */
+    __vo uint32_t TSSSR;      /*!< RTC time-stamp sub second register,                       Address offset: 0x38 */
+    __vo uint32_t CALR;       /*!< RTC calibration register,                                 Address offset: 0x3C */
+    __vo uint32_t TAFCR;      /*!< RTC tamper and alternate function configuration register, Address offset: 0x40 */
+    __vo uint32_t ALRMASSR;   /*!< RTC alarm A sub second register,                          Address offset: 0x44 */
+    __vo uint32_t ALRMBSSR;   /*!< RTC alarm B sub second register,                          Address offset: 0x48 */
+    uint32_t RESERVED7;       /*!< Reserved, 0x4C                                                                 */
+    __vo uint32_t BKP0R;      /*!< RTC backup register 1,                                    Address offset: 0x50 */
+    __vo uint32_t BKP1R;      /*!< RTC backup register 1,                                    Address offset: 0x54 */
+    __vo uint32_t BKP2R;      /*!< RTC backup register 2,                                    Address offset: 0x58 */
+    __vo uint32_t BKP3R;      /*!< RTC backup register 3,                                    Address offset: 0x5C */
+    __vo uint32_t BKP4R;      /*!< RTC backup register 4,                                    Address offset: 0x60 */
+    __vo uint32_t BKP5R;      /*!< RTC backup register 5,                                    Address offset: 0x64 */
+    __vo uint32_t BKP6R;      /*!< RTC backup register 6,                                    Address offset: 0x68 */
+    __vo uint32_t BKP7R;      /*!< RTC backup register 7,                                    Address offset: 0x6C */
+    __vo uint32_t BKP8R;      /*!< RTC backup register 8,                                    Address offset: 0x70 */
+    __vo uint32_t BKP9R;      /*!< RTC backup register 9,                                    Address offset: 0x74 */
+    __vo uint32_t BKP10R;     /*!< RTC backup register 10,                                   Address offset: 0x78 */
+    __vo uint32_t BKP11R;     /*!< RTC backup register 11,                                   Address offset: 0x7C */
+    __vo uint32_t BKP12R;     /*!< RTC backup register 12,                                   Address offset: 0x80 */
+    __vo uint32_t BKP13R;     /*!< RTC backup register 13,                                   Address offset: 0x84 */
+    __vo uint32_t BKP14R;     /*!< RTC backup register 14,                                   Address offset: 0x88 */
+    __vo uint32_t BKP15R;     /*!< RTC backup register 15,                                   Address offset: 0x8C */
+    __vo uint32_t BKP16R;     /*!< RTC backup register 16,                                   Address offset: 0x90 */
+    __vo uint32_t BKP17R;     /*!< RTC backup register 17,                                   Address offset: 0x94 */
+    __vo uint32_t BKP18R;     /*!< RTC backup register 18,                                   Address offset: 0x98 */
+    __vo uint32_t BKP19R;     /*!< RTC backup register 19,                                   Address offset: 0x9C */
+} RTC_TypeDef;
+
 /*
  * 	peripheral definitions (Peripheral base address typecasted to xxx_RegDef_t)
  */
@@ -291,6 +343,7 @@ typedef struct
 #define RCC				((RCC_RegDef_t*)RCC_BASEADDR)
 
 #define SYSCFG			((SYSCFG_RegDef_t*)SYSCFG_BASEADDR	)
+#define PWR             ((PWR_TypeDef *)PWR_BASEADDR)
 
 #define EXTI			((EXTI_RegDef_t*)EXTI_BASEADDR)
 
@@ -300,6 +353,7 @@ typedef struct
 #define TIM3			((TIM_RegDef_t*)TIM3_BASEADDR)
 #define TIM4			((TIM_RegDef_t*)TIM4_BASEADDR)
 #define TIM5			((TIM_RegDef_t*)TIM5_BASEADDR)
+#define RTC             ((RTC_TypeDef *)RTC_BASEADDR)
 
 #define UART2 			((UART_RegDef_t*)UART2_BASEADDR)
 
@@ -537,7 +591,7 @@ typedef struct
     __vo uint32_t ISAR[5];                 /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register                   */
     __vo uint32_t RESERVED0[5];
     __vo uint32_t CPACR;                   /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register                   */
-}SCB_RegDef_t;
+}SCB_RegDef_t;  
 
 #define SCB                 ((SCB_RegDef_t*)SCB_BASE)
 
