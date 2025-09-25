@@ -195,3 +195,4 @@ MCUs (e.g., ARM Cortex-M) to convert values before transmission.
 - [Memory Allocations](memory)
 - [Bit-Packed](bit_packed/)
 - [Linked Lists](linked/)
+- [Memory Pools](pools/)
