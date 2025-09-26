@@ -64,7 +64,7 @@ void *MemoryPool_Allocate(void)
  * @brief  Frees a previosly allocated block, returning it to the pool
  * @param ptr Pointer to block to be free
  */
-void *MemoryPool_free(void *ptr)
+void MemoryPool_free(void *ptr)
 {
     if(ptr == NULL)
     {
@@ -99,8 +99,15 @@ int main(void)
 
     MemoryPool_Init();
 
-    void *ptr1 = MemoryPool_Allocate();
-    printf("Free Blocks Left: %lu\n");
+    void *block1_ptr = MemoryPool_Allocate();
+    printf("Free Blocks Left: %lu\n", MemoryPool_GetFreeBlockCount());
+
+    void *block2_ptr = MemoryPool_Allocate();
+    printf("Free Blocks Left: %lu\n", MemoryPool_GetFreeBlockCount());
+
+    MemoryPool_free(block2_ptr);
+    MemoryPool_free(block1_ptr);
+    printf("Free Blocks Left: %lu\n", MemoryPool_GetFreeBlockCount());
 
     while (1)
     {   
