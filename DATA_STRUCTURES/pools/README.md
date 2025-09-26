@@ -48,3 +48,5 @@ UART Buffering can implemented using various data structures:
 | Heap Allocation (malloc/free) | No  | High | Yes | Dynamic, large buffers |
 
 ### Implementation
+
+- [Pool Basic Implementation](app/Src/pool_basic.c)

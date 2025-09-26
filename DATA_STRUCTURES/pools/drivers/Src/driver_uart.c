@@ -1,12 +1,64 @@
 #include "driver_uart.h"
 #include "driver_gpio.h"
 #include "driver_interrupt.h"
+#include <stddef.h>
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate);
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate)
 {
     return ((PeriphClk + (BaudRate/2U))/BaudRate);
+}
+
+/* Memory Pool Configuration */
+#define POOL_BLOCK_SIZE         64  // Size of each memory block in bytes
+#define POOL_NUM_BLOCKS         10  // Number of memory pools
+
+/*** Memory Pool Data Structure ***/
+typedef struct mem_block
+{
+    struct  mem_block *next_block; // pointer to the next free block
+}mem_block_t;
+
+typedef struct{
+    uint8_t pool[POOL_NUM_BLOCKS][POOL_BLOCK_SIZE]; // Memory pool array
+    mem_block_t *free_list;
+}memory_pool_t;
+
+
+static memory_pool_t uart_memory_pool;
+
+/**
+ * @brief Initializes the memory pool by linking all blocks into a free list
+ */
+void MemoryPool_Init(void)
+{
+    uart_memory_pool.free_list = (mem_block_t*)uart_memory_pool.pool;
+
+    // List all blocks together in a free list
+    for(int i = 0; i < POOL_NUM_BLOCKS - 1; i++)
+    {
+        ((mem_block_t*)uart_memory_pool.pool[i])->next_block = (mem_block_t*)uart_memory_pool.pool[i+1];
+    }
+
+    ((mem_block_t*)uart_memory_pool.pool[POOL_NUM_BLOCKS - 1])->next_block = NULL;
+}
+
+/**
+ * @brief Allocates a block of memory from the memory pool
+ * @retval Pointer to allocated block, or NULL if poolis exhausted
+ */
+void *MemoryPool_Allocate(void)
+{
+    if(uart_memory_pool.free_list == NULL)
+    {
+        return NULL;
+    }
+
+    mem_block_t *allocated_block = uart_memory_pool.free_list;  // Taking first block
+    uart_memory_pool.free_list = allocated_block->next_block;   // Move free list pointer
+
+    return (void *)allocated_block;
 }
 
 
