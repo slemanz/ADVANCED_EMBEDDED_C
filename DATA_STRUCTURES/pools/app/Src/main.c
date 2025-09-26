@@ -42,6 +42,23 @@ void MemoryPool_Init(void)
     ((MemBlock_t*)memPool.pool[MEMORY_POOL_SIZE - 1])->next = NULL; // End of list
 }
 
+/**
+ * @brief Allocates a block of memory from the memory pool
+ * @retval Pointer to allocated block, or NULL if poolis exhausted
+ */
+void *MemoryPool_Allocate(void)
+{
+    if(memPool.freelist == NULL)
+    {
+        return NULL; // no free blocks available
+    }
+
+    MemBlock_t *allocated_block = memPool.freelist; // taking first block
+    memPool.freelist = allocated_block->next;
+
+    return (void *)allocated_block;
+}
+
 
 int main(void)
  {
