@@ -76,6 +76,19 @@ void *MemoryPool_free(void *ptr)
     memPool.freelist = block;
 }
 
+uint32_t MemoryPool_GetFreeBlockCount(void)
+{
+    uint32_t count = 0;
+
+    MemBlock_t *current = memPool.freelist;
+    while(current)
+    {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
 
 int main(void)
  {
@@ -84,6 +97,10 @@ int main(void)
 
     printf("\nInit board...\n\r");
 
+    MemoryPool_Init();
+
+    void *ptr1 = MemoryPool_Allocate();
+    printf("Free Blocks Left: %lu\n");
 
     while (1)
     {   
