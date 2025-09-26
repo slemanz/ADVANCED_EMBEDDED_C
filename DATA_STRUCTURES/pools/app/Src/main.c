@@ -60,6 +60,23 @@ void *MemoryPool_Allocate(void)
 }
 
 
+/**
+ * @brief  Frees a previosly allocated block, returning it to the pool
+ * @param ptr Pointer to block to be free
+ */
+void *MemoryPool_free(void *ptr)
+{
+    if(ptr == NULL)
+    {
+        return;
+    }
+
+    MemBlock_t *block = (MemBlock_t*)ptr;
+    block->next = memPool.freelist; // return the block to the free list
+    memPool.freelist = block;
+}
+
+
 int main(void)
  {
     config_drivers();
