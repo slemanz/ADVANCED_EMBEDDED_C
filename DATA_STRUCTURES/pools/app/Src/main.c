@@ -24,6 +24,24 @@ typedef struct{
     MemBlock_t *freelist;               // Linked list of free block
 }MemoryPool_t;
 
+static MemoryPool_t memPool;
+
+/**
+ * @brief Initializes the memory pool by linking all blocks into a free list
+ */
+void MemoryPool_Init(void)
+{
+    memPool.freelist = (MemBlock_t*) memPool.pool;
+
+    // Link all blocks together in a free list
+    for(int i = 0; i < MEMORY_POOL_SIZE - 1; i++)
+    {
+        ((MemBlock_t*)memPool.pool[i])->next = (MemBlock_t*)memPool.pool[i+1];
+    }
+
+    ((MemBlock_t*)memPool.pool[MEMORY_POOL_SIZE - 1])->next = NULL; // End of list
+}
+
 
 int main(void)
  {
