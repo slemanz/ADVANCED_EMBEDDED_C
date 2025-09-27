@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include "config.h"
 #include "led.h"
 #include "button.h"
@@ -19,6 +20,16 @@ typedef struct {
 
 /* Queue instance for the UART RX buffer */
 static Queue_t uart_rx_queue = {.front = 0, .rear = 0, .length = 0};
+
+bool queue_is_full()
+{
+    return (uart_rx_queue.length == QUEUE_SIZE);
+}
+
+bool queue_is_empty()
+{
+    return (uart_rx_queue.length == 0);
+}
 
 int main(void)
  {
