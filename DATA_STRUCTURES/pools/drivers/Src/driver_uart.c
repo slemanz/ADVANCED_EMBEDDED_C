@@ -2,6 +2,7 @@
 #include "driver_gpio.h"
 #include "driver_interrupt.h"
 #include <stddef.h>
+#include <string.h>
 
 static uint16_t compute_uart_div(uint32_t PeriphClk, uint32_t BaudRate);
 
@@ -31,7 +32,7 @@ static memory_pool_t uart_memory_pool;
 /**
  * @brief Initializes the memory pool by linking all blocks into a free list
  */
-void MemoryPool_Init(void)
+void memory_pool_init(void)
 {
     uart_memory_pool.free_list = (mem_block_t*)uart_memory_pool.pool;
 
@@ -48,7 +49,7 @@ void MemoryPool_Init(void)
  * @brief Allocates a block of memory from the memory pool
  * @retval Pointer to allocated block, or NULL if poolis exhausted
  */
-static void *MemoryPool_Allocate(void)
+static void *memory_pool_allocate(void)
 {
     if(uart_memory_pool.free_list == NULL)
     {
@@ -133,4 +134,33 @@ void uart2_init_pins(void)
 
     UartPin.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_3;
     GPIO_Init(&UartPin);
+}
+
+int uart_send_message(const uint8_t *data, uint32_t length)
+{
+    if(length > POOL_BLOCK_SIZE)
+    {
+        return -1; /* Error: message exceeds max buffer size */
+    }
+
+    /* Allocate Memory Block from the Pool */
+    uint8_t *buffer = (uint8_t)memory_pool_allocate();
+
+    if(buffer == NULL)
+    {
+        return -1; // Error: no memory available
+    }
+
+    memcpy(buffer, data, length);
+
+    /* Transmit each byte */
+    for(uint32_t i = 0; i < length; i++)
+    {
+        uart2_write_byte(buffer[i]);
+    }
+
+    /* Free the allocated memory block after transmission */
+    memory_pool_free(buffer);
+
+    return 0;
 }
