@@ -50,3 +50,5 @@ UART Buffering can implemented using various data structures:
 ### Implementation
 
 - [Pool Basic Implementation](app/Src/pool_basic.c)
+- [Send message - driver uart](drivers/Src/driver_uart.c)
+- [Send message - main.c file](app/Src/main.c)

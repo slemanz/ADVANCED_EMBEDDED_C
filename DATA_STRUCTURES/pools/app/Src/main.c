@@ -12,6 +12,16 @@ int main(void)
 
     printf("\nInit board...\n\r");
 
+    memory_pool_init();
+
+    uint8_t msg1[] = "Hello from STM32\n";
+    uint8_t msg2[] = "Slemanz here! MemPool :)\n";
+    
+    uart_send_message(msg1, sizeof(msg1));
+    uart_send_message(msg2, sizeof(msg2));
+
+    printf("Free Blocks Left: %lu\n", memory_pool_get_free_count());
+
 
     while (1)
     {   

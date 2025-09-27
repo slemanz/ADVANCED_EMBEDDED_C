@@ -144,7 +144,7 @@ int uart_send_message(const uint8_t *data, uint32_t length)
     }
 
     /* Allocate Memory Block from the Pool */
-    uint8_t *buffer = (uint8_t)memory_pool_allocate();
+    uint8_t *buffer = (uint8_t*)memory_pool_allocate();
 
     if(buffer == NULL)
     {

@@ -16,5 +16,7 @@ void uart2_init_pins(void);
 void uart2_write_byte(uint8_t data);
 
 int uart_send_message(const uint8_t *data, uint32_t length);
+void memory_pool_init(void);
+uint32_t memory_pool_get_free_count(void);
 
 #endif
