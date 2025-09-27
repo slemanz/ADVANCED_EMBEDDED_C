@@ -31,6 +31,22 @@ bool queue_is_empty()
     return (uart_rx_queue.length == 0);
 }
 
+bool queue_enqueue(uint8_t data)
+{
+    if(queue_is_full())
+    {
+    	return false;
+    }
+
+    if(uart_rx_queue.rear >= QUEUE_SIZE) return false;
+
+    uart_rx_queue.buffer[uart_rx_queue.rear] = data;    //Store data into buffer
+    uart_rx_queue.rear++;                               // Move rear to the next position
+    uart_rx_queue.length++;                             //Increase the number of stored elements
+
+	return true;
+}
+
 int main(void)
  {
     config_drivers();
@@ -43,6 +59,7 @@ int main(void)
     while (1)
     {   
         // blinky
+        if((ticks_get() - start_time) >= 500)
         {
             led_toggle();
             start_time = ticks_get();
