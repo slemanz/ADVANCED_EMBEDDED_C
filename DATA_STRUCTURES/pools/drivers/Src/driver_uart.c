@@ -48,7 +48,7 @@ void MemoryPool_Init(void)
  * @brief Allocates a block of memory from the memory pool
  * @retval Pointer to allocated block, or NULL if poolis exhausted
  */
-void *MemoryPool_Allocate(void)
+static void *MemoryPool_Allocate(void)
 {
     if(uart_memory_pool.free_list == NULL)
     {
@@ -59,6 +59,39 @@ void *MemoryPool_Allocate(void)
     uart_memory_pool.free_list = allocated_block->next_block;   // Move free list pointer
 
     return (void *)allocated_block;
+}
+
+/**
+ * @brief Frees a previously allocated block, returning it to the memory pool
+ * @param ptr Pointer to the block to be freed
+ */
+static void memory_pool_free(void *ptr)
+{
+    if(ptr == NULL)
+    {
+        return; // prevent double Free
+    } 
+
+    mem_block_t *block = (mem_block_t*)ptr;
+    block->next_block = uart_memory_pool.free_list;
+    uart_memory_pool.free_list = block;
+}
+
+/**
+ * @brief Retrieves the number of free memory blocks in the pool
+ * @retval Number of available memory blocks
+ */
+uint32_t memory_pool_get_free_count(void)
+{
+    uint32_t count = 0;
+    mem_block_t *current = uart_memory_pool.free_list;
+    while(current)
+    {
+        count++;
+        current = current->next_block;
+    }
+
+    return count;
 }
 
 
