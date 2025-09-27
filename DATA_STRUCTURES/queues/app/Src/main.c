@@ -31,6 +31,11 @@ bool queue_is_empty()
     return (uart_rx_queue.length == 0);
 }
 
+/**
+ * @brief Add an element to the end of the queue
+ * @param data The byte to be added to the queue
+ * @retval true if successful, false if queue is full
+ */
 bool queue_enqueue(uint8_t data)
 {
     if(queue_is_full())
@@ -43,6 +48,27 @@ bool queue_enqueue(uint8_t data)
     uart_rx_queue.buffer[uart_rx_queue.rear] = data;    //Store data into buffer
     uart_rx_queue.rear++;                               // Move rear to the next position
     uart_rx_queue.length++;                             //Increase the number of stored elements
+
+	return true;
+}
+
+/**
+ * @brief Remove and return the front element from the queue
+ * @param data Pointer to where the retrieved byte will be stored
+ * @retval true if successful, false if queue is empty
+ */
+bool dequeue(uint8_t *data)
+{
+    if(queue_is_empty())
+    {
+    	return false;
+    }
+
+    if(uart_rx_queue.front >= QUEUE_SIZE) return false;
+
+    *data =  uart_rx_queue.buffer[uart_rx_queue.front]; //Retrieve data
+    uart_rx_queue.front++;                              // Move front to the next element
+    uart_rx_queue.length--;                             //Decrease the number of stored elements
 
 	return true;
 }
