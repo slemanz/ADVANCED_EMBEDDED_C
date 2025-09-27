@@ -88,3 +88,43 @@ the overflow condition in an application-specific way).
 - Check if the queue is empty. If it is, the operation fails.
 - Read the element from the location pointed to by the front pointer.
 - Update the front pointer: `front = (front + 1) % capacity.`
+
+### Circular Queues Applications
+
+1. Data Buffering:
+    - Communication Data: Buffering data coming in and out of communication
+    interfaces (UART, SPI, I2C, Ethernet).
+    - Audio/Video Data: Buffering samples from audio and video streams, where
+    constant data flow needs efficient handling.
+
+2. Task/Event Queuing:
+    - Task Scheduling: Holding task IDs or event triggers that need to be
+    processed.
+    - Interrupt Handling: Queueing the processing of interrupt events to prevent
+    prolonged interrupt service routines, which can disrupt the main flow of the
+    application.
+
+### Doubly Queues
+
+- A doubly-ended queue, often called a deque (pronounced "deck"), is a versatile
+data structure that combines the characteristics of both a queue and a stack.
+
+- Unlike a traditional queue, where elements are added at the rear and removed
+from the front (FIFO), a deque allows you to add and remove elements from both
+ends.
+
+- This bidirectional nature makes deques highly flexible for various applications.
+
+### Key Features of a Deque
+
+1. **Bidirectional Operations:**
+    - Insertion: Elements can be added at either the front (head) or the rear
+    (tail) of the deque.
+    - Deletion: Elements can be removed from either the front or the rear of the
+    deque.
+
+2. Flexibility:
+    - A deque can act like a queue (FIFO), a stack (LIFO), or a combination of
+    both. This adaptability makes it suitable for various scenarios.
+
+### Implementations
