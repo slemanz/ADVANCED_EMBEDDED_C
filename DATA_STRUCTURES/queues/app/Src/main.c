@@ -57,7 +57,7 @@ bool queue_enqueue(uint8_t data)
  * @param data Pointer to where the retrieved byte will be stored
  * @retval true if successful, false if queue is empty
  */
-bool dequeue(uint8_t *data)
+bool queue_dequeue(uint8_t *data)
 {
     if(queue_is_empty())
     {
@@ -72,6 +72,8 @@ bool dequeue(uint8_t *data)
 
 	return true;
 }
+
+void process_uart_data();
 
 int main(void)
  {
@@ -88,6 +90,7 @@ int main(void)
         if((ticks_get() - start_time) >= 500)
         {
             led_toggle();
+            process_uart_data();
             start_time = ticks_get();
         }
 
@@ -100,6 +103,16 @@ void USART2_IRQHandler(void)
     if(UART2->SR & UART_SR_RXNE)
     {
         received_data = UART2->DR;
-        uart2_write_byte(received_data);
+        queue_enqueue(received_data);
+    }
+}
+
+void process_uart_data()
+{
+    uint8_t rcv_data;
+    while(!queue_is_empty())
+    {
+        queue_dequeue(&rcv_data);
+        printf("Processed UART Byte: %c\n\r", rcv_data);
     }
 }
