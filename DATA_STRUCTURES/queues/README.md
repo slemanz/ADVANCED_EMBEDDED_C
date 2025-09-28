@@ -128,3 +128,5 @@ ends.
     both. This adaptability makes it suitable for various scenarios.
 
 ### Implementations
+
+- [Linear Queue](app/Src/linear_queue.c)
