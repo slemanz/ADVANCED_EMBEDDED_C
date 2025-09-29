@@ -36,12 +36,12 @@ typedef enum
     COMMAND_LED_ON,
     COMMAND_LED_OFF,
     COMMAND_READ_ADC
-}CommandType_t;
+}Command_type_t;
 
 /* Structure for a single command */
 typedef struct 
 {
-    CommandType_t command_type;
+    Command_type_t command_type;
     uint64_t time;
 }Command_t;
 
@@ -51,8 +51,29 @@ typedef struct
     uint8_t buffer[QUEUE_SIZE];     // Fixed-size buffer for adc samples
     volatile uint8_t head;          // Index of the first element
     volatile uint8_t tail;          // Index of the next insertion point
-}CommandQueue_t;
+}Command_queue_t;
 
+/* Queue instance for command buffer */
+static Command_queue_t command_queue = {.head = 0, .tail = 0};
+
+/**
+ * QUEUE IS FULL
+ */
+
+bool is_uart_queue_full(void)
+{
+    return (((uart_rx_queue.tail + 1) % QUEUE_SIZE) == uart_rx_queue.head);
+}
+
+bool is_adc_queue_full(void)
+{
+    return (((adc_data_queue.tail + 1) % ADC_BUFFER_SIZE) == command_queue.head);
+}
+
+bool is_command_queue_full()
+{
+    return (((command_queue.tail + 1) % QUEUE_SIZE) == command_queue.head);
+}
 
 
 int main(void)
