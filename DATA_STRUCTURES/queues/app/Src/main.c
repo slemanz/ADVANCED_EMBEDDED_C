@@ -193,13 +193,11 @@ int main(void)
 
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 500)
+        if((ticks_get() - start_time) >= 1000)
         {
-            led_toggle();
+            process_uart_data();
             start_time = ticks_get();
         }
-
     }
 }
 
@@ -219,6 +217,31 @@ void USART2_IRQHandler(void)
 
 static void process_uart_data(void)
 {
+    uint8_t received_byte;
+    while(dequeue_uart(&received_byte))
+    {
+        Command_t command;
+        switch (received_byte)
+        {
+            case '1':
+                command.command_type = COMMAND_LED_ON;
+                enqueue_command(command);
+                break;
+
+            case '2':
+                command.command_type = COMMAND_LED_OFF;
+                enqueue_command(command);
+                break;
+
+            case '3':
+                command.command_type = COMMAND_READ_ADC;
+                enqueue_command(command);
+                break;
+            
+            default:
+                break;
+        }
+    }
 
 }
 
