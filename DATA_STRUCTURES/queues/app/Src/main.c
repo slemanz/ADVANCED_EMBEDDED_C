@@ -48,7 +48,7 @@ typedef struct
 /* Structure to represent the command queue */
 typedef struct
 {
-    uint8_t buffer[QUEUE_SIZE];     // Fixed-size buffer for adc samples
+    Command_t buffer[QUEUE_SIZE];     // Fixed-size buffer for adc samples
     volatile uint8_t head;          // Index of the first element
     volatile uint8_t tail;          // Index of the next insertion point
 }Command_queue_t;
@@ -92,6 +92,46 @@ bool is_command_queue_empty(void)
 bool is_adc_queue_empty(void)
 {
     return (adc_data_queue.tail == adc_data_queue.head);
+}
+
+/**
+ * ENQUEUING
+ */
+
+bool enqueue_uart(uint8_t data)
+{
+    if(is_adc_queue_full())
+    {
+        return false;
+    }
+
+    uart_rx_queue.buffer[uart_rx_queue.tail] = data; // store data into buffer
+    uart_rx_queue.tail = (uart_rx_queue.tail + 1) % QUEUE_SIZE; // move tail to the next position
+    return true;
+}
+
+bool enqueue_command(Command_t command)
+{
+    if(is_command_queue_full())
+    {
+        return false;
+    }
+
+    command_queue.buffer[command_queue.tail] = command; // store data into buffer
+    command_queue.tail = (command_queue.tail + 1) % QUEUE_SIZE; // move tail to the next position
+    return true;
+}
+
+bool enqueue_adc(uint32_t data)
+{
+    if(is_adc_queue_full())
+    {
+        return false;
+    }
+
+    adc_data_queue.buffer[adc_data_queue.tail] = data; // store data into buffer
+    adc_data_queue.tail = (adc_data_queue.tail + 1) % ADC_BUFFER_SIZE; // move tail to the next position
+    return true;
 }
 
 
