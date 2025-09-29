@@ -70,9 +70,28 @@ bool is_adc_queue_full(void)
     return (((adc_data_queue.tail + 1) % ADC_BUFFER_SIZE) == command_queue.head);
 }
 
-bool is_command_queue_full()
+bool is_command_queue_full(void)
 {
     return (((command_queue.tail + 1) % QUEUE_SIZE) == command_queue.head);
+}
+
+/**
+ * QUEUE IS EMPTY
+ */
+
+bool is_uart_queue_empty(void)
+{
+    return (uart_rx_queue.tail == uart_rx_queue.head);
+}
+
+bool is_command_queue_empty(void)
+{
+    return (command_queue.tail == command_queue.head);
+}
+
+bool is_adc_queue_empty(void)
+{
+    return (adc_data_queue.tail == adc_data_queue.head);
 }
 
 
