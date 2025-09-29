@@ -174,6 +174,14 @@ bool dequeue_command(Command_t *command)
 	return true;
 }
 
+/**
+ * PROCESSING
+ */
+
+static void process_uart_data(void);
+static void collect_adc_data(void);
+static void process_commands(void);
+
 int main(void)
  {
     config_drivers();
@@ -201,5 +209,25 @@ void USART2_IRQHandler(void)
     if(UART2->SR & UART_SR_RXNE)
     {
         received_data = UART2->DR;
+        enqueue_uart(received_data);
     }
+}
+
+/**
+ * PROCESSING IMPLEMENTATION
+ */
+
+static void process_uart_data(void)
+{
+
+}
+
+static void collect_adc_data(void)
+{
+
+}
+
+static void process_commands(void)
+{
+
 }
