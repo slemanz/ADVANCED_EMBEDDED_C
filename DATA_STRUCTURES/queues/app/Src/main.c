@@ -134,6 +134,45 @@ bool enqueue_adc(uint32_t data)
     return true;
 }
 
+/**
+ * DEQUEUING
+ */
+
+bool dequeue_uart(uint8_t *data)
+{
+    if(is_uart_queue_empty())
+    {
+    	return false;
+    }
+
+    *data =  uart_rx_queue.buffer[uart_rx_queue.head];  //Retrieve data
+    uart_rx_queue.head =  (uart_rx_queue.head + 1)% QUEUE_SIZE;  // Move front to the next element
+	return true;
+}
+
+bool dequeue_command(Command_t *command)
+{
+    if(is_command_queue_empty())
+    {
+        return false;
+    }
+
+    *command = command_queue.buffer[command_queue.head]; // retrieve data
+    command_queue.head = (command_queue.head + 1) % QUEUE_SIZE; // move front to the next element
+    return true;
+}
+
+ bool dequeue_adc(uint32_t *data)
+ {
+    if(is_adc_queue_empty())
+    {
+    	return false;
+    }
+
+    *data =  adc_data_queue.buffer[adc_data_queue.head];  //Retrieve data
+    adc_data_queue.head =  (adc_data_queue.head + 1)% ADC_BUFFER_SIZE;  // Move front to the next element
+	return true;
+}
 
 int main(void)
  {
