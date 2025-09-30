@@ -56,6 +56,29 @@ int main(void)
     }
 }
 
+
+void add_task(TaskFunction task, uint8_t priority)
+{
+    if(task_count >= MAX_TASKS)
+    {
+        printf("Task queue is full\n");
+        return;
+    }
+
+    /* Insert the task into the queue based on priority */
+    uint8_t i = task_count;
+    while(i > 0 && task_queue[i-1].priority > priority)
+    {
+        task_queue[i] =  task_queue[i  -1];
+		i--;
+    }
+
+    task_queue[i].task =  task;
+	task_queue[i].priority =  priority;
+	task_count++;
+}
+
+
 uint8_t received_data = 0;
 void USART2_IRQHandler(void)
 {
