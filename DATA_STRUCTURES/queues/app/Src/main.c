@@ -23,6 +23,18 @@ static Task_t task_queue[MAX_TASKS];
 static uint8_t task_count = 0;
 
 
+void add_task(TaskFunction task, uint8_t priority);
+void execute_tasks(void);
+
+//example tasks
+void task_led_toggle(void);
+void task_read_adc(void);
+void task_send_data(void);
+
+
+typedef uint32_t task_profiler;
+task_profiler task1_profiler, task2_profiler, task3_profiler;
+
 int main(void)
  {
     config_drivers();
