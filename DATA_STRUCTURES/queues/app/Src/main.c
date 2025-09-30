@@ -7,6 +7,22 @@
 #include "driver_adc.h"
 #include "driver_uart.h"
 
+#define MAX_TASKS           10
+
+/* Task function pointer */
+typedef void (*TaskFunction)(void);
+
+/* Task structure */
+typedef struct
+{
+    uint8_t priority; // priority of the task (lower value means higher priority)
+    TaskFunction task;
+}Task_t;
+
+static Task_t task_queue[MAX_TASKS];
+static uint8_t task_count = 0;
+
+
 int main(void)
  {
     config_drivers();
