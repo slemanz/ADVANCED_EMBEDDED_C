@@ -130,3 +130,4 @@ ends.
 ### Implementations
 
 - [Linear Queue](app/Src/linear_queue.c)
+- [Circular Queue](app/Src/circular_queue.c)
