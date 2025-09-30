@@ -187,6 +187,8 @@ int main(void)
     config_drivers();
     config_bsp();
 
+    adc_start_conversion();
+
     printf("\nInit board...\n\r");
 
     uint64_t start_time = ticks_get();
@@ -245,12 +247,36 @@ static void process_uart_data(void)
 
 }
 
-static void collect_adc_data(void)
+static void process_commands(void)
 {
+    Command_t command;
 
+    while(dequeue_command(&command))
+    {
+        switch (command.command_type)
+        {
+            case COMMAND_LED_ON:
+                led_off();
+                printf("Led turned on\n");
+                break;
+            case COMMAND_LED_OFF:
+                led_on();
+                printf("Led turned off\n");
+                break;
+            case COMMAND_READ_ADC:
+                uint32_t adc_value;
+                while(dequeue_adc(&adc_value))
+                {
+                    printf("ADC value: %lu\n", adc_value);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
 
-static void process_commands(void)
+static void collect_adc_data(void)
 {
 
 }
