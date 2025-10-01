@@ -1,23 +1,33 @@
-#include "config.h"
 #include <stdio.h>
-#include "driver_systick.h"
+#include "config.h"
 #include "led.h"
 #include "button.h"
+#include "driver_systick.h"
+#include "driver_adc.h"
+#include "driver_uart.h"
+#include "driver_rtc.h"
+
+static void get_current_timestamp(void)
+{
+    uint32_t hour   =  rtc_time_get_hour();
+	uint32_t minute =  rtc_time_get_minute();
+	uint32_t second =  rtc_time_get_second();
+
+    printf("%02lx:%02lx:%02lx\n", hour, minute, second);
+}
 
 int main(void)
  {
     config_drivers();
     config_bsp();
+    rtc_init();
 
     printf("\nInit board...\n\r");
-
-    float n1 = 10.0, n2 = 7.0;
-    float result = n1/n2;
-    printf("%.2f/%.2f = %.5f\n", n1, n2, result);
 
     uint32_t adc_value = 0;
 
     uint64_t start_time = ticks_get();
+    uint64_t start_time2 = ticks_get();
 
     while (1)
     {   
@@ -28,11 +38,11 @@ int main(void)
             start_time = ticks_get();
         }
 
-        // blinky 2
-        /*
-        GPIO_ToggleOutputPin(LED_PORT, LED_PIN);
-        ticks_delay(500);
-        */
+        if((ticks_get() - start_time2) >= 5000)
+        {
+            get_current_timestamp();
+            start_time2 = ticks_get();
+        }
 
         if(!button_get_state())
         {
@@ -41,5 +51,15 @@ int main(void)
             printf("Adc: %ld\n", adc_value);
             while(!button_get_state());
         }
+    }
+}
+
+uint8_t received_data = 0;
+void USART2_IRQHandler(void)
+{
+    if(UART2->SR & UART_SR_RXNE)
+    {
+        received_data = UART2->DR;
+        uart2_write_byte(received_data);
     }
 }

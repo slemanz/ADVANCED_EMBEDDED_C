@@ -1,5 +1,8 @@
 #include "config.h"
 
+#include "driver_fpu.h"
+#include "driver_systick.h"
+#include "driver_uart.h"
 #include "driver_gpio.h"
 #include "driver_adc.h"
 

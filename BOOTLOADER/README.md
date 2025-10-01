@@ -37,3 +37,5 @@ for firmware updates to be performed only by authorized personnel or devices.
 This can help prevent unauthorized access or tampering with the device.
 
 --- 
+
+- [Linker Script](linkerscript/)
