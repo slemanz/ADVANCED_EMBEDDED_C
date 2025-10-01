@@ -46,11 +46,18 @@ int main(void)
 
     uint64_t start_time = ticks_get();
 
+    // add Tasks to  priority queue
+    add_task(task_led_toggle, 2);
+    add_task(task_read_adc, 3);
+    add_task(task_send_data, 1);
+
+    printf("Executing tasks...\n");
+    execute_tasks();
+
     while (1)
     {   
         if((ticks_get() - start_time) >= 1000)
         {
-            printf("Adc value: %lu\n", adc_read());
             start_time = ticks_get();
         }
     }
