@@ -78,6 +78,24 @@ void add_task(TaskFunction task, uint8_t priority)
 	task_count++;
 }
 
+void execute_tasks(void)
+{
+    while(task_count > 0)
+    {
+        TaskFunction task = task_queue[0].task;
+
+        /* Shift tasks in the queue */
+        for(uint8_t i = 1; i < task_count; i++)
+        {
+            task_queue[i-1] = task_queue[i];
+        }
+        task_count--;
+
+        /* Execute the task */
+        task();
+    }
+}
+
 
 uint8_t received_data = 0;
 void USART2_IRQHandler(void)
