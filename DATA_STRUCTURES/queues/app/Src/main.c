@@ -97,6 +97,27 @@ void execute_tasks(void)
 }
 
 
+void task_led_toggle(void)
+{
+    printf("Toggling LED\n");
+    led_toggle();
+    task1_profiler++;
+}
+
+void task_read_adc(void)
+{
+    uint32_t adc_value = adc_read();
+    printf("ADC Value %lu\n", adc_value);
+    task2_profiler++;
+}
+
+void task_send_data(void)
+{
+    printf("Sending data!\n");
+    task3_profiler++;
+}
+
+
 uint8_t received_data = 0;
 void USART2_IRQHandler(void)
 {
