@@ -3,11 +3,28 @@
 #include "led.h"
 #include "button.h"
 #include "driver_systick.h"
-#include "driver_adc.h"
+#include "driver_gpio.h"
 #include "driver_uart.h"
+
+// defines to place in linker sections
+#define CUSTOM_FUNC      __attribute__((section(".custom_section")))
+#define RAM_FUNC        __attribute__((section(".RamFunc")))
 
 unsigned char __attribute__((section(".custom_ram_block"))) custom_ram_buff[10]; // 10 bytes
 unsigned char __attribute__((section(".custom_flash_block"))) custom_flash_buff[10]; // 10 bytes
+
+void RAM_FUNC _led_toggle(void)
+{
+    led_toggle();
+    ticks_delay(100);
+}
+
+void CUSTOM_FUNC _led_toggle2(uint32_t dly_ms)
+{
+    led_toggle();
+    ticks_delay(dly_ms);
+}
+
 
 int main(void)
  {
@@ -15,19 +32,14 @@ int main(void)
     config_bsp();
     printf("\nInit board...\n\r");
 
-    uint64_t start_time = ticks_get();
-
     custom_ram_buff[0] = 10;
     (void)custom_ram_buff[0];
 
     while (1)
     {   
         // blinky
-        if((ticks_get() - start_time) >= 500)
-        {
-            led_toggle();
-            start_time = ticks_get();
-        }
+        //_led_toggle(); // works
+        _led_toggle2(1000); // works
     }
 }
 
