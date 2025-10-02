@@ -7,6 +7,7 @@ MEMORY
 {
     FLASH(rx): ORIGIN =0x08000000, LENGTH =512K
     SRAM(rwx): ORIGIN =0x20000000, LENGTH =128K
+    CUSTOM_MEMORY (rx) : ORIGIN = 0x800C000,	LENGTH = 64K
 }
 
 SECTIONS
@@ -44,6 +45,11 @@ SECTIONS
    {
    	    KEEP(*(.custom_flash_block))
    }>FLASH
+
+   .custom_section :
+   {
+        KEEP(*(.custom_section))
+   }>CUSTOM_MEMORY
     
     .arrays :
     {
