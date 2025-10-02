@@ -39,3 +39,4 @@ This can help prevent unauthorized access or tampering with the device.
 --- 
 
 - [Linker Script](linkerscript/)
+- [Bootloader v1](bootloader_v1/)
