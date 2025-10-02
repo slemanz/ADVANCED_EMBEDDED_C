@@ -32,6 +32,18 @@ SECTIONS
         . = ALIGN(4);
         _etext = .;       
     } > FLASH
+
+    /*Create this section in the RAM*/
+   .custom_ram_block 0x20000100(NOLOAD) : 
+   {
+        /*Keep variables even if they are not referenced*/
+        KEEP(*(.custom_ram_block))
+   }>SRAM
+   
+   .custom_flash_block 0x08004000 :
+   {
+   	    KEEP(*(.custom_flash_block))
+   }>FLASH
     
     .arrays :
     {

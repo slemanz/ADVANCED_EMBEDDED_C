@@ -5,7 +5,9 @@
 #include "driver_systick.h"
 #include "driver_adc.h"
 #include "driver_uart.h"
-#include "driver_rtc.h"
+
+unsigned char __attribute__((section(".custom_ram_block"))) custom_ram_buff[10]; // 10 bytes
+unsigned char __attribute__((section(".custom_flash_block"))) custom_flash_buff[10]; // 10 bytes
 
 int main(void)
  {
@@ -14,6 +16,9 @@ int main(void)
     printf("\nInit board...\n\r");
 
     uint64_t start_time = ticks_get();
+
+    custom_ram_buff[0] = 10;
+    (void)custom_ram_buff[0];
 
     while (1)
     {   
