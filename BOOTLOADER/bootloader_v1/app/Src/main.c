@@ -3,31 +3,39 @@
 #include "led.h"
 #include "button.h"
 #include "driver_systick.h"
-#include "driver_adc.h"
 #include "driver_uart.h"
-#include "driver_rtc.h"
 
-static void get_current_timestamp(void)
+
+#define APPLICATION_ADDRESS         0x08008000
+
+
+typedef void (*func_ptr)(void);
+
+void jmp_to_default_app(void)
 {
-    uint32_t hour   =  rtc_time_get_hour();
-	uint32_t minute =  rtc_time_get_minute();
-	uint32_t second =  rtc_time_get_second();
+    uint32_t app_start_address;
+    func_ptr jump_to_app;
 
-    printf("%02lx:%02lx:%02lx\n", hour, minute, second);
+    printf("Bootloader started...\n");
+    ticks_delay(300);
+
+    app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
+    jump_to_app = (func_ptr)app_start_address;
+
+    /* Initialize main stack pointer */
+    // implement
+
+    jump_to_app();
 }
 
 int main(void)
  {
     config_drivers();
     config_bsp();
-    rtc_init();
 
     printf("\nInit board...\n\r");
 
-    uint32_t adc_value = 0;
-
     uint64_t start_time = ticks_get();
-    uint64_t start_time2 = ticks_get();
 
     while (1)
     {   
@@ -36,20 +44,6 @@ int main(void)
         {
             led_toggle();
             start_time = ticks_get();
-        }
-
-        if((ticks_get() - start_time2) >= 5000)
-        {
-            get_current_timestamp();
-            start_time2 = ticks_get();
-        }
-
-        if(!button_get_state())
-        {
-            adc_start_conversion();
-            adc_value = adc_read();
-            printf("Adc: %ld\n", adc_value);
-            while(!button_get_state());
         }
     }
 }
