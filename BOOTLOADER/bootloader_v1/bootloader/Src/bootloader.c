@@ -16,7 +16,7 @@ void jmp_to_default_app(void)
     uint32_t app_start_address;
     func_ptr jump_to_app;
 
-    printf("Bootloader started...\n");
+    printf("Jump to app!\n");
     ticks_delay(300);
 
     app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
@@ -36,6 +36,7 @@ int main(void)
     printf("\nInit bootloader...\n\r");
 
     uint64_t start_time = ticks_get();
+    uint64_t start_time2 = ticks_get();
 
     while (1)
     {   
@@ -44,6 +45,12 @@ int main(void)
         {
             led_toggle();
             start_time = ticks_get();
+        }
+
+        if((ticks_get() - start_time2) >= 5000)
+        {
+            INTERRUPT_DISABLE();
+            jmp_to_default_app();
         }
     }
 }

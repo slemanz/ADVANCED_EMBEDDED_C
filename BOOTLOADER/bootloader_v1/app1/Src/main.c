@@ -5,10 +5,17 @@
 #include "driver_systick.h"
 #include "driver_uart.h"
 
+#define FLASH_BASE                  0x08000000
+#define VECT_TAB_BASE_ADDRESS       FLASH_BASE
+#define VECT_TAB_OFFSET	            0x8000
+
 int main(void)
  {
+    SCB->VTOR = (VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET); // offset vector table
     config_drivers();
     config_bsp();
+    INTERRUPT_ENABLE();
+    ticks_delay(1000);
 
     printf("\nInit app (1)...\n\r");
 
