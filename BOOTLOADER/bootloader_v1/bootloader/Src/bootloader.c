@@ -33,14 +33,14 @@ int main(void)
     config_drivers();
     config_bsp();
 
-    printf("\nInit app...\n\r");
+    printf("\nInit bootloader...\n\r");
 
     uint64_t start_time = ticks_get();
 
     while (1)
     {   
         // blinky
-        if((ticks_get() - start_time) >= 1000)
+        if((ticks_get() - start_time) >= 100)
         {
             led_toggle();
             start_time = ticks_get();
