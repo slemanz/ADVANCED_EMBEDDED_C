@@ -23,7 +23,7 @@ OBJCOPY=arm-none-eabi-objcopy
 ###########################################
 #				 INCLUDES
 
-INCLUDES+= -I $(ROOT_DIR)/app/Inc/
+INCLUDES+= -I $(ROOT_DIR)/bootloader/Inc/
 INCLUDES+= -I $(ROOT_DIR)/drivers/Inc/ 
 INCLUDES+= -I $(ROOT_DIR)/bsp/Inc/ 
 

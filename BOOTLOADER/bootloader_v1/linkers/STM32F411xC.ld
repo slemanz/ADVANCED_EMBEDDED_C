@@ -14,6 +14,8 @@ SECTIONS
     .text :
     {
         . = ALIGN(4);
+        KEEP (*(.bootloader_section))
+        . = ALIGN(4);
         KEEP(*(.isr_vector))
         . = ALIGN(4);
         *(.text)         

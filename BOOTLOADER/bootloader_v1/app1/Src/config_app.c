@@ -1,4 +1,4 @@
-#include "config.h"
+#include "config_app.h"
 
 #include "driver_fpu.h"
 #include "driver_systick.h"

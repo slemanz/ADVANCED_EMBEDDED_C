@@ -5,8 +5,9 @@ MACH= -mcpu=cortex-m4
 FLOAT=-mfloat-abi=hard
 
 BUILD_DIR= Build
+ROOT_DIR = ..
 
-LINKER= -T linkers/STM32F411xC.ld
+LINKER= -T $(ROOT_DIR)/linkers/STM32F411xC.ld
 MAP_FILE= -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
 
@@ -22,16 +23,17 @@ OBJCOPY=arm-none-eabi-objcopy
 ###########################################
 #				 INCLUDES
 
-INCLUDES+= -I app/Inc/
-INCLUDES+= -I drivers/Inc/ 
-INCLUDES+= -I bsp/Inc/ 
+INCLUDES+= -I $(ROOT_DIR)/app1/Inc/
+INCLUDES+= -I $(ROOT_DIR)/drivers/Inc/ 
+INCLUDES+= -I $(ROOT_DIR)/bsp/Inc/ 
 
 
 ############################################
 # 				OUTPUT FILES
 
+OBJS		+= $(BUILD_DIR)/bootloader.o
 OBJS		+= $(BUILD_DIR)/main.o
-OBJS		+= $(BUILD_DIR)/config.o
+OBJS		+= $(BUILD_DIR)/config_app.o
 OBJS		+= $(BUILD_DIR)/syscalls.o
 OBJS		+= $(BUILD_DIR)/startup.o
 
@@ -56,17 +58,20 @@ all: $(PREREQ) $(BUILD_DIR)/$(TARGET).elf
 $(PREREQ):
 	mkdir $(PREREQ)
 
-$(BUILD_DIR)/%.o: app/Src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o app/Src/$(*).c
+$(BUILD_DIR)/%.o: $(ROOT_DIR)/app1/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(ROOT_DIR)/app1/Src/$(*).c
 
-$(BUILD_DIR)/%.o: drivers/Src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o drivers/Src/$(*).c
+$(BUILD_DIR)/%.o: $(ROOT_DIR)/app1/Src/%.S
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(ROOT_DIR)/app1/Src/$(*).S
 
-$(BUILD_DIR)/%.o: bsp/Src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o bsp/Src/$(*).c
+$(BUILD_DIR)/%.o: $(ROOT_DIR)/drivers/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(ROOT_DIR)/drivers/Src/$(*).c
 
-$(BUILD_DIR)/%.o: linkers/*.c
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o linkers/$(*).c
+$(BUILD_DIR)/%.o: $(ROOT_DIR)/bsp/Src/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(ROOT_DIR)/bsp/Src/$(*).c
+
+$(BUILD_DIR)/%.o: $(ROOT_DIR)/linkers/*.c
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BUILD_DIR)/$(*).o $(ROOT_DIR)/linkers/$(*).c
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJS) $(DRIVERS) $(BSP)
 	$(CC) $(LDFLAGS) -o $@ $^
@@ -75,7 +80,7 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJS) $(DRIVERS) $(BSP)
 
 load:
 	openocd -f interface/jlink.cfg -c "transport select swd" -f target/stm32f4x.cfg -c init -c "reset init" \
-	-c "flash write_image erase Build/flash.elf" -c "reset run" -c shutdown
+	-c "flash write_image erase Build/$(TARGET).elf" -c "reset run" -c shutdown
 
 clean:
 	rm -rf $(BUILD_DIR)/*.map $(BUILD_DIR)/*.o

@@ -1,39 +1,16 @@
 #include <stdio.h>
-#include "config.h"
+#include "config_app.h"
 #include "led.h"
 #include "button.h"
 #include "driver_systick.h"
 #include "driver_uart.h"
-
-
-#define APPLICATION_ADDRESS         0x08008000
-
-
-typedef void (*func_ptr)(void);
-
-void jmp_to_default_app(void)
-{
-    uint32_t app_start_address;
-    func_ptr jump_to_app;
-
-    printf("Bootloader started...\n");
-    ticks_delay(300);
-
-    app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
-    jump_to_app = (func_ptr)app_start_address;
-
-    /* Initialize main stack pointer */
-    // implement
-
-    jump_to_app();
-}
 
 int main(void)
  {
     config_drivers();
     config_bsp();
 
-    printf("\nInit app...\n\r");
+    printf("\nInit app (1)...\n\r");
 
     uint64_t start_time = ticks_get();
 
