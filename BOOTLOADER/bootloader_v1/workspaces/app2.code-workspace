@@ -1,0 +1,27 @@
+{
+	"folders": [
+        {
+            "path": "../app2"
+        },
+        {
+            "path": "../bsp"
+        },
+        {
+            "path": "../drivers"
+        },
+        {
+            "path": "../linkers"
+        }
+    ],
+    "settings": {
+        "C_Cpp.default.includePath": [
+            "${workspaceFolder}/../app2/Inc",
+            "${workspaceFolder}/../bsp/Inc",
+            "${workspaceFolder}/../drivers/Inc"
+        ],
+        "files.associations": {
+            "driver_gpio.h": "c",
+            "config_app.h": "c"
+        }
+    }
+}
