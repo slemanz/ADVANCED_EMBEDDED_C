@@ -40,6 +40,9 @@ void jmp_to_default_app(void)
         // implement
 
         jump_to_app();
+    }else
+    {
+        printf("Ops! No application found at location...\n");
     }
 }
 
@@ -52,6 +55,7 @@ int main(void)
 
     uint64_t start_time = ticks_get();
     uint64_t start_time2 = ticks_get();
+    uint64_t jump_time = 5000;
 
     while (1)
     {   
@@ -62,10 +66,13 @@ int main(void)
             start_time = ticks_get();
         }
 
-        if((ticks_get() - start_time2) >= 5000)
+        if((ticks_get() - start_time2) >= jump_time)
         {
             INTERRUPT_DISABLE();
             jmp_to_default_app();
+
+            jump_time = 900000;
+            start_time2 = ticks_get();
         }
     }
 }
