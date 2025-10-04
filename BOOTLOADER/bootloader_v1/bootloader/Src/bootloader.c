@@ -7,9 +7,13 @@
 
 
 #define APPLICATION_ADDRESS         0x08008000
+#define MSP_VERIFY_MASK			    0x2FFE0000
+#define EMPTY_MEM					0xFFFFFFFF
 
 
 typedef void (*func_ptr)(void);
+
+#define MEM_CHECKK_V2
 
 void jmp_to_default_app(void)
 {
@@ -19,13 +23,24 @@ void jmp_to_default_app(void)
     printf("Jump to app!\n");
     ticks_delay(300);
 
-    app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
-    jump_to_app = (func_ptr)app_start_address;
+    	/*Version 1*/
+#ifdef MEM_CHECKK_V1
+	if(((*(uint32_t *)APPLICATION_ADDRESS) & MSP_VERIFY_MASK ) ==  0x20020000)
+#endif
 
-    /* Initialize main stack pointer */
-    // implement
+	/*Version 2*/
+#ifdef MEM_CHECKK_V2
+	if((*(uint32_t *)APPLICATION_ADDRESS) != EMPTY_MEM)
+#endif
+    {
+        app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
+        jump_to_app = (func_ptr)app_start_address;
 
-    jump_to_app();
+        /* Initialize main stack pointer */
+        // implement
+
+        jump_to_app();
+    }
 }
 
 int main(void)
