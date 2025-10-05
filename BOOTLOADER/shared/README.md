@@ -7,6 +7,6 @@
 
 **App 1**
 
-- [bootloader.S](app1/Src/bootloader.S)
-- [main.c](app1/Src/main.c)
+- [bootloader.S](app/Src/bootloader.S)
+- [main.c](app/Src/main.c)
 - [Linker](linkers/STM32F411xC.ld)

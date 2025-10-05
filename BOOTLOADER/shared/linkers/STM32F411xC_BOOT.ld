@@ -5,7 +5,8 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 
 MEMORY
 {
-    FLASH(rx): ORIGIN =0x08000000, LENGTH =32K
+    FLASH(rx): ORIGIN =0x08000000, LENGTH =16K
+    CUSTOM_MEMORY(rx): ORIGIN =0x08004000, LENGTH =16K
     SRAM(rwx): ORIGIN =0x20000000, LENGTH =128K
 }
 
@@ -51,6 +52,11 @@ SECTIONS
         PROVIDE_HIDDEN (__fini_array_end = .);
         . = ALIGN(4);
     } >FLASH
+
+    COMMON_APIS 0x08004000	:
+	{
+		KEEP(*(.COMMON_APIS))
+	} >CUSTOM_MEMORY
 
     _la_data = LOADADDR(.data);
     .data :

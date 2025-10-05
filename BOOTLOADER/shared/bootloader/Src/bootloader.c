@@ -15,6 +15,21 @@ typedef void (*func_ptr)(void);
 
 #define MEM_CHECKK_V2
 
+struct btl_common_apis
+{
+    void (*led_on)(void);
+    void (*led_off)(void);
+    void (*led_toggle)(void);
+    void (*uart_write_byte)(uint8_t ch);
+};
+
+struct btl_common_apis common_apis __attribute__((section(".COMMON_APIS"))) = {
+    led_on,
+    led_off,
+    led_toggle,
+    uart2_write_byte
+};
+
 void jmp_to_default_app(void)
 {
     uint32_t app_start_address;
@@ -62,7 +77,7 @@ int main(void)
         // blinky
         if((ticks_get() - start_time) >= 100)
         {
-            led_toggle();
+            common_apis.led_toggle();
             start_time = ticks_get();
         }
 
