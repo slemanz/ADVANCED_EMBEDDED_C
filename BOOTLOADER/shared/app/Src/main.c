@@ -9,6 +9,26 @@
 #define VECT_TAB_BASE_ADDRESS       FLASH_BASE
 #define VECT_TAB_OFFSET	            0x8000
 
+struct btl_common_apis
+{
+    void (*led_on)(void);
+    void (*led_off)(void);
+    void (*led_toggle)(void);
+    void (*uart_write_byte)(uint8_t ch);
+};
+
+struct btl_common_apis *btl_common_apis = (struct btl_common_apis*)0x08004000;
+
+void print_hello(void)
+{
+    btl_common_apis->uart_write_byte('h');
+    btl_common_apis->uart_write_byte('e');
+    btl_common_apis->uart_write_byte('l');
+    btl_common_apis->uart_write_byte('l');
+    btl_common_apis->uart_write_byte('o');
+    btl_common_apis->uart_write_byte('\n');
+}
+
 int main(void)
  {
     SCB->VTOR = (VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET); // offset vector table
@@ -18,6 +38,7 @@ int main(void)
     ticks_delay(1000);
 
     printf("\nInit app ok...\n\r");
+    print_hello();
 
     uint64_t start_time = ticks_get();
 
@@ -26,7 +47,7 @@ int main(void)
         // blinky
         if((ticks_get() - start_time) >= 1000)
         {
-            led_toggle();
+            btl_common_apis->led_toggle();
             start_time = ticks_get();
         }
     }
