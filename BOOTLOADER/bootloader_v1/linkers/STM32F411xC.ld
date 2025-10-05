@@ -35,7 +35,7 @@ SECTIONS
         _etext = .;       
     } > FLASH
     
-    .arrays :
+    .arrays (READONLY) :
     {
         . = ALIGN(4);
         PROVIDE_HIDDEN (__preinit_array_start = .);
