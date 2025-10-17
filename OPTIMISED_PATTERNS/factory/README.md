@@ -124,3 +124,12 @@ and peripherals are scarce. Factories can manage these efficiently by reusing
 or dynamically allocating resources.
 
 ## Code
+
+**[main.c](app/Src/main.c)**
+
+**[comm_interface.h](app/Inc/comm_interface.h)**
+
+- **[protocol_factory.c](app/Src/protocol_factory.c)**
+- **[i2c_protocol.c](app/Src/i2c_protocol.c)**
+- **[spi_protocol.c](app/Src/spi_protocol.c)**
+- **[uart_protocol.c](app/Src/uart_protocol.c)**
