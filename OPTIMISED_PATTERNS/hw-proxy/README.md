@@ -76,3 +76,8 @@ to prevent accidental misuse.
 | Decorator | Dynamic enhancement     | Proxy manages access, decorator extends |
 
 ## Code
+
+**[main.c](app/Src/main.c)**
+
+- **[gpio_proxy.h](app/Inc/gpio_proxy.h)**
+- **[gpio_proxy.c](app/Src/gpio_proxy.c)**
