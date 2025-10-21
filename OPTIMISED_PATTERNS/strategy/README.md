@@ -60,3 +60,17 @@ The **Strategy Pattern** solves these by:
 - **Step 3:** configure context
 
 ## Code
+
+**[main.c](app/Src/main.c)**
+
+Inc:
+
+- **[filter_strategy.h](app/Inc/filter_strategy.h)**
+- **[adc_interface.h](app/Inc/adc_interface.h)**
+- **[adc_reader.h](app/Inc/adc_reader.h)**
+
+Src:
+
+- **[filter_strategy.c](app/Src/filter_strategy.c)**
+- **[adc_interface.c](app/Src/adc_interface.c)**
+- **[adc_reader.c](app/Src/adc_reader.c)**
