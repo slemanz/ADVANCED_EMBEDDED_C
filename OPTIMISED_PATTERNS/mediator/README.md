@@ -81,3 +81,18 @@ Communication Protocols: The Mediator Pattern can simplify the implementation of
 protocols like UART, SPI, or I2C by centralizing message routing.
 
 ## Code
+
+**[main.c](app/Src/main.c)**
+
+Inc:
+
+- **[embedded_system.h](app/Inc/embedded_system.h)**
+- **[mediator.h](app/Inc/mediator.h)**
+- **[actuator.h](app/Inc/actuator.h)**
+- **[sensor.h](app/Inc/sensor.h)**
+
+Src:
+
+- **[concrete_mediator.c](app/Src/concrete_mediator.c)**
+- **[actuator.c](app/Src/actuator.c)**
+- **[sensor.c](app/Src/sensor.c)**
