@@ -146,3 +146,5 @@ can be simulated in a controlled environment.
 | Sensor Data Processing |  States representing calibration, normal operation, and error handling for sensor arrays. |
 
 ## Code
+
+**[main.c](app/Src/main.c)**
