@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "config.h"
 
 #include "driver_fpu.h"
@@ -38,6 +39,39 @@ void config_bsp(void)
 {
     led_init();
     button_init();
+}
+
+typedef void (*func_ptr)(void);
+
+void jmp_to_default_app(void)
+{
+    uint32_t app_start_address;
+    func_ptr jump_to_app;
+
+    printf("Jump to app!\r\n");
+    ticks_delay(300);
+
+    	/*Version 1*/
+#ifdef MEM_CHECKK_V1
+	if(((*(uint32_t *)APPLICATION_ADDRESS) & MSP_VERIFY_MASK ) ==  0x20020000)
+#endif
+
+	/*Version 2*/
+#ifdef MEM_CHECKK_V2
+	if((*(uint32_t *)APPLICATION_ADDRESS) != EMPTY_MEM)
+#endif
+    {
+        app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
+        jump_to_app = (func_ptr)app_start_address;
+
+        /* Initialize main stack pointer */
+        // implement
+
+        jump_to_app();
+    }else
+    {
+        printf("Ops! No application found at location...\r\n");
+    }
 }
 
 // printf retarget

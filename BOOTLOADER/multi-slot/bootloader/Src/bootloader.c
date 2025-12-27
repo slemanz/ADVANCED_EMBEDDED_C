@@ -6,52 +6,15 @@
 #include "driver_uart.h"
 
 
-#define APPLICATION_ADDRESS         0x08008000
-#define MSP_VERIFY_MASK			    0x2FFE0000
-#define EMPTY_MEM					0xFFFFFFFF
 
 
-typedef void (*func_ptr)(void);
-
-#define MEM_CHECKK_V2
-
-void jmp_to_default_app(void)
-{
-    uint32_t app_start_address;
-    func_ptr jump_to_app;
-
-    printf("Jump to app!\n");
-    ticks_delay(300);
-
-    	/*Version 1*/
-#ifdef MEM_CHECKK_V1
-	if(((*(uint32_t *)APPLICATION_ADDRESS) & MSP_VERIFY_MASK ) ==  0x20020000)
-#endif
-
-	/*Version 2*/
-#ifdef MEM_CHECKK_V2
-	if((*(uint32_t *)APPLICATION_ADDRESS) != EMPTY_MEM)
-#endif
-    {
-        app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
-        jump_to_app = (func_ptr)app_start_address;
-
-        /* Initialize main stack pointer */
-        // implement
-
-        jump_to_app();
-    }else
-    {
-        printf("Ops! No application found at location...\n");
-    }
-}
 
 int main(void)
  {
     config_drivers();
     config_bsp();
 
-    printf("\nInit bootloader...\n\r");
+    printf("\r\nInit bootloader...\r\n");
 
     uint64_t start_time = ticks_get();
     uint64_t start_time2 = ticks_get();
@@ -60,7 +23,7 @@ int main(void)
     while (1)
     {   
         // blinky
-        if((ticks_get() - start_time) >= 100)
+        if((ticks_get() - start_time) >= 500)
         {
             led_toggle();
             start_time = ticks_get();
@@ -77,12 +40,25 @@ int main(void)
     }
 }
 
-uint8_t received_data = 0;
+volatile char g_key = 0;
+
+static void uart_callback(void)
+{
+    g_key = UART2->DR;
+
+    if(g_key == '1')
+    {
+        printf("Key pressed: 1\n\r");
+    }else
+    {
+        printf("Key presseder: Other\n\r");
+    }
+}
+
 void USART2_IRQHandler(void)
 {
     if(UART2->SR & UART_SR_RXNE)
     {
-        received_data = UART2->DR;
-        uart2_write_byte(received_data);
+        uart_callback();
     }
 }
