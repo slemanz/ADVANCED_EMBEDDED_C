@@ -5,7 +5,7 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 
 MEMORY
 {
-    FLASH(rx): ORIGIN =0x08000000, LENGTH =512K
+    FLASH(rx): ORIGIN =0x08000000, LENGTH =32K
     SRAM(rwx): ORIGIN =0x20000000, LENGTH =128K
 }
 
@@ -13,8 +13,6 @@ SECTIONS
 {
     .text :
     {
-        . = ALIGN(4);
-        KEEP (*(.bootloader_section))
         . = ALIGN(4);
         KEEP(*(.isr_vector))
         . = ALIGN(4);
