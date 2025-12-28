@@ -1,0 +1,28 @@
+{
+	"folders": [
+        {
+            "path": "../bootloader"
+        },
+        {
+            "path": "../bsp"
+        },
+        {
+            "path": "../drivers"
+        },
+        {
+            "path": "../linkers"
+        }
+    ],
+    "settings": {
+        "C_Cpp.default.includePath": [
+            "${workspaceFolder}/../bootloader/Inc",
+            "${workspaceFolder}/../bsp/Inc",
+            "${workspaceFolder}/../drivers/Inc"
+        ],
+        "files.associations": {
+            "driver_uart.h": "c",
+            "stm32f411xx.h": "c",
+            "driver_gpio.h": "c"
+        }
+    }
+}
