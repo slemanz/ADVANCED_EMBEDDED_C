@@ -11,10 +11,10 @@ LINKER= -T $(ROOT_DIR)/linkers/STM32F411xC_BOOT.ld
 MAP_FILE= -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
 
-CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 \
+CFLAGS= -c $(MACH) -mthumb $(FLOAT) -std=gnu99 -Wall -O0 -g \
 		--specs=nano.specs -ffunction-sections -fdata-sections
 
-LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) \
+LDFLAGS =  $(MACH) -mthumb $(FLOAT) --specs=nosys.specs  $(LINKER) $(MAP_FILE) -g \
 			-Wl,--gc-sections -static --specs=nano.specs -Wl,--start-group -lc -lm -Wl,--end-group \
  			-Wl,--print-memory-usage
 
@@ -49,6 +49,7 @@ DRIVERS		+= $(BUILD_DIR)/driver_i2c.o
 
 BSP			+= $(BUILD_DIR)/led.o
 BSP			+= $(BUILD_DIR)/button.o
+BSP			+= $(BUILD_DIR)/simple-timer.o
 
 PREREQ = $(BUILD_DIR)/
 
