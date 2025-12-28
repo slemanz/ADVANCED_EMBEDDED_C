@@ -2,12 +2,9 @@
 #include "config.h"
 #include "led.h"
 #include "button.h"
-#include "driver_systick.h"
+#include "simple-timer.h"
+
 #include "driver_uart.h"
-
-
-
-
 
 int main(void)
  {
@@ -16,26 +13,25 @@ int main(void)
 
     printf("\r\nInit bootloader...\r\n");
 
-    uint64_t start_time = ticks_get();
-    uint64_t start_time2 = ticks_get();
-    uint64_t jump_time = 5000;
+    simple_timer_t timer_blink;
+    simple_timer_t timer_jump;
+    
+    simple_timer_setup(&timer_blink, 100, true);
+    simple_timer_setup(&timer_jump, 4700, false);
 
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 500)
+        if(simple_timer_has_elapsed(&timer_blink))
         {
             led_toggle();
-            start_time = ticks_get();
         }
 
-        if((ticks_get() - start_time2) >= jump_time)
+        if(simple_timer_has_elapsed(&timer_jump))
         {
             INTERRUPT_DISABLE();
             jmp_to_default_app();
 
-            jump_time = 900000;
-            start_time2 = ticks_get();
+            simple_timer_setup(&timer_blink, 500, true);
         }
     }
 }
@@ -51,7 +47,7 @@ static void uart_callback(void)
         printf("Key pressed: 1\n\r");
     }else
     {
-        printf("Key presseder: Other\n\r");
+        printf("Key pressed: Other\n\r");
     }
 }
 
