@@ -6,6 +6,17 @@
 
 #include "driver_uart.h"
 
+typedef enum
+{
+	SYS_APP = 1,
+	SYS_FACTORY_APP,
+}SYS_APPS;
+
+volatile char g_ch_key = 0;
+volatile uint8_t g_un_key = 0;
+
+static void proces_btldr_cmds(SYS_APPS curr_app);
+
 int main(void)
  {
     config_drivers();
@@ -29,25 +40,78 @@ int main(void)
         if(simple_timer_has_elapsed(&timer_jump))
         {
             INTERRUPT_DISABLE();
-            jmp_to_default_app();
-
+            jmp_to_app(DEFAULT_APP_ADDRESS);
             simple_timer_setup(&timer_blink, 500, true);
+        }
+
+        if(!button_get_state())
+        {
+
+            /*Button pressed*/
+            printf("DBG: Button Pressed\r\n");
+
+            /*Button pressed*/
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+
+            printf("\r\n");
+            printf("Bootloader Menu\r\n");
+            printf("\r\n");
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+            printf("==========================================\r\n");
+
+            printf("Available Commands:\r\n");
+            printf("1       ==> Run App\r\n");
+            printf("F       ==> Factory App 2\r\n");
+
+		    while(1)
+		    {
+			    proces_btldr_cmds((SYS_APPS)g_un_key);
+		    }
         }
     }
 }
 
-volatile char g_key = 0;
+static void proces_btldr_cmds(SYS_APPS curr_app)
+{
+    switch(curr_app)
+    {
+        case SYS_APP:
+        {
+            printf("APP1 Selected....\n\r");
+            jmp_to_app(DEFAULT_APP_ADDRESS);
+            while(1);
+        }
+        case SYS_FACTORY_APP:
+        {
+            printf("Factory APP Selected....\n\r");
+            jmp_to_app(FACTORY_APP_ADDRESS);
+            while(1);
+        }
+
+        default:
+            break;
+    }
+
+}
 
 static void uart_callback(void)
 {
-    g_key = UART2->DR;
+    g_ch_key = UART2->DR;
 
-    if(g_key == '1')
+    if(g_ch_key == '1')
     {
-        printf("Key pressed: 1\n\r");
+        g_un_key = 1;
+    }else if((g_ch_key ==  'f')  || (g_ch_key ==  'F'))
+    {
+        g_un_key = 2;
     }else
     {
-        printf("Key pressed: Other\n\r");
+        
     }
 }
 

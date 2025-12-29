@@ -1,4 +1,4 @@
-BOOTLOADER_SIZE = 0x8000
+BOOTLOADER_SIZE = 0x4000
 BOOTLOADER_FILE = "Build/bootloader.bin"
 
 with open(BOOTLOADER_FILE, "rb") as f:

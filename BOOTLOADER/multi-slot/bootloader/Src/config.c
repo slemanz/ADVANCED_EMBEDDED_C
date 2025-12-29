@@ -43,7 +43,7 @@ void config_bsp(void)
 
 typedef void (*func_ptr)(void);
 
-void jmp_to_default_app(void)
+void jmp_to_app(uint32_t addr_value)
 {
     uint32_t app_start_address;
     func_ptr jump_to_app;
@@ -53,15 +53,15 @@ void jmp_to_default_app(void)
 
     	/*Version 1*/
 #ifdef MEM_CHECKK_V1
-	if(((*(uint32_t *)APPLICATION_ADDRESS) & MSP_VERIFY_MASK ) ==  0x20020000)
+	if(((*(uint32_t *)addr_value) & MSP_VERIFY_MASK ) ==  0x20020000)
 #endif
 
 	/*Version 2*/
 #ifdef MEM_CHECKK_V2
-	if((*(uint32_t *)APPLICATION_ADDRESS) != EMPTY_MEM)
+	if((*(uint32_t *)addr_value) != EMPTY_MEM)
 #endif
     {
-        app_start_address = *(uint32_t*)(APPLICATION_ADDRESS + 4);
+        app_start_address = *(uint32_t*)(addr_value + 4);
         jump_to_app = (func_ptr)app_start_address;
 
         /* Initialize main stack pointer */

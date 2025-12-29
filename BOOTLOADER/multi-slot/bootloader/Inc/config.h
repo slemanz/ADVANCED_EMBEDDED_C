@@ -3,7 +3,14 @@
 
 #include "stdint.h"
 
-#define APPLICATION_ADDRESS         0x08008000
+#define SECTOR0_BASE_ADDRESS		0x08000000 /* Bootloader sector*/
+#define SECTOR1_BASE_ADDRESS		0x08004000 /* Factory APP sector*/
+#define SECTOR2_BASE_ADDRESS		0x08008000 /* APP sector*/
+
+
+#define FACTORY_APP_ADDRESS		SECTOR1_BASE_ADDRESS
+#define DEFAULT_APP_ADDRESS		SECTOR2_BASE_ADDRESS
+
 #define MSP_VERIFY_MASK			    0x2FFE0000
 #define EMPTY_MEM					0xFFFFFFFF
 
@@ -15,6 +22,6 @@
 void config_drivers(void);
 void config_bsp(void);
 
-void jmp_to_default_app(void);
+void jmp_to_app(uint32_t addr_value);
 
 #endif /* INC_CONFIG_H_ */
