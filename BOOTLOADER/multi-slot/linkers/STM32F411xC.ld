@@ -15,6 +15,7 @@ SECTIONS
     {
         . = ALIGN(4);
         KEEP (*(.bootloader_section))
+        KEEP (*(.factory_section))
         . = ALIGN(4);
         KEEP(*(.isr_vector))
         . = ALIGN(4);
