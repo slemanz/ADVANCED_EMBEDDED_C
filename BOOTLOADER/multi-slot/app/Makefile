@@ -50,6 +50,7 @@ DRIVERS		+= $(BUILD_DIR)/driver_i2c.o
 
 BSP			+= $(BUILD_DIR)/led.o
 BSP			+= $(BUILD_DIR)/button.o
+BSP			+= $(BUILD_DIR)/simple-timer.o
 
 PREREQ = $(BUILD_DIR)/
 

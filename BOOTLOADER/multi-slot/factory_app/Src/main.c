@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include "config_app.h"
-#include "led.h"
-#include "button.h"
 #include "driver_systick.h"
 #include "driver_uart.h"
+
+#include "led.h"
+#include "button.h"
+#include "simple-timer.h"
 
 #define FLASH_BASE                  0x08000000
 #define VECT_TAB_BASE_ADDRESS       FLASH_BASE
 #define VECT_TAB_OFFSET	            0x4000
+
+uint8_t received_data = 0;
 
 int main(void)
  {
@@ -17,27 +21,27 @@ int main(void)
     INTERRUPT_ENABLE();
     ticks_delay(1000);
 
-    printf("\nInit Factory...\n\r");
+    printf("\r\nInit Factory...\r\n");
 
-    uint64_t start_time = ticks_get();
+    simple_timer_t timer_blinky;
+    simple_timer_setup(&timer_blinky, 1000, true);
 
     while (1)
     {   
-        // blinky
-        if((ticks_get() - start_time) >= 1000)
+        if(simple_timer_has_elapsed(&timer_blinky)) led_toggle();
+
+        if(received_data != 0)
         {
-            led_toggle();
-            start_time = ticks_get();
+            uart2_write_byte(received_data);
+            received_data = (received_data == '\r') ? '\n' : 0;
         }
     }
 }
 
-uint8_t received_data = 0;
 void USART2_IRQHandler(void)
 {
     if(UART2->SR & UART_SR_RXNE)
     {
         received_data = UART2->DR;
-        uart2_write_byte(received_data);
     }
 }
