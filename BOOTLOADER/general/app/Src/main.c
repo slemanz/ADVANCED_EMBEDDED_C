@@ -13,7 +13,7 @@ static void get_current_timestamp(void)
 	uint32_t minute =  rtc_time_get_minute();
 	uint32_t second =  rtc_time_get_second();
 
-    printf("%02lx:%02lx:%02lx\n", hour, minute, second);
+    printf("%02lx:%02lx:%02lx\r\n", hour, minute, second);
 }
 
 int main(void)
@@ -22,7 +22,7 @@ int main(void)
     config_bsp();
     rtc_init();
 
-    printf("\nInit board...\n\r");
+    printf("\r\nInit board...\r\n");
 
     uint32_t adc_value = 0;
 
@@ -61,5 +61,10 @@ void USART2_IRQHandler(void)
     {
         received_data = UART2->DR;
         uart2_write_byte(received_data);
+        if(received_data == '\r')
+        {
+            received_data = '\n';
+            uart2_write_byte(received_data);
+        }
     }
 }
