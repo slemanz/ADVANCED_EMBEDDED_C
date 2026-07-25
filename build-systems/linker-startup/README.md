@@ -1,359 +1,191 @@
 # Linker and Startup
 
-### Memory Model
+Between the last object file and a chip that actually runs, two things have to
+happen that no desktop program worries about. Someone has to assign the real
+flash and RAM addresses of every section, and someone has to run before `main`
+to move initialized data into RAM, zero the rest, and point the core at the
+vector table. That someone is the linker script plus the startup code. This is
+the part of the build that fades from memory fastest, so this module keeps the
+smallest complete example: one blink, one linker script, one hand-written
+startup, and the dumps that show where everything landed.
 
-1. Flash Memory:
-    - Read-Only
-    - Size depends on specific microcontroller
-    - Program code is stored here.
-    - Contains a vector table, this consists of pointers to
-    the various exception handles.
+## The idea
 
-2. SRAM:
-    - Read and Write
-    - Begins at 0x20000000
-    - Size depends on specific microcontroller
-    - Variables and Stack are stored here
+Two files do the work. [linker.ld](linker.ld) is the memory map and section
+placement, the *locating* step. [startup.c](startup.c) is the vector table and
+the `Reset_Handler` that runs first and hands control to `main`.
 
-## Linker Script
+### VMA and LMA, the one idea the rest hangs on
 
-- Script given to the linker in order to specify the memory layout
-and to initialize the various memory sections used by the firmware.
-
-- The linker script is responsible for making sure various portions
-of the firmware are in their proper place and also for associating
-meaningful labels with specific regions of memory used by the startup
-code.
-
-**The script has 4 features:**
-
-- Memory Layout : available memory types
-- Section Definitions: placing specific parts at specific locations
-- Options : commands e.g. ENTRY POINT
-- Symbols: variables to inject into program at link time
-
-### Memory
-
-In order to allocate program memory, the linker needs to know the types
-of memory, their addresses and sizes. We use the `MEMORY` definition to
-provide this information
+A section has two addresses. The **LMA** (load memory address) is where its
+bytes sit in the image that gets burned to flash. The **VMA** (virtual, or run,
+address) is where the code expects to find them while executing. For `.text`
+they are the same, because code runs straight out of flash. For `.data` they
+differ, and that difference is the entire reason startup code exists.
+`objdump -h` on the linked ELF ([flash.txt](flash.txt)) shows it:
 
 ```
-MEMORY
+Idx Name    Size      VMA       LMA
+  0 .text   0000033c  08000000  08000000
+  1 .data   00000004  20000000  0800033c
+  2 .bss    0000000c  20000004  08000340
+```
+
+`.data` runs at `0x20000000` in SRAM but is stored at `0x0800033c` in flash,
+right after `.text` ends. It has to be stored there, because RAM is empty at
+power-on and the initial value has to live somewhere non-volatile. Compare the
+same dump on `main.o` before linking ([main.txt](main.txt)): every VMA and LMA
+is `0`, the addresses are unassigned. Locating is what filled that table in.
+
+The `> SRAM AT> FLASH` in the script says exactly this: put the section's VMA in
+SRAM, but its LMA (its stored copy) in FLASH.
+
+### The linker script
+
+The `MEMORY` block names the regions the part actually has: FLASH `rx` at
+`0x08000000`, SRAM `rwx` at `0x20000000`, with the sizes written as the script
+sees them (256K and 60K here). `ENTRY(Reset_Handler)` names the first function.
+`_estack` is set to the top of SRAM, because the stack grows downward from
+there.
+
+`SECTIONS` decides the order and destination of each output section. `.text`
+comes first and takes the vector table, then the code, then read-only data, all
+into FLASH. `.data` and `.bss` go to SRAM. The location counter `.` tracks the
+current address, `ALIGN(4)` pads to a word boundary, and the script defines
+boundary symbols the startup code will read back:
+
+```
+.data :
 {
-    name [(attr)] ORIGIN origin, LENGTH = len
-}
+    _sdata = .;      /* start of .data in SRAM */
+    *(.data)
+    _edata = .;      /* end of .data */
+} > SRAM AT> FLASH   /* VMA in SRAM, LMA in FLASH */
 ```
 
-```
-MEMORY
-{
-    FLASH(rx):ORIGIN =0x08000000, LENGTH =512K
-    SRAM(rwx):ORIGIN =0x20000000, LENGTH =128K
-}
-```
+A linker symbol is an address, not a variable. `_sdata` does not hold a value,
+`_sdata` *is* the address where `.data` begins. That is why the startup code
+takes `&_sdata`, not `_sdata`.
 
-### Sections
+One asymmetry worth seeing: `.bss` has no stored image. In [flash.txt](flash.txt)
+it is marked `ALLOC` only, no `LOAD`, no `CONTENTS`. It just needs to exist in
+RAM and be zeroed, so its LMA is meaningless and the `AT> FLASH` on it does
+nothing. Only `.data` needs a flash copy, because only `.data` has non-zero
+initial values to preserve.
 
-Code and data are organized into sections. Symbols of the same memory
-region are placed in the same s
+### What runs before main
 
-```
-SECTIONS
-{
+`Reset_Handler` is the second word of the vector table, the address the core
+loads into the program counter at reset (the first word is the initial stack
+pointer). It does three things and then calls `main`:
 
-}
-```
-
-```
-E.g.
-SECTIONS
-{
-    .text:
-    {
-        *(.text) /*merge all text sections of input files */
-    }> FLASH
-}
+```c
+uint32_t *src = (uint32_t *)&_etext;   /* .data image, in flash          */
+uint32_t *dst = (uint32_t *)&_sdata;   /* .data home,  in SRAM           */
+/* 1. copy .data from its LMA to its VMA, up to _edata */
+/* 2. zero .bss from _sbss to _ebss                    */
+/* 3. main();                                          */
 ```
 
-### The 3 relevant sections
+The stakes are visible in [main.c](main.c). `led_data = 27` is a `.data`
+variable: the `27` lives in flash, the variable lives in SRAM, and it only reads
+back as `27` because step 1 copied it across. `led_data0 = 0`, `led_size`, and
+`led_length` are `.bss`: they only read as `0` because step 2 zeroed them. Skip
+the startup code and every one of these globals holds garbage. That is the whole
+job made concrete.
 
-- **.text** - Placed in the FLASH
-- **.data** - Placed in the SRAM
-- **.bss**  - Placed in the SRAM
+### The vector table
 
-### VMA and LMA
+The table is an array placed in section `.isr_vector_tbl`, which the script
+forces to the very front of flash (`0x08000000`) so the core finds it at reset.
+The map file confirms `vector_tbl` sitting at `0x08000000`. Word 0 is the
+initial stack pointer (`&_estack`), word 1 is `Reset_Handler`, and the rest are
+the exception and interrupt handlers in the fixed order the Cortex-M4 expects,
+with `0` in the reserved slots.
 
-- **LMA:** Load Memory Address, the address at which a section is loaded.
+Every handler is declared like this:
 
-- **VMA:** Virtual Memory Address, the address of a section during execution.
-
-The Linker distinguishes between the VMA and LMA address.
-
-
-### Load memory
-
-Flash memory:
-
-```
-┌────────────────┐
-│                │
-│                │
-│                │
-├────────────────┤
-│                │
-│    .data       │
-│                │
-├────────────────┤
-│                │
-│   .rodata      │
-│                │
-├────────────────┤
-│                │
-│    .text       │
-│                │
-├────────────────┤
-│  .isr_vector   │
-└────────────────┘ 0x0800 0000
+```c
+void USART2_IRQHandler(void) __attribute__((weak, alias("Default_Handler")));
 ```
 
-In startup code, copy .data from `FLASH` to `SRAM`:
+`Default_Handler` is a placeholder that loops forever. `weak` means any
+strong definition wins, so writing `void USART2_IRQHandler(void) { ... }`
+anywhere in the application silently takes over that slot, no table edit needed.
+That is the mechanism behind every driver that "just works" by defining its
+handler. When a script uses `--gc-sections`, `KEEP()` is what stops the linker
+from discarding the vector table as unreferenced; this script keeps it simply by
+not garbage-collecting.
 
-```
-┌────────────────┐
-│                │
-│                │
-├────────────────┤
-│     .bss       │
-├────────────────┤
-│     .data      │
-└────────────────┘ 0x2000 0000
-```
+## When to use it (and when not to)
 
-### Some Commands
+You rarely write these from scratch. The vendor ships a startup file and a
+linker script (that is [cmsis](../cmsis/)), and that is the right default. You
+reach for a hand-written pair when the stock map does not fit: a bootloader that
+carves out a slot, an application linked to run above a bootloader, code copied
+into RAM for speed, or a custom section for a config block or a region shared
+between two images. The bootloader work in this repo is exactly that
+([../../bootloader](../../bootloader/)). Knowing the copy-and-zero is also what
+lets you debug the classic symptom where a global reads correctly in the
+debugger's flash view but is garbage at runtime: the `.data` copy never ran, or
+a boundary symbol is wrong.
 
-- **ENTRY**: Sets program entry address.
+The cost is that you now own the correctness of the earliest code on the chip,
+before any tool can help you. A wrong symbol or an off-by-one in the copy loop
+faults before `main` and presents as a dead board with nothing to attach to.
 
-- **MEMORY**: Describes the locations and sizes of the different
-memories available.
+Noted in this code, not fixed: the copy and zero loops use the byte count
+(`&_edata - &_sdata`) as an iteration count while advancing a `uint32_t *`, so
+each loop moves four times as many bytes as the section holds and runs past its
+end. It survives here only because the sections are a few words and the overrun
+lands in adjacent RAM that is about to be zeroed anyway. The usual forms compare
+the pointer against the end symbol (`while (dst < &_edata)`) or divide the size
+by four. Separately, `__max_heap_size` and `__max_stack_size` are defined but
+never used to reserve or guard space, so nothing here catches a stack that grows
+down into `.bss`.
 
-- **ALIGN**: Inserts padding to align location.
+## Build and run
 
-- **SECTIONS**: Used to map input sections to output sections and
-describes how to place output sections in memory.
-
-- **KEEP**: Tells linker to keep the specified section even if no
-symbols in that section are referenced.
-
-- **AT >**: This is a directive, it tells the linker to load a section's
-data to somewhere other than the address it is located at.
-
-### Constants
-
-- The linker considers an integer with:
-    - 0 as Octal
-    - Ox as hexadecimal
-
-- Suffixes K and M may be used to scale a constant by 1024 or by
-1024*1024 respectively
-
-Different ways of writing the same quantity :
-
-- _four_1 = 4K
-
-- _four_2 = 4096;
-
-- _four_3 = 0x1000;
-
-### Load Memory
-
-```
-┌────────────────┐ SRAM
-│                │
-│                │
-├────────────────┤
-│     .bss       │
-├────────────────┤
-│     .data      │
-└────────────────┘ 0x2000 0000
-
-┌────────────────┐ FLASH
-│                │
-│                │
-│                │
-├────────────────┤
-│                │ Copy .data section from FLASH
-│    .data       │ to SRAM
-│                │
-├────────────────┤
-│                │
-│   .rodata      │
-│                │
-├────────────────┤
-│                │
-│    .text       │
-│                │
-├────────────────┤
-│  .isr_vector   │
-└────────────────┘ 0x0800 0000
-```
-
-### Symbols
-
-- Symbols have a name and a value.
-- Symbol values are an unsigned integers.
-- Symbols are generated by the compiler for each function and variable D
-- The value represent the target address where the variable or function is stored.
-- When you refer to the symbol by name in the linker command file or in an assembly
-file, you get that integer value.
-
-Example: When we use X in our code we are actually referring to the value of
-X which is 3500
-
-`X = 3500`
-
-When we write: `X - Y`
-
-- The compiler fetches 3500
-- To achieve this the compiler generates a linker symbol called x with the value &x
-- Although the C/C++ variable and the linker symbol have the same name, they don't
-represent the same thing.
-- In C/C++ x is a variable name with address &x and value 3500
-- For the linker symbols x is an address and that address contains 3500
-
-```
-┌───────────────────┐
-│      main.c       │
-├───────────────────┤
-│ int x = 3500;     │               ┌─────────────────────┐
-│ void blink(void)  │               │     Symbol table    │
-│ {                 │               ├────────┬────────────┤
-│     led_on();     │─── Build ──>  │ Symbol │ Address    │
-│     wait();       │               │   x    │ 0x20000000 │
-│     led_off();    │               │ blink  │ 0x08000000 │
-│ }                 │               └────────┴────────────┘
-└───────────────────┘               
-```
-
-Values may be assigned to symbols. This will define them and place them into
-the Symbol Table
-
-```
-┌────────────────┐ 
-│                │
-│                │
-│                │
-├────────────────┤ _edata
-│                │
-│    .data       │
-│                │
-├────────────────┤ _sdata
-│                │
-│   .rodata      │
-│                │
-├────────────────┤ _etext
-│                │
-│    .text       │
-│                │
-├────────────────┤
-│  .isr_vector   │
-└────────────────┘ 0x0800 0000
-```
-
-### The Location Counter
-
-- It is a special linker symbol written as "." dot
-- This symbol always contains the current output location counter
-- This symbol can only appear inside the `SECTION` command Because it always
-refers to a location in an output section
-- We can use this symbol to define and know the boundaries of various sections.
-- Since symbols are addresses, this symbol is incremented by the size of
-the output section.
-- This symbol may not be moved backward, i.e. assigned a value lower than the current
-output location. Doing this may lead to creating areas of overlapping LMAS
-
-Example of use:
-
-```
-SECTIONS
-{
-    . = 0x08000000;/*Set value of location counter*/
-    .text:
-    {
-    *(.text) /*merge all.text sections of*/
-             /*input files */
-    }
-
-    . = 0x20000000;
-    .data:
-    {
-    *(.data) /*merge all data sections of*/
-             /*input files */
-    }
-}
-```
-
-### Align
-
-To align sections use: `. = ALIGN(X);`
-
-## Startup Code
-
-1. Reset Handler
-    - This functions copies the initial values for variables from the
-    `FLASH` where the linker places them to the `SRAM`.
-    - It also zeros out the uninitialized data portion of the `SRAM`.
-
-2. Interrupt Vector Table
-
-    - This is an array that holds memory address of interrupt handler
-    functions
-    - In order to allow application code to conveniently redefine the
-    various interrupt handlers, every required vector is assigned an
-    overideable `_weak` alias to a default function which loops forever.
-
-### Verify custom section
-
-```C
-__attribute__((section(".NAME")))
-```
+Not the shared Makefile. This one is compiled by hand so every artifact stays on
+disk to read. Cortex-M4, 256K flash and 60K RAM as the script is written, and it
+blinks PA5.
 
 ```bash
-arm-none-eabi-gcc -c startup.c -o startup.o
-arm-none-eabi-objdump -h startup.o > startup.txt
-```
-
-## Simple example
-
-Generate output files:
-
-```bash
-arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -std=gnu99 main.c -o main.o
+arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -std=gnu99 main.c    -o main.o
 arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -std=gnu99 startup.c -o startup.o
-```
-
-Then, link:
-
-```bash
 arm-none-eabi-gcc -nostdlib -T linker.ld *.o -o flash.elf -Wl,-Map=flash.map
 ```
 
-Dump the files:
+`-nostdlib` because there is no C library and no default startup here: the
+linker script and `startup.c` are the entire runtime. Then dump the sections and
+flash it:
 
 ```bash
-arm-none-eabi-objdump -h main.o > main.txt
-arm-none-eabi-objdump -h flash.elf > flash.txt
+arm-none-eabi-objdump -h flash.elf > flash.txt   # VMA/LMA after locating
+arm-none-eabi-objdump -h main.o    > main.txt    # same, before locating (all zero)
+openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg \
+  -c init -c "reset init" -c "flash write_image erase flash.elf" -c "reset run" -c shutdown
 ```
 
-Finally, load with openocd:
+The map file is where you read the final layout: every symbol's address, every
+section's placement, and the `region FLASH overflowed` message when the image
+does not fit. This picks up where [build-process](../build-process/) stopped,
+which ended with an object file whose sections were still at address zero.
 
-```bash
-openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg -c init -c "reset init" \
-	-c "flash write_image erase flash.elf" -c "reset run" -c shutdown
-```
+## Files
 
-Then, clean *.o files
+- [linker.ld](linker.ld): the memory map, section placement, and boundary
+  symbols.
+- [startup.c](startup.c): the vector table with weak-aliased handlers and the
+  `Reset_Handler` that copies `.data`, zeroes `.bss`, and calls `main`.
+- [main.c](main.c): a PA5 blink whose `.data` (`led_data = 27`) and `.bss`
+  globals make the copy-and-zero observable.
+- [flash.txt](flash.txt): `objdump -h` of the linked ELF, the VMA/LMA split.
+- [main.txt](main.txt) and [startup.txt](startup.txt): `objdump -h` before
+  locating; `startup.txt` shows `.isr_vector_tbl` as its own section.
+- [flash.map](flash.map): the full link map, symbol addresses and section
+  placement.
 
-```bash
-rm *.o
-```
+For the vendor-supplied version of all this see [cmsis](../cmsis/), for the
+Makefile that drives a real build see [the-make](../the-make/), and for where it
+gets used in anger see [the bootloader](../../bootloader/).
