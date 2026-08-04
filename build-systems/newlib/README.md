@@ -1,197 +1,198 @@
 # Newlib
 
-Newlib is a C standard library designed for embedded systems. It is a collection
-of software from various sources, all under free software licenses.
+`printf`, `snprintf`, `malloc`, and every standard header are just C. On a hosted
+system the operating system sits under the library and provides `write`, `read`,
+`sbrk`, and the rest, which is where those functions bottom out. Bare metal has no
+operating system, so the library's bottom layer is missing. Newlib is the
+embedded C library, but it still expects that layer to exist. This module supplies
+it: the syscall stubs, a startup that runs the library's initializers, and a
+linker script that places the sections newlib generates. It is the capstone of
+this block, because it uses every piece before it.
 
-Newlib is known for its portability and is often used in conjunction with GNU
-cross-development toolchains. 
+## The idea
 
-The idea of this readme is to document how to implement full linker script, makefile
-linker scripts content to implement libc in microcontrollers ARM Cortex-M.
+Newlib is linked in by default with `arm-none-eabi-gcc`. You opt out with
+`-nostdlib`, which is exactly what [linker-startup](../linker-startup/) and
+[the-make](../the-make/) did to stay minimal. Once it is in, calling `printf`
+pulls the library, and the library calls down to functions it assumes the "OS"
+provides. Supply them and it links. Leave one out and you get the `undefined
+reference to _write` link error from the [build-process](../build-process/)
+story.
 
-### Syscalls
+### The retarget chain
 
-Newlib is enabled by default when you build a project with arm-none-eabi-gcc.
-Indeed, you must explicitly opt-out with `-nostdlib` if you prefer to build your
-firmware without it.
+The path that matters is output. `printf` formats into a buffer and calls
+`_write`. The `_write` in [syscalls.c](linkers/syscalls.c) knows nothing about
+UARTs; it loops over the bytes calling `__io_putchar`:
 
-The newlib documentation5 calls some functions “system calls”. In short, they
-are the handful of things newlib expects the underlying “operating system”. The
-complete list follows:
-
-```
-_exit, close, environ, execve, fork, fstat, getpid, isatty, kill,
-link, lseek, open, read, sbrk, stat, times, unlink, wait, write
-```
-- **fstat:** returns the status of an open file. The minimal version of this
-should identify all files as character special devices. This forces
-one-byte-read at a time.
-
-```C
-#include <sys/stat.h>
-int _fstat(int file, struct stat *st) {
-  st->st_mode = S_IFCHR;
-  return 0;
-}
-```
-
-- **lseek:** repositions the file offset of the open file associated with the
-file descriptor fd to the argument offset according to the directive whence.
-Here we can simply return 0, which implies the file is empty.
-
-```C
-int _lseek(int file, int offset, int whence) {
-  return 0;
-}
-```
-
-- **close:** closes a file descriptor fd. Since no file should have gotten
-opened, we can just return an error on close:
-
-```C
-int _close(int fd) {
-  return -1;
-}
-```
-
-- **write:** writes up to count bytes from the buffer starting at buf to the
-file referred to by the file descriptor fd. we will want those bytes to be
-written to serial instead.
-
-```C
+```c
 int _write(int file, char *ptr, int len) {
-  int DataIdx;
-
-  for (DataIdx = 0; DataIdx < len; DataIdx++)
-  {
-  	__io_putchar(*ptr++);
-  }
-  return len;
-}
-```
-
-- **read:** attempts to read up to count bytes from file descriptor fd into the
-buffer at buf.
-
-```C
-int _read(int file, char *ptr, int len) {
-    int DataIdx;
-
-    for (DataIdx = 0; DataIdx < len; DataIdx++)
-    {
-    	*ptr++ = __io_getchar();
-    }
+    for (int i = 0; i < len; i++) __io_putchar(*ptr++);
     return len;
 }
 ```
 
-- **sbrk:** increases the program’s data space by increment bytes. In other
-words, it increases the size of the heap.
+`__io_putchar` is the hook, and [constructors.c](linkers/constructors.c) points
+it at the serial port:
 
-```C
-caddr_t _sbrk(int incr)
-{
-    extern char end asm("end");
-    static char *heap_end;
-    char *prev_heap_end;
-
-    if (heap_end == 0)
-    	heap_end = &end;
-
-    prev_heap_end = heap_end;
-    if (heap_end + incr > stack_ptr)
-    {
-    	errno = ENOMEM;
-    	return (caddr_t) -1;
-    }
-
-    heap_end += incr;
-
-    return (caddr_t) prev_heap_end;
-}
+```c
+int __io_putchar(int ch) { uart2_write_byte((uint8_t)ch); return ch; }
 ```
 
-The other functions simple implementation can be found in the file
-[syscalls.c](linkers/syscalls.c). Also can be found more details in the
-official documentation from newlib: [newlibc](https://sourceware.org/newlib/).
+So the full path is `printf` -> `_write` -> `__io_putchar` -> `uart2_write_byte`.
+That chain is what "retarget printf to UART" means, and it is why the same
+`printf("Init the board\n")` in [main.c](app/Src/main.c) comes out of USART2
+instead of nowhere. Point `__io_putchar` at a different sink and every `printf`
+follows. Semihosting is the same idea with `_write` aimed at the debugger instead
+(see [semihosting](../semihosting/)).
 
-### Linker
+`_fstat` returning `S_IFCHR` tells newlib that stdout is a character device, which
+keeps output unbuffered and byte-at-a-time, so each character reaches the UART as
+it is written.
 
-By default, GCC places all program code into a section named ".text" and
-read-only data (such as const static variables) into a section named ".rodata"
-in the input object files. This naming convention is from the ELF ABI
-specification.
+### The heap
 
-When you build with newlib, a new sections are generated:
+`malloc` bottoms out at `_sbrk`, which grows the heap upward from the `end` symbol
+(the top of `.bss`, defined by the linker) toward the stack:
 
-```
-Sections:
-Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         000062a0  08000000  08000000  00010000  2**6
-                  CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .init         0000000c  080062a0  080062a0  000162a0  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .fini         0000000c  080062ac  080062ac  000162ac  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, CODE
-  3 .eh_frame     00000004  080062b8  080062b8  000162b8  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .ARM.exidx    00000008  080062bc  080062bc  000162bc  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .rodata.str1.4 00000142  080062c4  080062c4  000162c4  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, DATA
-  6 .data         000001dc  20000000  08006406  00020000  2**2
-                  CONTENTS, ALLOC, LOAD, DATA
-  7 .init_array   00000004  200001dc  080065e2  000201dc  2**2
-                  CONTENTS, ALLOC, LOAD, DATA
-  8 .fini_array   00000004  200001e0  080065e6  000201e0  2**2
-                  CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          000000d8  200001e8  080065ea  000201e8  2**3
-                  ALLOC
- 10 ._user_heap_stack 00000600  200002c0  080065ea  000202c0  2**0
-                  ALLOC
- 11 .ARM.attributes 00000030  00000000  00000000  000201e4  2**0
+```c
+if (heap_end + incr > stack_ptr) { errno = ENOMEM; return (caddr_t)-1; }
 ```
 
-The file **[linker.ld](linkers/linker.ld)** shows one complete linker script
-which merge all sections generated by newlib and also from c++ posible code.
+That single comparison is the entire protection between heap and stack on a part
+with no MMU. It checks the stack pointer at the instant `sbrk` runs, and nothing
+stops the stack from later growing down into memory that was already handed out.
+This is the concrete version of the warning in
+[memory](../../data-structures/memory/): you can have `malloc`, but the
+fragmentation and the silent collision are exactly why most firmware does not.
 
-### Startup
+The remaining stubs (`_close`, `_lseek`, `_open`, `_kill`, `_getpid`, `_fork`, and
+the rest) are minimal: return an error or a fixed answer. They exist only because
+newlib references them, and each missing one is a link error, not a runtime
+feature.
 
-The startup must have the `__libc_init_array();` function, looking the
-Reset_Handler something like:
+### Running the library's initializers
 
-```C
-void Reset_Handler(void)
-{
-    copy_data();
-    clear_bss();
+`linker-startup` established that `Reset_Handler` copies `.data` and zeroes
+`.bss`. A newlib startup adds one line before `main`:
 
-    __libc_init_array();
-
-    main();
-}
+```c
+copy_data();
+clear_bss();
+__libc_init_array();   /* run the constructors collected in .init_array */
+main();
 ```
 
-The file **[startup.c](linkers/startup.c)** have a complete implementation.
+`__libc_init_array()` walks the `.init_array` section and calls every function in
+it: C++ static constructors, and any C function marked
+`__attribute__((constructor))`. Here that is `serial_init` in constructors.c,
+which calls `uart2_init()`. So the UART is up before the first `printf`, with no
+explicit call at the top of `main`. The tradeoff is that the init is now invisible
+in `main`: it runs automatically, which is convenient and also easy to forget is
+happening.
 
-### Constructors in C
+### The sections newlib adds
 
-The GNU compiler collection and Newlib offer an alternative solution:
-constructors. Constructors are functions which should be run before main.
-Conceptually, they are similar to the constructors of statically allocated C++
-objects. A function is marked as a constructor using the attribute syntax:
-`_attribute__((constructor))` .
+A minimal script placing `.text`, `.data`, and `.bss` is no longer enough.
+Building with newlib and constructors generates more sections the script must
+place:
 
-The file **[constructors.c](linkers/constructors.c)** show a full example of
-uart init and also retarget the printf.
+```
+.init_array          pointers __libc_init_array walks (the constructors)
+.fini_array          destructors, for completeness
+.init / .fini        libc init and fini code
+.ARM.exidx           exception unwind tables
+._user_heap_stack    the reserved heap and stack region
+```
 
----
+Miss `.init_array` and the constructors silently never run: the UART stays dead
+and `printf` goes nowhere. The full script is in [linker.ld](linkers/linker.ld),
+which is why a real libc build needs the complete script, not the hand-cut one
+from linker-startup.
+
+### The build flags that select newlib
+
+[The Makefile](Makefile) carries the knobs:
+
+- `--specs=nano.specs` picks newlib-nano, the size-optimized variant (smaller
+  `printf` and `malloc`). Default newlib is bigger, and `--specs=nosys.specs`
+  gives stubs that just fail. This is the same `--specs` switch
+  [semihosting](../semihosting/) used to select `rdimon`.
+- `-u _printf_float` force-references the floating-point `printf` code, because
+  nano's `printf` drops `%f` to save space. Without this flag `%f` prints nothing
+  or garbage, a classic afternoon lost. With it, floats print and the binary
+  grows.
+- `-Wl,--print-memory-usage` prints flash and RAM totals after the link, which is
+  what you watch when the libc starts eating the budget.
+- `-mfloat-abi=hard` uses the FPU, which the F4 has and `driver_fpu.c` enables.
+
+## When to use it (and when not to)
+
+Newlib is the default and the right one whenever you want standard headers,
+formatted output, and the familiar library. The retarget (`_write` to UART) plus a
+constructor for early init is the standard bring-up on any Cortex-M, and it is
+what this whole repo assumes.
+
+Where to hold back is inside newlib, not around it:
+
+- **Flash.** Pulling in `printf` and friends costs kilobytes; here `.text` is
+  around 25 KB, most of it library. `nano.specs` shrinks it, but on a small part
+  it is real, and it is why a code-size number has to say which libc it used.
+- **The heap.** `malloc` works, but `_sbrk` guards heap against stack with one
+  runtime compare and no MMU. On firmware that runs for months, the fragmentation
+  and collision risk from [memory](../../data-structures/memory/) still apply, so
+  most designs keep the library and skip its allocator, using static buffers and
+  [pools](../../data-structures/pools/) instead.
+- **`printf` on a real-time path.** It is large, slow, and not reentrant. Call it
+  from both an ISR and the main loop and the output interleaves or corrupts. For
+  logging on a hot path, a lighter custom formatter or a UART ring buffer beats
+  it.
+
+So the practical shape is: link newlib, retarget output, run constructors, then
+mostly stay in the static, allocation-free style the rest of the repo argues for,
+reaching into the library for formatting and headers rather than for the heap.
+
+Noted in this code, not fixed: `Reset_Handler` resets the main stack pointer with
+`MSR MSP` after `__libc_init_array()` has already run and right before `main()`.
+Doing that in the middle of a C function, after calls, is fragile, because the
+compiler may hold values relative to the old `SP`. And `_sbrk`'s collision check
+only sees the stack pointer at call time, so a later stack growth into the heap
+goes undetected, the fundamental heap-stack fragility above. The Makefile also
+carries the same non-`.PHONY` and missing linker-script-dependency gaps flagged in
+[the-make](../the-make/).
+
+## Build and run
+
+STM32F401 with the FPU on, USART2 for the retargeted output. It is a full build:
+app, drivers, syscalls, startup, and constructors.
+
+```bash
+make          # builds Build/flash.elf and flash.bin, prints size and memory usage
+make load     # flash with OpenOCD over ST-Link
+make clean
+```
+
+`printf("Init the board\n\r")` appears on USART2, and PA5 toggles once a second.
+`--print-memory-usage` reports the flash and RAM the libc build consumes.
+
+## Files
+
+- [linkers/syscalls.c](linkers/syscalls.c): the syscall layer, `_write` / `_read`
+  / `_sbrk` and the minimal stubs.
+- [linkers/constructors.c](linkers/constructors.c): `__io_putchar` (the UART
+  retarget) and `serial_init` (the constructor that runs `uart2_init` before
+  `main`).
+- [linkers/startup.c](linkers/startup.c): the `Reset_Handler` with
+  `__libc_init_array()` added.
+- [linkers/linker.ld](linkers/linker.ld): the full script placing `.init_array`,
+  `.fini_array`, and the heap and stack region.
+- [app/Src/main.c](app/Src/main.c): the app, one `printf` and a 1 Hz blink.
+- [Drivers/](Drivers/): the GPIO, UART, SysTick, and FPU drivers.
+- [Makefile](Makefile): the `--specs=nano.specs`, `-u _printf_float`, and
+  memory-usage flags.
 
 ### References
 
-[The most thoroughly commented linker script (probably)](https://blog.thea.codes/the-most-thoroughly-commented-linker-script/)
-
-[From Zero to main(): Bootstrapping libc with Newlib](https://interrupt.memfault.com/blog/boostrapping-libc-with-newlib)
-
-[How a Microcontroller starts](https://www.youtube.com/watch?v=MhOba73z-dQ&ab_channel=ArtfulBytes)
-
+- [The most thoroughly commented linker script (probably)](https://blog.thea.codes/the-most-thoroughly-commented-linker-script/)
+- [From Zero to main(): Bootstrapping libc with Newlib](https://interrupt.memfault.com/blog/boostrapping-libc-with-newlib)
+- [How a Microcontroller starts](https://www.youtube.com/watch?v=MhOba73z-dQ)
