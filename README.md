@@ -20,6 +20,9 @@ small projects that compile and run instead of theory alone.
 6. **[TDD](tdd/)**: notes on test-driven development for embedded, expanded in
    its own repository (link below).
 
+Looking for a specific topic? [MAP.md](MAP.md) lists every module with a
+one-line description.
+
 ## Hardware and toolchain
 
 Every subfolder is a self-contained project with its own Makefile, linker
