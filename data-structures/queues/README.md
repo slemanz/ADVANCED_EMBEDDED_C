@@ -126,14 +126,15 @@ permanent stall once `rear` reaches the end.
 
 ## Build and run
 
-STM32F411 (black pill). The Makefile builds `app/Src/main.c`, which this module
-does not ship, so pick a demo and make it `main.c` first (copy or rename
-`circular_queue.c`, `linear_queue.c`, or `priority_queue.c`). Then `make` builds
-`Build/flash.elf` and `Build/flash.bin`, and `make load` flashes it through
-OpenOCD with a J-Link over SWD. On UART2 at 115200 the circular demo takes `1`,
-`2`, and `3` to turn the LED on, off, and print queued ADC values; the linear
-demo echoes each processed byte; the priority demo runs three tasks in priority
-order at startup.
+STM32F411 (black pill). The three demos are separate files, and the Makefile
+picks one through the `APP` variable, so nothing has to be renamed. `make` builds
+the default (`circular_queue`), and `make APP=linear_queue` or
+`make APP=priority_queue` (each also a convenience target, `make linear_queue`)
+builds the others. Either way it produces `Build/flash.elf` and `Build/flash.bin`,
+and `make load` flashes it through OpenOCD with a J-Link over SWD. On UART2 at
+115200 the circular demo takes `1`, `2`, and `3` to turn the LED on, off, and
+print queued ADC values; the linear demo echoes each processed byte; the priority
+demo runs three tasks in priority order at startup.
 
 ## Files
 

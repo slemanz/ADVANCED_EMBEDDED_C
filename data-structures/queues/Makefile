@@ -1,5 +1,6 @@
 CC=arm-none-eabi-gcc
 TARGET=flash
+APP ?= circular_queue
 
 MACH= -mcpu=cortex-m4
 FLOAT=-mfloat-abi=hard
@@ -30,7 +31,7 @@ INCLUDES+= -I bsp/Inc/
 ############################################
 # 				OUTPUT FILES
 
-OBJS		+= $(BUILD_DIR)/main.o
+OBJS		+= $(BUILD_DIR)/$(APP).o
 OBJS		+= $(BUILD_DIR)/config.o
 OBJS		+= $(BUILD_DIR)/syscalls.o
 OBJS		+= $(BUILD_DIR)/startup.o
@@ -52,6 +53,15 @@ BSP			+= $(BUILD_DIR)/button.o
 PREREQ = $(BUILD_DIR)/
 
 all: $(PREREQ) $(BUILD_DIR)/$(TARGET).elf
+
+circular_queue:
+	$(MAKE) all APP=circular_queue
+
+linear_queue:
+	$(MAKE) all APP=linear_queue
+
+priority_queue:
+	$(MAKE) all APP=priority_queue
 
 $(PREREQ):
 	mkdir $(PREREQ)
