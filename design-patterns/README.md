@@ -24,6 +24,22 @@ Every pattern is documented with four elements:
 
 Understanding the *consequences* is just as important as understanding the solution. Every pattern has a cost, and applying it in the wrong place creates more problems than it solves.
 
+## Quick reference
+
+Pick a pattern by the problem it solves and what it costs, then read its entry
+below or open the module.
+
+| Pattern | Problem it solves | Cost |
+| --- | --- | --- |
+| [ADT](adt/) | Hide a struct's internals so callers depend only on the interface | Pointer indirection per access, one allocation per instance |
+| [Bit Fields](bit-fields/) | Pack flags into exact bits to save RAM | Implementation-defined layout (not portable, unsafe for registers), mask and shift on access |
+| [State](state/) | Behavior that depends on a mode, without a tangle of flags | Indirection (a table or a pointer) or a growing switch; see the three-variant comparison |
+| [Hardware Proxy](hardware-proxy/) | Keep a device's registers and encoding in one place, not in every client | One indirection layer, and a single point all access funnels through |
+| [Strategy](strategy/) | Swap an algorithm at runtime without editing the client | A function-pointer indirect call, and a strategy that is easy to leave unset |
+| [Hardware Adapter](hardware-adapter/) | Use devices with different interfaces through the one the app expects | A conversion layer per device, on top of the proxy it builds on |
+| [Client-Server](client-server/) | Decouple one producer from many consumers | A shared buffer in RAM to size, plus indirection through the server |
+| [Publisher-Subscriber](publisher-subscriber/) | Let consumers register and leave without the producer knowing them | A fixed subscriber table in RAM; notify from an ISR runs the callbacks in interrupt context |
+
 ## Patterns
 
 1. **[ADT](adt/)**: an abstract data type behind an opaque pointer, so callers

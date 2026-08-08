@@ -27,6 +27,25 @@ shaped by them:
 Each module states what the pattern costs, so the decision to use it stays
 honest.
 
+## Quick reference
+
+Pick a pattern by the problem it solves and what it costs, then read its entry
+below or open the module.
+
+| Pattern | Problem it solves | Cost |
+| --- | --- | --- |
+| [Singleton](singleton/) | One instance of a resource (a UART) with a global access point | Global state (hidden coupling, harder to test); lazy init races if called from an ISR and main |
+| [Builder](builder/) | Construct a complex configuration step by step, readably | A builder struct and more code than a designated initializer; pays off only when construction has real logic |
+| [Factory](factory/) | Pick one of several implementations (a comm protocol) behind one call | An indirect call through the vtable, and every candidate linked even if one is used |
+| [Hardware Proxy](hw-proxy/) | Gate and control access to a peripheral behind a checked interface | Double indirection plus a mask check per operation; worth it only if gating or a swappable backend is real |
+| [Decorator](decorator/) | Add behavior (logging) around an interface without touching the wrapped code | An extra indirection per call; the static-self version here supports only one instance |
+| [Mediator](mediator/) | Let components coordinate without referencing each other | The hub becomes a single point (god object), string routing is fragile, notify can re-enter |
+| [Mediator Example](mediator-example/) | The same, applied to three coordinated devices | Same god-object and stringly-typed routing cost at larger scale |
+| [Strategy](strategy/) | Swap an algorithm (a filter) at runtime, with per-strategy state | An indirect call, and each strategy carries its own state in RAM |
+| [Observer](observer/) | Notify several observers when a subject changes | A fixed observer array in RAM; notify in an ISR runs blocking observer code in interrupt context |
+| [State](state/) | Model modes as handlers instead of scattered flags | An indirect call per step; transition is just repointing a global (no lifecycle) |
+| [State Example](state-example/) | The same, with an enter, execute, exit lifecycle | More structure and per-state files; re-init on entry is an easy trap |
+
 ## Patterns
 
 All modules run on the STM32F411.
