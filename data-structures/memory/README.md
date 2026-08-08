@@ -124,12 +124,13 @@ use-after-free bugs simply cannot happen when there is no `free` to call.
 
 ## Build and run
 
-STM32F411 (black pill). The Makefile builds `app/Src/main.c`, and this module
-ships the demo as two separate files instead, so pick one and make it `main.c`
-first (copy or rename `static_allocation.c` or `dynamic_allocation.c` to
-`app/Src/main.c`). Then `make` builds `Build/flash.elf` and `Build/flash.bin`,
-and `make load` flashes it through OpenOCD with a J-Link over SWD. The chosen
-demo prints its walkthrough on UART2 at 115200 and then blinks the LED.
+STM32F411 (black pill). The two demos are separate files, and the Makefile picks
+one through the `APP` variable, so nothing has to be renamed. `make` builds the
+default (`static_allocation`), and `make APP=dynamic_allocation` (or the
+convenience target `make dynamic_allocation`) builds the other. Either way it
+produces `Build/flash.elf` and `Build/flash.bin`, and `make load` flashes it
+through OpenOCD with a J-Link over SWD. The chosen demo prints its walkthrough on
+UART2 at 115200 and then blinks the LED.
 
 ## Files
 
