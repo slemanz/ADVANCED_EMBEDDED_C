@@ -47,7 +47,7 @@ Now the layout is written down, not inferred, so it is identical on every
 compiler and architecture. This is the form you use for a hardware register or a
 protocol frame, where the bit positions are fixed by something outside your code.
 
-`gpio_packed.c` (which `main.c` builds as the running demo) is the same masking
+`gpio_packed.c` (the default demo) is the same masking
 applied to a real peripheral: it packs GPIO mode, state, and speed into one
 byte, then unpacks it to drive PC13's `MODER`, `OSPEEDR`, and `ODR` registers,
 and toggles the LED by flipping just the state bit in the packed byte. It shows
@@ -90,12 +90,14 @@ between saving space and paying to access it also runs through
 
 ## Build and run
 
-STM32F411 (black pill). `make` builds `Build/flash.elf` and `Build/flash.bin`
-from `app/Src/main.c`, and `make load` flashes it through OpenOCD with a J-Link
-over SWD. The running demo packs the LED's GPIO settings into one byte,
-configures PC13 from it, prints the unpacked values on UART2 at 115200, and then
-toggles the LED once a second by flipping the packed state bit. To run one of
-the other demos, point `main.c` at `bad.c` or `better.c`.
+STM32F411 (black pill). The three demos are separate files, and the Makefile
+picks one through the `APP` variable. `make` builds the default (`gpio_packed`),
+and `make APP=bad` or `make APP=better` (each also a convenience target,
+`make bad`) builds the others. It produces `Build/flash.elf` and
+`Build/flash.bin`, and `make load` flashes it through OpenOCD with a J-Link over
+SWD. The default demo packs the LED's GPIO settings into one byte, configures
+PC13 from it, prints the unpacked values on UART2 at 115200, and then toggles the
+LED once a second by flipping the packed state bit.
 
 ## Files
 
@@ -104,5 +106,5 @@ the other demos, point `main.c` at `bad.c` or `better.c`.
 - [app/Src/better.c](app/Src/better.c): the same fields packed by hand with masks
   and shifts, portable and explicit.
 - [app/Src/gpio_packed.c](app/Src/gpio_packed.c): masking applied to real GPIO
-  registers, showing a peripheral register as a bit-packed structure. `main.c`
-  is a copy of this and is what the build runs.
+  registers, showing a peripheral register as a bit-packed structure. The default
+  demo the build runs.
