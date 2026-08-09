@@ -91,12 +91,14 @@ pool-plus-ring-buffer approach over a heap-backed list shared with an interrupt.
 
 ## Build and run
 
-STM32F411 (black pill). `make` builds `Build/flash.elf` and `Build/flash.bin`
-from `app/Src/main.c`, and `make load` flashes it through OpenOCD with a J-Link
-over SWD. The running demo is the event log: type commands like `add_event
-ButtonPressed*`, `print_events*`, or `remove_event 3679*` on UART2 at 115200
-(each command ends with `*`). To run the command-queue demo instead, point
-`main.c` at `linked_command.c`.
+STM32F411 (black pill). The three demos are separate files, and the Makefile
+picks one through the `APP` variable. `make` builds the default (`main`, the
+event log), and `make APP=linked_command` or `make APP=linked_event_sim` (each
+also a convenience target, `make linked_command`) builds the others. It produces
+`Build/flash.elf` and `Build/flash.bin`, and `make load` flashes it through
+OpenOCD with a J-Link over SWD. The default event-log demo takes commands like
+`add_event ButtonPressed*`, `print_events*`, or `remove_event 3679*` on UART2 at
+115200 (each command ends with `*`).
 
 ## Files
 
@@ -105,5 +107,4 @@ ButtonPressed*`, `print_events*`, or `remove_event 3679*` on UART2 at 115200
 - [app/Src/linked_event_sim.c](app/Src/linked_event_sim.c): the event-list
   operations exercised without live input.
 - [app/Src/main.c](app/Src/main.c): the event log with an RTC timestamp per node
-  and a UART command parser for add, print, and remove; this is what the build
-  runs.
+  and a UART command parser for add, print, and remove; the default demo.
